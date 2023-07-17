@@ -10,9 +10,8 @@ export default function Home({navigation}) {
       onPress={() => 
         navigation.navigate('Scan',{})
       }
-      >
+      />
 
-      </Button>
       <Button 
       title="Audio"
       onPress={() =>
