@@ -10,6 +10,19 @@ const functions = getFunctions(app);
 
 export default function Scan() {
   const [image, setImage] = useState(null);
+  const [imageBlob, setImageBlob] = useState(null);
+  const [inputFile, setInputFile] = useState(null);
+
+  function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+  }
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -18,27 +31,52 @@ export default function Scan() {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: false
     });
-
-   
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
-  
-  const handleClick = () => {
-    // Invoke the Cloud Function
 
-    const addMessage = httpsCallable(functions, 'helloWorld');
-    addMessage()
-    .then((result) => {
-      console.log(result.data); // Should log "Hello from Firebase!"
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  useEffect(() => {
+    if (image){
+      setImageBlob(dataURItoBlob(image));
+    }
+  }, [image]);
+
+  useEffect(() => {
+    if (imageBlob){
+      setInputFile(new File([imageBlob], 'example.png', { type: 'image/png' }));
+      console.log("Successfully set Input File.");
+    }
+  }, [imageBlob]);
+
+  
+  
+  const handleClick = async () => {
+    try {
+      const apiUrl = 'http://192.168.208.1:3000/upload'; // Replace with your locally hosted API URL
+      const formData = new FormData();
+      formData.append('file', inputFile); // Use the 'file' variable instead of 'image'
+  
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (response.ok) {
+        const notesJson = await response.json();
+        console.log('Notes JSON:', notesJson);
+        // Now you have the notes JSON, and you can process it further as needed.
+      } else {
+        console.log('API call failed:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error calling API:', error);
+    }
   };
+  
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
