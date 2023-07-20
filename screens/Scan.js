@@ -54,7 +54,7 @@ export default function Scan() {
 
   
   
-  const handleClick = async () => {
+  const runAudiverisApi = async () => {
     try {
       const apiUrl = 'http://192.168.208.1:3000/upload'; // Replace with your locally hosted API URL
       const formData = new FormData();
@@ -81,7 +81,7 @@ export default function Scan() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Button title="Pick image" onPress={pickImage} />
-       <Button title="test" color="red" onPress={handleClick} />
+       <Button title="test" color="red" onPress={runAudiverisApi} />
       {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
     </View>
   );
