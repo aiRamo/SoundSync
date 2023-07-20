@@ -90,7 +90,11 @@ export default function Scan() {
       <Button title="Pick image" onPress={pickImage} />
       <Button title="test" color="red" onPress={handleClick} />
       {image && (
-        <Image source={{ uri: image }} style={{ height: 200, width: 600 }} />
+        <Image
+          source={{ uri: image }}
+          style={{ height: 200, width: 600 }}
+          resizeMode="contain"
+        />
       )}
       <Text>{holder}</Text>
     </View>
