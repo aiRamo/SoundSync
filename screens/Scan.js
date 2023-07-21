@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Image, View, Platform, Text } from "react-native";
+import { Button, Image, View, ScrollView, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { initializeApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions";
@@ -14,6 +14,7 @@ export default function Scan() {
   const [image, setImage] = useState(null);
   const [imageBlob, setImageBlob] = useState(null);
   const [inputFile, setInputFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(",")[1]);
@@ -56,6 +57,8 @@ export default function Scan() {
 
   const handleClick = async () => {
     try {
+      setLoading(true);
+
       const apiUrl = "http://192.168.208.1:3000/upload"; // Replace with your locally hosted API URL
       const formData = new FormData();
       formData.append("file", inputFile); // Use the 'file' variable instead of 'image'
@@ -68,35 +71,78 @@ export default function Scan() {
       if (response.ok) {
         const notesJson = await response.json();
         console.log("Notes JSON:", notesJson);
-
-        for (var i = 0; i < notesJson.notes[0].notes.length; i++) {
-          temp += notesJson.notes[0].notes[i].pitch[0].step[0];
-          temp += notesJson.notes[0].notes[i].pitch[0].octave[0];
-          temp += ",";
-        }
-        setHolder(temp);
-
-        // Now you have the notes JSON, and you can process it further as needed.
+  
+        // Create an array to hold the table data
+        const tableData = [
+          ["Num", "Pitch", "Type", "Staff Number", "Chord", "Dot", "Measure Number"],
+        ];
+        let count = 0;
+        // Iterate through the notes and add their attributes to the table data array
+        notesJson.notes.forEach((measure) => {
+          measure.notes.forEach((note) => {
+            const pitch = note.pitch[0];
+            const type = note.type[0];
+            const staffNumber = note.staff[0];
+            const hasChord = note.chord ? "chord" : "";
+            const hasDot = note.dot ? "dot" : "";
+            const measureNumber = measure.number;
+            tableData.push([++count, `${pitch.step[0]}${pitch.octave[0]}`, type, staffNumber, hasChord, hasDot, measureNumber]);
+          });
+        });
+  
+        // Update the state with the table data
+        setHolder(tableData);
       } else {
         console.log("API call failed:", response.statusText);
       }
     } catch (error) {
       console.error("Error calling API:", error);
+    } finally {
+      setLoading(false); // Hide loading circle
     }
   };
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button title="Pick image" onPress={pickImage} />
-      <Button title="test" color="red" onPress={handleClick} />
-      {image && (
-        <Image
-          source={{ uri: image }}
-          style={{ height: 200, width: 600 }}
-          resizeMode="contain"
-        />
-      )}
-      <Text>{holder}</Text>
+      <ScrollView style={{ width: '100%' }}>
+        <View style={{ width: '30%', alignSelf: 'center', marginBottom: 10}}>
+          <Button title="Pick image" onPress={pickImage} />
+        </View>
+        <View style={{ width: '30%', alignSelf: 'center' , marginBottom: 10}}>
+          <Button title="test" color="red" onPress={handleClick} />
+        </View>
+    
+        {image && (
+          <Image
+            source={{ uri: image }}
+            style={{ height: 200, width: 600, alignSelf: 'center' }}
+            resizeMode="contain"
+          />
+        )}
+
+        {loading && <Image source={require('../assets/loader.gif')} style={{ height: 50, width: 50, alignSelf: 'center' }} />}
+    
+        {Array.isArray(holder) && (
+          <View style={{ marginVertical: 20 , alignSelf: 'center'}}>
+            {holder.map((row, rowIndex) => (
+              <View key={rowIndex} style={{ flexDirection: "row" }}>
+                {row.map((cell, cellIndex) => (
+                  <View
+                    key={`${rowIndex}-${cellIndex}`}
+                    style={{
+                      borderWidth: 1,
+                      padding: 1,
+                      flex: cellIndex === 6 || cellIndex === 3 || cellIndex === 2  ? 3 : 2, // Make the first column wider
+                    }}
+                  >
+                    <Text>{cell}</Text>
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
