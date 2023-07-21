@@ -82,7 +82,7 @@ export default function Scan() {
           measure.notes.forEach((note) => {
             const pitch = note.pitch[0];
             const type = note.type[0];
-            const staffNumber = note.staff[0];
+            const staffNumber = note.staff[0] ? note.staff[0]: "";
             const hasChord = note.chord ? "chord" : "";
             const hasDot = note.dot ? "dot" : "";
             const measureNumber = measure.number;
