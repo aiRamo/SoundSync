@@ -28,11 +28,26 @@ const AudioRecorder = () => {
     }
   }
 
-  const recordingLoop = () => {   
+  const recordingLoop = async () => {   
     if(isRecording) {
-      setTimeout(recordingLoop, 10);
+      try {
+        const recording = new Audio.Recording();
+        await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
+        await recording.startAsync();
+        setIsRecording(recording);
+
+        setTimeout(async () => {
+          await recording.stopAndUnloadAsync();
+          const uri = recording.getURI();
+          const { sound } = await Audio.Sound.createAsync({ uri });
+          recordingLoop();
+        }, 200);
+      }
+      catch (error) {
+        console.error("rec error", error);
+      }
     }
-  }
+  };
 
   return (        /*recording toggle button*/
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
