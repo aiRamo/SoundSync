@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './screens/Home';
 import Scan from './screens/Scan';
-import Audio from './screens/Audio';
+import AudioRecorder from './screens/Audio';
 
 
 const Stack = createNativeStackNavigator();
@@ -17,7 +17,7 @@ export default function App() {
         options={{title:'Home'}}
         />
         <Stack.Screen name="Scan" component={Scan}/>
-        <Stack.Screen name="Audio" component={Audio}/>
+        <Stack.Screen name="Audio" component={AudioRecorder}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
