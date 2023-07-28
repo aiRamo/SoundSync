@@ -59,7 +59,7 @@ export default function Scan() {
     try {
       setLoading(true);
 
-      const apiUrl = "http://192.168.208.1:3000/upload"; // Replace with your locally hosted API URL
+      const apiUrl = "http://192.168.86.41:3000/upload"; // Replace with your locally hosted API URL
       const formData = new FormData();
       formData.append("file", inputFile); // Use the 'file' variable instead of 'image'
 
@@ -71,30 +71,53 @@ export default function Scan() {
       if (response.ok) {
         const notesJson = await response.json();
         console.log("Notes JSON:", notesJson);
-  
+
         // Create an array to hold the table data
         const tableData = [
-          ["Note Number", "Pitch", "Type", "Staff Number", "Chord", "Dot", "Measure Number"],
+          [
+            "Note Number",
+            "Pitch",
+            "Type",
+            "Staff Number",
+            "Chord",
+            "Dot",
+            "Measure Number",
+          ],
         ];
         let count = 0;
         // Iterate through the notes and add their attributes to the table data array
         notesJson.notes.forEach((measure) => {
           measure.notes.forEach((note) => {
-            const pitch = note.pitch? note.pitch[0]: "";
-            const type = note.rest ? 'rest' : (note.type ? note.type[0] : "");
-            const staffNumber = note.staff ? note.staff[0]: "";
+            const pitch = note.pitch ? note.pitch[0] : "";
+            const type = note.rest ? "rest" : note.type ? note.type[0] : "";
+            const staffNumber = note.staff ? note.staff[0] : "";
             const hasChord = note.chord ? "chord" : "";
             const hasDot = note.dot ? "dot" : "";
             const measureNumber = measure.number;
-            if (note.pitch){
-              tableData.push([++count, `${pitch.step[0]}${pitch.octave[0]}`, type, staffNumber, hasChord, hasDot, measureNumber]);
+            if (note.pitch) {
+              tableData.push([
+                ++count,
+                `${pitch.step[0]}${pitch.octave[0]}`,
+                type,
+                staffNumber,
+                hasChord,
+                hasDot,
+                measureNumber,
+              ]);
             } else {
-              tableData.push([++count, "", type, staffNumber, hasChord, hasDot, measureNumber]);
+              tableData.push([
+                ++count,
+                "",
+                type,
+                staffNumber,
+                hasChord,
+                hasDot,
+                measureNumber,
+              ]);
             }
-            
           });
         });
-  
+
         // Update the state with the table data
         setHolder(tableData);
       } else {
@@ -109,30 +132,36 @@ export default function Scan() {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ScrollView style={{ width: '100%' }}>
-        <View style={{ width: '30%', alignSelf: 'center', marginBottom: 10}}>
+      <ScrollView style={{ width: "100%" }}>
+        <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
           <Button title="Pick image" onPress={pickImage} />
         </View>
-        
-    
+
         {image && (
           <>
-            <View style={{ width: '30%', alignSelf: 'center' , marginBottom: 10}}>
+            <View
+              style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}
+            >
               <Button title="test" color="red" onPress={handleClick} />
             </View>
 
             <Image
               source={{ uri: image }}
-              style={{ height: 200, width: 600, alignSelf: 'center' }}
+              style={{ height: 200, width: 600, alignSelf: "center" }}
               resizeMode="contain"
             />
           </>
         )}
 
-        {loading && <Image source={require('../assets/loader.gif')} style={{ height: 50, width: 50, alignSelf: 'center' }} />}
-    
+        {loading && (
+          <Image
+            source={require("../assets/loader.gif")}
+            style={{ height: 50, width: 50, alignSelf: "center" }}
+          />
+        )}
+
         {Array.isArray(holder) && (
-          <View style={{ marginVertical: 20 , alignSelf: 'center'}}>
+          <View style={{ marginVertical: 20, alignSelf: "center" }}>
             {holder.map((row, rowIndex) => (
               <View key={rowIndex} style={{ flexDirection: "row" }}>
                 {row.map((cell, cellIndex) => (
@@ -141,7 +170,13 @@ export default function Scan() {
                     style={{
                       borderWidth: 1,
                       padding: 1,
-                      flex: cellIndex === 6 || cellIndex === 3 || cellIndex === 2 || cellIndex ===  0 ? 3 : 2, // Make the first column wider
+                      flex:
+                        cellIndex === 6 ||
+                        cellIndex === 3 ||
+                        cellIndex === 2 ||
+                        cellIndex === 0
+                          ? 3
+                          : 2, // Make the first column wider
                     }}
                   >
                     <Text>{cell}</Text>
