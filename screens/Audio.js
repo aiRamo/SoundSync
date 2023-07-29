@@ -33,41 +33,39 @@ const AudioRecorder = () => {
     }
     else {
       setIsRecording(true);
-      recordingLoop();
     }
   }
 
   useEffect(() => {
-    console.log("max fft value:", maxFftValue);
-  }, [maxFftValue]);
+    if(isRecording) {
+      recordingLoop();
+    }
+  },[isRecording]);
 
   const recordingLoop = async () => {   
-    if(isRecording) {
-      try {
-        const recording = new Audio.Recording();
-        await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
-        await recording.startAsync();
-        setIsRecording(recording);
+    try {
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
+      await recording.startAsync();
+      setIsRecording(recording);
 
-        setTimeout(async () => {
-          await recording.stopAndUnloadAsync();
-          const uri = recording.getURI();
-          const { sound } = await Audio.Sound.createAsync({ uri });
-          const status = await sound.getStatusAsync();
-          const audioData = status.isLoaded ? sound._loaded : null;
-          const audioArray = audioData ? Array.from(audioData.data) : [];
-          const fftResult = fft.fft(audioArray);
-          const fftMag = fftUtil.fftMag(fftResult);
-          const maxMagnitude = Math.max(...fftMag);
-          setMaxFftValue(maxMagnitude);
+      setTimeout(async () => {
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+        const { sound } = await Audio.Sound.createAsync({ uri });
+        const status = await sound.getStatusAsync();
+        const audioData = status.isLoaded ? sound._loaded : null;
+        const audioArray = Object.values(audioData.data);
+        setAudioArray(audioArray)
+        setFftResult(fft.fft(audioArray));
+        setFftMag(fftUtil.fftMag(fftResult));
+        setMaxFftValue(Math.max(...fftMag));
           
-
-          recordingLoop();
-        }, 200);
-      }
-      catch (error) {
-        console.error("rec error", error);
-      }
+        recordingLoop();
+      }, 200);
+    }
+    catch (error) {
+      console.error("rec error", error);
     }
   };
 
