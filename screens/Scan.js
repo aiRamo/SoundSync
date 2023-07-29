@@ -74,19 +74,24 @@ export default function Scan() {
   
         // Create an array to hold the table data
         const tableData = [
-          ["Num", "Pitch", "Type", "Staff Number", "Chord", "Dot", "Measure Number"],
+          ["Note Number", "Pitch", "Type", "Staff Number", "Chord", "Dot", "Measure Number"],
         ];
         let count = 0;
         // Iterate through the notes and add their attributes to the table data array
         notesJson.notes.forEach((measure) => {
           measure.notes.forEach((note) => {
-            const pitch = note.pitch[0];
-            const type = note.type[0];
+            const pitch = note.pitch? note.pitch[0]: "";
+            const type = note.rest ? 'rest' : (note.type ? note.type[0] : "");
             const staffNumber = note.staff ? note.staff[0]: "";
             const hasChord = note.chord ? "chord" : "";
             const hasDot = note.dot ? "dot" : "";
             const measureNumber = measure.number;
-            tableData.push([++count, `${pitch.step[0]}${pitch.octave[0]}`, type, staffNumber, hasChord, hasDot, measureNumber]);
+            if (note.pitch){
+              tableData.push([++count, `${pitch.step[0]}${pitch.octave[0]}`, type, staffNumber, hasChord, hasDot, measureNumber]);
+            } else {
+              tableData.push([++count, "", type, staffNumber, hasChord, hasDot, measureNumber]);
+            }
+            
           });
         });
   
@@ -108,16 +113,20 @@ export default function Scan() {
         <View style={{ width: '30%', alignSelf: 'center', marginBottom: 10}}>
           <Button title="Pick image" onPress={pickImage} />
         </View>
-        <View style={{ width: '30%', alignSelf: 'center' , marginBottom: 10}}>
-          <Button title="test" color="red" onPress={handleClick} />
-        </View>
+        
     
         {image && (
-          <Image
-            source={{ uri: image }}
-            style={{ height: 200, width: 600, alignSelf: 'center' }}
-            resizeMode="contain"
-          />
+          <>
+            <View style={{ width: '30%', alignSelf: 'center' , marginBottom: 10}}>
+              <Button title="test" color="red" onPress={handleClick} />
+            </View>
+
+            <Image
+              source={{ uri: image }}
+              style={{ height: 200, width: 600, alignSelf: 'center' }}
+              resizeMode="contain"
+            />
+          </>
         )}
 
         {loading && <Image source={require('../assets/loader.gif')} style={{ height: 50, width: 50, alignSelf: 'center' }} />}
@@ -132,7 +141,7 @@ export default function Scan() {
                     style={{
                       borderWidth: 1,
                       padding: 1,
-                      flex: cellIndex === 6 || cellIndex === 3 || cellIndex === 2  ? 3 : 2, // Make the first column wider
+                      flex: cellIndex === 6 || cellIndex === 3 || cellIndex === 2 || cellIndex ===  0 ? 3 : 2, // Make the first column wider
                     }}
                   >
                     <Text>{cell}</Text>
