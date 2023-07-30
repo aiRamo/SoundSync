@@ -1,7 +1,7 @@
 import { Audio } from "expo-av"
 import fft from 'fft-js';
 import { Button, Image, View, ScrollView, Text } from "react-native";
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect, useRef} from "react"
 
 const AudioRecorder = () => {
   const [currentNote, setCurrentNote] = useState(""); /*value of note to be displayed*/
@@ -11,6 +11,7 @@ const AudioRecorder = () => {
   const [fftMag, setFftMag] = useState([]);
   const [fftResult, setFftResult] = useState([]);
   const [audioArray, setAudioArray] = useState([]);
+  const recording = useRef(null);
 
   useEffect (() => {      /*request mic permission on first load*/
     (async () => {
@@ -22,7 +23,7 @@ const AudioRecorder = () => {
     })();
   }, []);
 
-  const toggleRecording = () => {   /*starts and stops recording loop*/
+  const toggleRecording = async () => {   /*starts and stops recording loop*/
     if (isRecording) {
       setIsRecording(false);
       clearTimeout(recordingLoop);
@@ -44,12 +45,12 @@ const AudioRecorder = () => {
 
   const recordingLoop = async () => {   
     try {
-      const recording = new Audio.Recording();
-      await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
-      await recording.startAsync();
-      setIsRecording(recording);
+      recording.current = new Audio.Recording();
+      await recording.current.prepareToRecordAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
+      await recording.current.startAsync();
 
       setTimeout(async () => {
+        const recording = new Audio.Recording();
         await recording.stopAndUnloadAsync();
         const uri = recording.getURI();
         const { sound } = await Audio.Sound.createAsync({ uri });
