@@ -1,84 +1,87 @@
-import { Audio } from "expo-av"
-import fft from 'fft-js';
-import { Button, Image, View, ScrollView, Text } from "react-native";
-import React, {useState, useEffect, useRef} from "react"
+import React, { useState, useEffect } from "react";
+import { Text, View, ScrollView, Button } from 'react-native';
+import { Audio } from 'expo-av';
 
-const AudioRecorder = () => {
-  const [currentNote, setCurrentNote] = useState(""); /*value of note to be displayed*/
-  const [isRecording, setIsRecording] = useState(false); /*for demo will record only when selected*/
-  const [recorder, setRecorder] = useState(null); /*recorder object*/
-  const [maxFftValue, setMaxFftValue] = useState(0);
-  const [fftMag, setFftMag] = useState([]);
-  const [fftResult, setFftResult] = useState([]);
-  const [audioArray, setAudioArray] = useState([]);
-  const recording = useRef(null);
+export default function AudioRecorder() {
+  const [recording, setRecording] = useState();
+  const [sound, setSound] = useState();
+  const [uri, setUri] = useState();
 
-  useEffect (() => {      /*request mic permission on first load*/
-    (async () => {
-      try{
-        await Audio.requestPermissionsAsync();
-      } catch (error) {
-        console.error("Need audio permission:", error);
+  useEffect(() => {
+    playSound();
+  }, [uri]);
+
+  async function playSound() {
+    if(uri != null)
+    {
+      console.log('Loading Sound');
+      const { sound, status } = await Audio.Sound.createAsync(uri);
+      if (status.isLoaded) {
+        setSound(sound);
+  
+        console.log('Playing Sound');
+        await sound.playAsync();
+      } else {
+        console.error('Sound is not loaded.');
       }
-    })();
-  }, []);
-
-  const toggleRecording = async () => {   /*starts and stops recording loop*/
-    if (isRecording) {
-      setIsRecording(false);
-      clearTimeout(recordingLoop);
-      console.log("max fft value:", maxFftValue);
-      console.log("ffit mag:", fftMag);
-      console.log("fft result:", fftResult);
-      console.log("audio array:", audioArray);
-    }
-    else {
-      setIsRecording(true);
     }
   }
 
   useEffect(() => {
-    if(isRecording) {
-      recordingLoop();
-    }
-  },[isRecording]);
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
-  const recordingLoop = async () => {   
+  async function startRecording() {
     try {
-      recording.current = new Audio.Recording();
-      await recording.current.prepareToRecordAsync(Audio.RecordingOptionsPresets.LOW_QUALITY);
-      await recording.current.startAsync();
+      console.log('Requesting permissions..');
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
 
-      setTimeout(async () => {
-        const recording = new Audio.Recording();
-        await recording.stopAndUnloadAsync();
-        const uri = recording.getURI();
-        const { sound } = await Audio.Sound.createAsync({ uri });
-        const status = await sound.getStatusAsync();
-        const audioData = status.isLoaded ? sound._loaded : null;
-        const audioArray = Object.values(audioData.data);
-        setAudioArray(audioArray)
-        setFftResult(fft.fft(audioArray));
-        setFftMag(fftUtil.fftMag(fftResult));
-        setMaxFftValue(Math.max(...fftMag));
-          
-        recordingLoop();
-      }, 200);
+      console.log('Starting recording..');
+      const { recording } = await Audio.Recording.createAsync( Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+      console.log('Recording started');
+    } catch (err) {
+      console.error('Failed to start recording', err);
     }
-    catch (error) {
-      console.error("rec error", error);
-    }
-  };
+  }
 
-  return (        /*recording toggle button*/
+  async function stopRecording() {
+    console.log('Stopping recording..');
+    setRecording(undefined);
+    await recording.stopAndUnloadAsync();
+    await Audio.setAudioModeAsync(
+      {
+        allowsRecordingIOS: false,
+      }
+    );
+    const uri = recording.getURI();
+    setUri(uri);
+    console.log('Recording stopped and stored at', uri);
+    playSound();
+  }
+
+  return (
+    /*recording toggle button*/
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ScrollView style={{ width: '100%' }}>
-        <View style={{ width: '30%', alignSelf: 'center', marginBottom: 10}}>
-          <Button title={isRecording ? "Stop Recording" : "Record"} color ={isRecording ? "red" : "green"} onPress={toggleRecording} />
+      <ScrollView style={{ width: "100%" }}>
+        <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
+          <Button
+            title={recording ? "Stop Recording" : "Record"}
+            color={recording ? "red" : "green"}
+            onPress={recording ? stopRecording : startRecording}
+          />
         </View>
       </ScrollView>
     </View>
   );
 }
-
-export default AudioRecorder;
