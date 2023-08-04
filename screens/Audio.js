@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, ScrollView, Button } from 'react-native';
 import { Audio } from 'expo-av';
+import axios, * as others from 'axios';
 
 export default function AudioRecorder() {
   const [recording, setRecording] = useState();
   const [sound, setSound] = useState();
   const [uri, setUri] = useState();
+  const [array, setArray] = useState();
 
   useEffect(() => {
     playSound();
+    if(uri!=null) {
+      processAudioDataFromURI(uri);
+    }
   }, [uri]);
+
+  useEffect(() => {
+    console.log(array);
+  }, [array]);
 
   async function playSound() {
     if(uri != null)
@@ -24,6 +33,31 @@ export default function AudioRecorder() {
       } else {
         console.error('Sound is not loaded.');
       }
+    }
+  }
+
+  async function processAudioDataFromURI(audioURI) {
+    try {
+      // Fetch the audio data from the URI (assuming it's a URL)
+      const response = await axios.get(audioURI, { responseType: 'arraybuffer' });
+      const audioData = new Uint8Array(response.data);
+  
+      // Convert the audio data to an array of numbers (assuming it's 8-bit unsigned data)
+      const audioSamples = Array.from(audioData).map((sample) => sample - 128);
+      setArray(audioSamples); 
+  
+      // Perform the FFT on the audio samples
+      // const phasors = fft.fft(audioSamples);
+  
+      // Process the FFT output as needed
+      // For example, you might calculate the magnitudes of the frequency components:
+      // const magnitudes = phasors.map((phasor) => Math.sqrt(phasor.real  2 + phasor.imag  2));
+  
+      // Return the magnitudes or any other processed data
+      // return magnitudes;
+    } catch (error) {
+      console.error('Error fetching or processing audio data:', error);
+      return null;
     }
   }
 
