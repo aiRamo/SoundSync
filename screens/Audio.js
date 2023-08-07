@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, ScrollView, Button } from 'react-native';
+import React, { useState, useEffect, useRef } from "react";
+import { Text, View, ScrollView, Button, Dimensions } from 'react-native';
 import { Audio } from 'expo-av';
 import axios, * as others from 'axios';
+import { VictoryChart, VictoryLine, VictoryAxis} from "victory";
+
+
 
 export default function AudioRecorder() {
   const [recording, setRecording] = useState();
   const [sound, setSound] = useState();
   const [uri, setUri] = useState();
   const [array, setArray] = useState();
+  const [timeArray, setTimeArray] = useState([]);
+  const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
     playSound();
@@ -17,8 +22,41 @@ export default function AudioRecorder() {
   }, [uri]);
 
   useEffect(() => {
-    console.log(array);
+    if (array) {
+      console.log(array);
+
+      // Calculate the timeArray and store it in the variable when the component mounts
+      calculateTimeArray(array);
+      applyFFT(array);
+    }
   }, [array]);
+
+  useEffect(() => {
+    if(timeArray)
+    {
+      console.log(timeArray);
+    }
+  }, [timeArray]);
+
+  function applyFFT(audioSamples) {
+    const fft = new p5.FFT();
+    fft.setInput(audioSamples);
+    const spectrum = fft.analyze();
+    console.log("Spectrum:", spectrum);
+    // Use the spectrum data as needed.
+
+    console.log(spectrum);
+  }
+
+  async function calculateTimeArray(array) {
+    const newTimeArray = new Array(array.length);
+    const timeInterval = 44100; 
+    for (let i = 0; i < newTimeArray.length; i++) {
+      newTimeArray[i] = i / timeInterval;
+    }
+    setTimeArray(newTimeArray);
+  };
+
 
   async function playSound() {
     if(uri != null)
@@ -52,9 +90,7 @@ export default function AudioRecorder() {
       // Process the FFT output as needed
       // For example, you might calculate the magnitudes of the frequency components:
       // const magnitudes = phasors.map((phasor) => Math.sqrt(phasor.real  2 + phasor.imag  2));
-  
-      // Return the magnitudes or any other processed data
-      // return magnitudes;
+
     } catch (error) {
       console.error('Error fetching or processing audio data:', error);
       return null;
@@ -104,6 +140,7 @@ export default function AudioRecorder() {
     playSound();
   }
 
+  
   return (
     /*recording toggle button*/
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -115,7 +152,36 @@ export default function AudioRecorder() {
             onPress={recording ? stopRecording : startRecording}
           />
         </View>
+        {timeArray.length > 0 && array.length > 0 && (
+          <VictoryChart
+          width={250}
+          height={250}
+          domain={{ x: [0, 0.25], y: [-200, 200] }}
+        >
+          <VictoryLine
+            style={{
+              data: { stroke: "#c43a31", strokeWidth: 0.25 },
+            }}
+            data={timeArray.map((xValue, index) => ({ x: xValue, y: array[index] }))}
+          />
+          <VictoryAxis
+            style={{
+              axis: {stroke: "#756f6a"},
+              axisLabel: {fontSize: 2},
+              tickLabels: {fontSize: 2, padding: -5, offset: -10}
+            }}
+          />
+          <VictoryAxis
+            dependentAxis // This makes it the Y-axis
+            style={{
+              axis: { stroke: "#756f6a" },
+              axisLabel: { fontSize: 2 }, // Adjust the font size as needed
+              tickLabels: { fontSize: 2, padding: -5, offset: -10 }, // Adjust the font size as needed
+            }}
+          />
+        </VictoryChart>
+        )}
       </ScrollView>
     </View>
-  );
+    );
 }
