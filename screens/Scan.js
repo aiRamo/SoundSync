@@ -4,6 +4,8 @@ import * as ImagePicker from "expo-image-picker";
 import { initializeApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { firebaseConfig } from "../firebaseConfig";
+import * as FileSystem from "expo-file-system";
+import { Asset } from "expo-asset";
 
 const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
@@ -15,6 +17,7 @@ export default function Scan() {
   const [imageBlob, setImageBlob] = useState(null);
   const [inputFile, setInputFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [fileContent, setFileContent] = useState("");
 
   function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(",")[1]);
@@ -41,6 +44,42 @@ export default function Scan() {
       setImage(result.assets[0].uri);
     }
   };
+  const readTextFileContent = async () => {
+    try {
+      const filePath = `${FileSystem.documentDirectory}here.txt`;
+      const fileContent = await FileSystem.readAsStringAsync(filePath);
+      return fileContent;
+    } catch (error) {
+      console.error("Error reading file content:", error);
+      return "";
+    }
+  };
+
+  const modifyAndSaveFileContent = async (newContent) => {
+    try {
+      const filePath = `${FileSystem.documentDirectory}here.txt`;
+      await FileSystem.writeAsStringAsync(filePath, newContent);
+      console.log("File content modified and saved successfully!");
+    } catch (error) {
+      console.error("Error modifying and saving file content:", error);
+    }
+  };
+  const handleModifyFile = async () => {
+    try {
+      // Modify and save the file content
+      const newContent = "BAZZZZZZZINNNNGGGAAAAAAAA";
+      await modifyAndSaveFileContent(newContent);
+
+      // Read and display the updated file content
+      const updatedContent = await readTextFileContent();
+      console.log("Updated file content:", updatedContent); // Display in the console
+
+      console.log("File content modified and displayed successfully!");
+    } catch (error) {
+      console.error("Error modifying and displaying file content:", error);
+    }
+  };
+  handleModifyFile();
 
   useEffect(() => {
     if (image) {
@@ -59,7 +98,7 @@ export default function Scan() {
     try {
       setLoading(true);
 
-      const apiUrl = "http://192.168.56.1:3000/upload"; // Replace with your locally hosted API URL
+      const apiUrl = "http://192.168.208.1:3000/upload"; // Replace with your locally hosted API URL
       const formData = new FormData();
       formData.append("file", inputFile); // Use the 'file' variable instead of 'image'
 
@@ -71,30 +110,55 @@ export default function Scan() {
       if (response.ok) {
         const notesJson = await response.json();
         console.log("Notes JSON:", notesJson);
-  
+
         // Create an array to hold the table data
         const tableData = [
-          ["Note Number", "Pitch", "Type", "Staff Number", "Chord", "Dot", "Measure Number"],
+          [
+            "Note Number",
+            "Pitch",
+            "Type",
+            "Staff Number",
+            "Chord",
+            "Dot",
+            "Measure Number",
+          ],
         ];
         let count = 0;
         // Iterate through the notes and add their attributes to the table data array
         notesJson.notes.forEach((measure) => {
           measure.notes.forEach((note) => {
-            const pitch = note.pitch? note.pitch[0]: "";
-            const type = note.rest ? 'rest' : (note.type ? note.type[0] : "");
-            const staffNumber = note.staff ? note.staff[0]: "";
+            const pitch = note.pitch ? note.pitch[0] : "";
+            const type = note.rest ? "rest" : note.type ? note.type[0] : "";
+            const staffNumber = note.staff ? note.staff[0] : "";
             const hasChord = note.chord ? "chord" : "";
             const hasDot = note.dot ? "dot" : "";
             const measureNumber = measure.number;
-            if (note.pitch){
-              tableData.push([++count, `${pitch.step[0]}${pitch.octave[0]}`, type, staffNumber, hasChord, hasDot, measureNumber]);
+            if (note.pitch) {
+              temp = pitch.step[0] + pitch.octave[0];
+
+              tableData.push([
+                ++count,
+                `${pitch.step[0]}${pitch.octave[0]}`,
+                type,
+                staffNumber,
+                hasChord,
+                hasDot,
+                measureNumber,
+              ]);
             } else {
-              tableData.push([++count, "", type, staffNumber, hasChord, hasDot, measureNumber]);
+              tableData.push([
+                ++count,
+                "",
+                type,
+                staffNumber,
+                hasChord,
+                hasDot,
+                measureNumber,
+              ]);
             }
-            
           });
         });
-  
+
         // Update the state with the table data
         setHolder(tableData);
       } else {
@@ -109,30 +173,36 @@ export default function Scan() {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ScrollView style={{ width: '100%' }}>
-        <View style={{ width: '30%', alignSelf: 'center', marginBottom: 10}}>
+      <ScrollView style={{ width: "100%" }}>
+        <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
           <Button title="Pick image" onPress={pickImage} />
         </View>
-        
-    
+
         {image && (
           <>
-            <View style={{ width: '30%', alignSelf: 'center' , marginBottom: 10}}>
+            <View
+              style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}
+            >
               <Button title="test" color="red" onPress={handleClick} />
             </View>
 
             <Image
               source={{ uri: image }}
-              style={{ height: 200, width: 600, alignSelf: 'center' }}
+              style={{ height: 200, width: 600, alignSelf: "center" }}
               resizeMode="contain"
             />
           </>
         )}
 
-        {loading && <Image source={require('../assets/loader.gif')} style={{ height: 50, width: 50, alignSelf: 'center' }} />}
-    
+        {loading && (
+          <Image
+            source={require("../assets/loader.gif")}
+            style={{ height: 50, width: 50, alignSelf: "center" }}
+          />
+        )}
+
         {Array.isArray(holder) && (
-          <View style={{ marginVertical: 20 , alignSelf: 'center'}}>
+          <View style={{ marginVertical: 20, alignSelf: "center" }}>
             {holder.map((row, rowIndex) => (
               <View key={rowIndex} style={{ flexDirection: "row" }}>
                 {row.map((cell, cellIndex) => (
@@ -141,7 +211,13 @@ export default function Scan() {
                     style={{
                       borderWidth: 1,
                       padding: 1,
-                      flex: cellIndex === 6 || cellIndex === 3 || cellIndex === 2 || cellIndex ===  0 ? 3 : 2, // Make the first column wider
+                      flex:
+                        cellIndex === 6 ||
+                        cellIndex === 3 ||
+                        cellIndex === 2 ||
+                        cellIndex === 0
+                          ? 3
+                          : 2, // Make the first column wider
                     }}
                   >
                     <Text>{cell}</Text>
