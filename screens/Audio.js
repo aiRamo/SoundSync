@@ -10,10 +10,9 @@ export default function AudioRecorder() {
   const [recording, setRecording] = useState();
   const [sound, setSound] = useState();
   const [uri, setUri] = useState();
-  const [array, setArray] = useState();
+  const [soundArray, setArray] = useState();
   const [timeArray, setTimeArray] = useState([]);
   const screenWidth = Dimensions.get("window").width;
-  const [array, setArray] = useState([]);
 
 
   useEffect(() => {
@@ -24,14 +23,13 @@ export default function AudioRecorder() {
   }, [uri]);
 
   useEffect(() => {
-    if (array) {
-      console.log(array);
+    if (soundArray) {
+      console.log(soundArray);
 
       // Calculate the timeArray and store it in the variable when the component mounts
-      calculateTimeArray(array);
-      applyFFT(array);
+      calculateTimeArray(soundArray);
     }
-  }, [array]);
+  }, [soundArray]);
 
   useEffect(() => {
     if(timeArray)
@@ -40,18 +38,9 @@ export default function AudioRecorder() {
     }
   }, [timeArray]);
 
-  function applyFFT(audioSamples) {
-    const fft = new p5.FFT();
-    fft.setInput(audioSamples);
-    const spectrum = fft.analyze();
-    console.log("Spectrum:", spectrum);
-    // Use the spectrum data as needed.
 
-    console.log(spectrum);
-  }
-
-  async function calculateTimeArray(array) {
-    const newTimeArray = new Array(array.length);
+  async function calculateTimeArray(soundArray) {
+    const newTimeArray = new Array(soundArray.length);
     const timeInterval = 44100; 
     for (let i = 0; i < newTimeArray.length; i++) {
       newTimeArray[i] = i / timeInterval;
@@ -168,17 +157,17 @@ export default function AudioRecorder() {
             //onPress={recording ? stopPitch : startPitch}
           />
         </View>
-        {timeArray.length > 0 && array.length > 0 && (
+        {timeArray.length > 0 && soundArray.length > 0 && (
           <VictoryChart
           width={250}
           height={250}
-          domain={{ x: [0, 0.25], y: [-200, 200] }}
+          domain={{ x: [0, .25], y: [-200, 200] }}
         >
           <VictoryLine
             style={{
               data: { stroke: "#c43a31", strokeWidth: 0.25 },
             }}
-            data={timeArray.map((xValue, index) => ({ x: xValue, y: array[index] }))}
+            data={timeArray.map((xValue, index) => ({ x: xValue, y: soundArray[index] }))}
           />
           <VictoryAxis
             style={{
