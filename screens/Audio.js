@@ -3,8 +3,8 @@ import { Text, View, ScrollView, Button, Dimensions } from 'react-native';
 import { Audio } from 'expo-av';
 import axios, * as others from 'axios';
 import { VictoryChart, VictoryLine, VictoryAxis} from "victory";
-
-
+//import { PitchDetector } from 'react-native-pitch-detector';
+import { fft } from 'mathjs';
 
 export default function AudioRecorder() {
   const [recording, setRecording] = useState();
@@ -13,6 +13,8 @@ export default function AudioRecorder() {
   const [array, setArray] = useState();
   const [timeArray, setTimeArray] = useState([]);
   const screenWidth = Dimensions.get("window").width;
+  const [array, setArray] = useState([]);
+
 
   useEffect(() => {
     playSound();
@@ -82,7 +84,11 @@ export default function AudioRecorder() {
   
       // Convert the audio data to an array of numbers (assuming it's 8-bit unsigned data)
       const audioSamples = Array.from(audioData).map((sample) => sample - 128);
-      setArray(audioSamples); 
+      setArray(audioSamples);
+      const fftResults = fft(audioSamples); 
+      console.log('FFT Results:', fftResults);
+      //const magnitudes = fftResults.map(([real, imag]) => Math.sqrt(real ** 2 + imag ** 2));
+      //console.log('Magnitudes:', magnitudes);
   
       // Perform the FFT on the audio samples
       // const phasors = fft.fft(audioSamples);
@@ -140,7 +146,16 @@ export default function AudioRecorder() {
     playSound();
   }
 
-  
+  //async function startPitch() {
+    //await PitchDetector.start();
+    //const subscription = PitchDetector.addListener(console.log)
+  //};
+
+  //async function startPitch() {
+    //await PitchDetector.stop();
+    //PitchDetector.removeListener()
+  //};
+
   return (
     /*recording toggle button*/
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -150,6 +165,7 @@ export default function AudioRecorder() {
             title={recording ? "Stop Recording" : "Record"}
             color={recording ? "red" : "green"}
             onPress={recording ? stopRecording : startRecording}
+            //onPress={recording ? stopPitch : startPitch}
           />
         </View>
         {timeArray.length > 0 && array.length > 0 && (
