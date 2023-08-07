@@ -17,6 +17,7 @@
     "axios": "^1.4.0",
     "base64-js": "^1.5.1",
     "cors": "^2.8.5",
+    "dsp.js": "^1.0.1",
     "expo": "~48.0.18",
     "expo-av": "~13.2.1",
     "expo-file-system": "~15.2.2",
@@ -27,15 +28,18 @@
     "firebase-functions": "^4.4.1",
     "mathjs": "^11.9.1",
     "nativewind": "^2.0.11",
+    "p5": "^1.7.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-native-chart-kit": "^6.12.0",
     "react-native": "0.71.8",
-    "react-native-pitch-detector": "^0.1.5",
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",
-    "react-native-web": "~0.18.11",
-    "tailwindcss": "^3.3.2"
+    "react-native-voice": "^0.3.0",
+    "react-native-web": "^0.18.12",
+    "tailwindcss": "^3.3.2",
+    "victory": "^36.6.11"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
