@@ -59,7 +59,7 @@ export default function Scan() {
     try {
       setLoading(true);
 
-      const apiUrl = "http://192.168.208.1:3000/upload"; // Replace with your locally hosted API URL
+      const apiUrl = "http://192.168.56.1:3000/upload"; // Replace with your locally hosted API URL
       const formData = new FormData();
       formData.append("file", inputFile); // Use the 'file' variable instead of 'image'
 
