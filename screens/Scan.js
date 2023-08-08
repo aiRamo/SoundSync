@@ -6,6 +6,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { firebaseConfig } from "../firebaseConfig";
 import * as FileSystem from "expo-file-system";
 import { Asset } from "expo-asset";
+import RNFS from "react-native-fs";
 
 const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
@@ -44,6 +45,12 @@ export default function Scan() {
       setImage(result.assets[0].uri);
     }
   };
+  function saveBase64AsPDF(base64Data, filePath) {
+    const decodedPDF = Buffer.from(base64Data, "base64");
+    fs.writeFileSync(filePath, decodedPDF);
+  }
+
+  /*
   const readTextFileContent = async () => {
     try {
       const filePath = `${FileSystem.documentDirectory}here.txt`;
@@ -80,6 +87,7 @@ export default function Scan() {
     }
   };
   handleModifyFile();
+  */
 
   useEffect(() => {
     if (image) {
@@ -98,7 +106,7 @@ export default function Scan() {
     try {
       setLoading(true);
 
-      const apiUrl = "http://192.168.208.1:3000/upload"; // Replace with your locally hosted API URL
+      const apiUrl = "http://192.168.86.41:3000/upload"; // Replace with your locally hosted API URL
       const formData = new FormData();
       formData.append("file", inputFile); // Use the 'file' variable instead of 'image'
 
@@ -109,7 +117,11 @@ export default function Scan() {
 
       if (response.ok) {
         const notesJson = await response.json();
-        console.log("Notes JSON:", notesJson);
+
+        const path = String.raw`C:\Users\benfa\OneDrive\Desktop\React_Native_stuff\SoundSync\output`;
+        saveBase64AsPDF(notesJson.base6, path);
+
+        console.log(notesJson);
 
         // Create an array to hold the table data
         const tableData = [
