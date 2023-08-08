@@ -4,7 +4,8 @@ import { Audio } from 'expo-av';
 import axios, * as others from 'axios';
 import { VictoryChart, VictoryLine, VictoryAxis} from "victory";
 //import { PitchDetector } from 'react-native-pitch-detector';
-import { fft } from 'mathjs';
+import { fft, sqrt } from 'mathjs';
+import Complex from 'complex.js';
 
 export default function AudioRecorder() {
   const [recording, setRecording] = useState();
@@ -24,7 +25,7 @@ export default function AudioRecorder() {
 
   useEffect(() => {
     if (soundArray) {
-      console.log(soundArray);
+      //console.log(soundArray);
 
       // Calculate the timeArray and store it in the variable when the component mounts
       calculateTimeArray(soundArray);
@@ -34,7 +35,7 @@ export default function AudioRecorder() {
   useEffect(() => {
     if(timeArray)
     {
-      console.log(timeArray);
+      //console.log(timeArray);
     }
   }, [timeArray]);
 
@@ -76,16 +77,48 @@ export default function AudioRecorder() {
       setArray(audioSamples);
       const fftResults = fft(audioSamples); 
       console.log('FFT Results:', fftResults);
-      //const magnitudes = fftResults.map(([real, imag]) => Math.sqrt(real ** 2 + imag ** 2));
-      //console.log('Magnitudes:', magnitudes);
-  
-      // Perform the FFT on the audio samples
-      // const phasors = fft.fft(audioSamples);
-  
-      // Process the FFT output as needed
-      // For example, you might calculate the magnitudes of the frequency components:
-      // const magnitudes = phasors.map((phasor) => Math.sqrt(phasor.real  2 + phasor.imag  2));
 
+      //for(let i = 0; i < audioSamples.length - 1; i++)
+      //{
+      //  const complexExtract = fftResults[i];
+       // const realPart = complexExtract[0];
+       // const imagPart = complexExtract[1];
+       // audioSamples[i] = Math.sqrt(realPart**2 + imagPart**2);
+      //}
+/*
+      const magnitudes = [];
+      for(let i = 0; i < fftResults.length; i++)
+      {
+        const complexExtract = fftResults[i];
+        const realPart = complexExtract[0];
+        const imagPart = complexExtract[1];
+        const magnitude = Math.sqrt(realPart ** 2 + imagPart ** 2);
+        magnitudes.push(magnitude);
+      }
+*/
+/*
+      const magnitudes = [];
+      for(let i = 0; i < fftResults.length; i++)
+      {
+        const complexExtract = fftResults[i];
+        const realPart = complexExtract[0];
+        const imagPart = complexExtract[1];
+        const magnitude = sqrt(realPart ** 2 + imagPart ** 2);
+        magnitudes.push(magnitude);
+      }
+*/
+
+      const magnitudes = [];
+        // Calculate magnitude using complex.js method
+        for(let i = 0; i < fftResults.length; i++)
+      {
+        const complexExtract = fftResults[i];
+        const magnitude = complexExtract.abs();
+        magnitudes.push(magnitude);
+      }
+
+      console.log('Magnitudes', magnitudes);
+      console.log('MAX', maxVal);
     } catch (error) {
       console.error('Error fetching or processing audio data:', error);
       return null;
