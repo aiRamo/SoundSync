@@ -4,9 +4,6 @@ import * as ImagePicker from "expo-image-picker";
 import { initializeApp } from "firebase/app";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import { firebaseConfig } from "../firebaseConfig";
-import * as FileSystem from "expo-file-system";
-import { Asset } from "expo-asset";
-import RNFS from "react-native-fs";
 
 const app = initializeApp(firebaseConfig);
 const functions = getFunctions(app);
