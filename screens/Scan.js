@@ -42,9 +42,22 @@ export default function Scan() {
       setImage(result.assets[0].uri);
     }
   };
-  function saveBase64AsPDF(base64Data, filePath) {
-    const decodedPDF = Buffer.from(base64Data, "base64");
-    fs.writeFileSync(filePath, decodedPDF);
+
+  function saveBase64AsPDF(base64Data) {
+    // Decode base64 to binary
+    const binaryData = atob(base64PDF);
+
+    // Convert binary data to array buffer
+    const arrayBuffer = new ArrayBuffer(binaryData.length);
+    const view = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < binaryData.length; i++) {
+      view[i] = binaryData.charCodeAt(i);
+    }
+
+    // Create a Blob from the array buffer
+    const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
+
+    return pdfBlob
   }
 
   /*
@@ -116,8 +129,10 @@ export default function Scan() {
         const notesJson = await response.json();
 
         const path = String.raw`C:\Users\benfa\OneDrive\Desktop\React_Native_stuff\SoundSync\output`;
-        saveBase64AsPDF(notesJson.base6, path);
+        const pdfBlob = saveBase64AsPDF(notesJson.base6);
 
+        console.log(pdfBlob);
+        
         console.log(notesJson);
 
         // Create an array to hold the table data
