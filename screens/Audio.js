@@ -70,7 +70,7 @@ export default function AudioRecorder() {
       // Fetch the audio data from the URI (assuming it's a URL)
       const response = await axios.get(audioURI, { responseType: 'arraybuffer' });
       //const audioData = new Uint8Array(response.data);
-      const audioData = new Int8Array(response.data);
+      const audioData = new Uint8Array(response.data);
   
       // Convert the audio data to an array of numbers (assuming it's 8-bit unsigned data)
       //const audioSamples = Array.from(audioData).map((sample) => sample - 128);
