@@ -65,19 +65,48 @@ export default function AudioRecorder() {
     }
   }
 
+  async function audioBufferToWavBuffer(audioBuffer) {
+    const wavData = await audioBufferToWav(audioBuffer);
+    return new Uint8Array(wavData);
+  }
+  
+  async function audioBufferToWav(audioBuffer) {
+    const pcmData = new Float32Array(audioBuffer.getChannelData(0));
+    const wavData = new DataView(new ArrayBuffer(pcmData.length * 2));
+    for (let i = 0; i < pcmData.length; i++) {
+      const sample = Math.max(-1, Math.min(1, pcmData[i]));
+      const sampleValue = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+      wavData.setInt16(i * 2, sampleValue, true);
+    }
+    return wavData.buffer;
+  }
+
   async function processAudioDataFromURI(audioURI) {
     try {
       // Fetch the audio data from the URI (assuming it's a URL)
-      const response = await axios.get(audioURI, { responseType: 'arraybuffer' });
-      //const audioData = new Uint8Array(response.data);
-      const audioData = new Uint8Array(response.data);
-  
-      // Convert the audio data to an array of numbers (assuming it's 8-bit unsigned data)
-      //const audioSamples = Array.from(audioData).map((sample) => sample - 128);
-      const audioSamples = Array.from(audioData);//.map((sample) => sample - 128);
+      
+      const downloadAndStoreWav = async (audioURI) => {
+        try {
+          const response = await fetch(audioURI);
+          const audioBlob = await response.blob();
+      
+          //TODO: Convert the audioBlob to a wav file. Then, log a message showing the created wav file.
 
-      setArray(audioSamples);
-      const fftResults = fft(audioSamples); 
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const arrayBuffer = await audioBlob.arrayBuffer();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+          const wavBuffer = await audioBufferToWavBuffer(audioBuffer);
+          console.log('Audio converted to WAV:', wavBuffer);
+
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      };
+      
+      downloadAndStoreWav(audioURI);
+      
+      /*const fftResults = fft(audioSamples); 
       console.log('FFT Results:', fftResults);
 
       //calculates magnitudes 
@@ -91,7 +120,7 @@ export default function AudioRecorder() {
       }
 
       console.log('Magnitudes', magnitudes);
-      
+      */
     } catch (error) {
       console.error('Error fetching or processing audio data:', error);
       return null;
