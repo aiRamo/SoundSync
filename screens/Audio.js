@@ -20,6 +20,51 @@ export default function AudioRecorder() {
   const [maxMagnitude, setMaxMagnitude] = useState([]);
   const [indexOfMaxMagnitude, setIdxMaxMag] = useState([]);
   const musicNotes = [
+  ["E1", 84.5],
+  ["F1", 89.5],
+  ["F1#", 95],
+  ["G1", 101],
+  ["G1#", 107],
+  ["A1", 113.5],
+  ["A1#", 120],
+  ["B1", 127],
+  ["C1", 135],
+  ["C1#", 143],
+  ["D1", 151.5],
+  ["D1#", 160.5],
+  ["E2" ,170],
+  ["F2", 180],
+  ["F2#", 190.5],
+  ["G2", 202],
+  ["G2#", 214],
+  ["A2", 226.5],
+  ["A2#", 240],
+  ["B2", 254.5],
+  ["C2", 269.5],
+  ["C2#", 285.5],
+  ["D2", 302.5],
+  ["D2#", 320],
+  ["E3", 339],
+  ["F3", 359.5],
+  ["F3#", 381],
+  ["G3", 403.5],
+  ["G3#", 427.5],
+  ["A3", 453],
+  ["A3#", 480],
+  ["B3", 508.5],
+  ["C3", 538.5],
+  ["C3#", 570.5],
+  ["D3", 604.5],
+  ["D3#", 640.5],
+  ["E4", 678.5],
+  ["F4", 719],
+  ["F4#", 762],
+  ["G4", 807.5],
+  ["G4#", 855.5],
+  ["A4", 906],
+  ["A4#", 960],
+  ["B4", 1017.5],
+  ["C4", 1060]];/*[
     ["C", 16.35, 32.70, 65.41, 130.81, 261.63, 523.25, 1046.50, 2093.00, 4186.00],
     ["C#", 17.32, 34.65, 69.30, 138.59, 277.18, 554.37, 1108.73, 2217.46, 4434.92],
     ["D", 18.35, 36.71, 73.42, 146.83, 293.66, 587.33, 1174.66, 2349.32, 4698.64],
@@ -32,7 +77,7 @@ export default function AudioRecorder() {
     ["A", 27.50, 55.00, 110.00, 220.00, 440.00, 880.00, 1760.00, 3520.00, 7040.00],
     ["Bb", 29.14, 58.27, 116.54, 233.08, 466.16, 932.33, 1864.66, 3729.31, 7458.62],
     ["B", 30.87, 61.74, 123.47, 246.94, 493.88, 987.77, 1975.53, 3951.07, 7902.13]
-  ];
+  ];*/ 
 
   useEffect(() => {
     //playSound();
@@ -238,7 +283,7 @@ export default function AudioRecorder() {
     source.connect(audioContext.destination);
     source.start();
      
-    const frequencyRange = 5.0; // Replace with your desired frequency range
+    /*const frequencyRange = 5.0; // Replace with your desired frequency range
 
     for (let row = 0; row < musicNotes.length; row++) {
       const rowData = musicNotes[row];
@@ -251,10 +296,15 @@ export default function AudioRecorder() {
           console.log(`Match found! Frequency ${freqMaxMag} is within ${frequencyRange} units of ${note} (${frequency}) at col ${col}.`);
         }
       }
+    }*/
+    for (let row = 0; row < musicNotes.length; row++) {
+      if (freqMaxMag < musicNotes[row][1]) {
+        const note = musicNotes[row][0];
+        console.log(`Match found! Frequency (${freqMaxMag}) is within range of ${note}.`);
+        row = musicNotes.length;
+      }
     }
-
-
-
+    
     } catch (error) {
       console.error('Error fetching or processing audio data:', error);
       return null;
