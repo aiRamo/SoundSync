@@ -1,7 +1,31 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { AUTH } from "../firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState("");
+
+  const signIn = async () => {
+    setLoading(true);
+
+    try {
+      const response = await signInWithEmailAndPassword(
+        AUTH,
+        email.trim(),
+        password
+      );
+      alert("Sign in successful");
+      navigation.navigate("Home", {});
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -17,7 +41,9 @@ const Login = ({ navigation }) => {
               marginLeft: 10,
               marginRight: 10,
             }}
+            value={email}
             placeholder="test14@gmail.com"
+            onChangeText={(text) => setEmail(text)}
           />
           <Text style={{ margin: 10 }}>Password</Text>
           <TextInput
@@ -27,7 +53,10 @@ const Login = ({ navigation }) => {
               marginLeft: 10,
               marginRight: 10,
             }}
+            secureTextEntry={true}
+            value={password}
             placeholder="*****"
+            onChangeText={(text) => setPassword(text)}
           />
         </View>
         <View style={{ marginLeft: 10, marginRight: 10 }}>
@@ -38,7 +67,8 @@ const Login = ({ navigation }) => {
               padding: 10,
               alignItems: "center",
             }}
-            onPress={() => navigation.navigate("Home", {})}
+            //onPress={() => navigation.navigate("Home", {})}
+            onPress={() => signIn()}
           >
             <Text style={{ fontSize: 15, color: "white" }}>Sign In</Text>
           </TouchableOpacity>
