@@ -6,20 +6,25 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 const Create = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [loading, setLoading] = useState("");
 
   const signUp = async () => {
-    try {
-      const response = await createUserWithEmailAndPassword(
-        AUTH,
-        email.trim(),
-        password
-      );
-      alert("Account created succesfully");
-      navigation.navigate("Home", {});
-    } catch (error) {
-      console.log(error);
-      alert("Registration failed " + error.message);
+    if (password === password2) {
+      try {
+        const response = await createUserWithEmailAndPassword(
+          AUTH,
+          email.trim(),
+          password
+        );
+        alert("Account created succesfully");
+        navigation.navigate("Home", {});
+      } catch (error) {
+        console.log(error);
+        alert("Registration failed " + error.message);
+      }
+    } else {
+      alert("Passwords do not match");
     }
   };
 
@@ -54,6 +59,18 @@ const Create = ({ navigation }) => {
             value={password}
             placeholder="*****"
             onChangeText={(text) => setPassword(text)}
+          />
+          <TextInput
+            style={{
+              borderWidth: 1,
+              height: 40,
+              marginLeft: 10,
+              marginRight: 10,
+            }}
+            secureTextEntry={true}
+            value={password2}
+            placeholder="*****"
+            onChangeText={(text) => setPassword2(text)}
           />
         </View>
         <View style={{ marginLeft: 10, marginRight: 10 }}>

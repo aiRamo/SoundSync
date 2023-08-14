@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Button, Image, View, ScrollView, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { initializeApp } from "firebase/app";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { firebaseConfig } from "../firebaseConfig";
-
-const app = initializeApp(firebaseConfig);
-const functions = getFunctions(app);
+import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Scan() {
   let temp = "";
@@ -15,6 +13,21 @@ export default function Scan() {
   const [imageBlob, setImageBlob] = useState(null);
   const [inputFile, setInputFile] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const checkCurrentUser = () => {
+    onAuthStateChanged(AUTH, (user) => {
+      if (user) {
+        // User is signed in
+        console.log("User is signed in:", user.uid);
+      } else {
+        // No user is signed in
+        console.log("No user is signed in.");
+      }
+    });
+  };
+
+  // Call the function to check the current user's status
+  checkCurrentUser();
 
   function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(",")[1]);
@@ -39,8 +52,41 @@ export default function Scan() {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      uploadImage(result.assets[0].uri);
+      //firebase upload
     }
   };
+
+  //firebase upload
+  async function uploadImage(uri) {
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const storageRef = ref(STORAGE, "images/");
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    //event listner
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Handle progress or state changes if needed
+      },
+      (error) => {
+        console.error("Error uploading image: ", error);
+      },
+      () => {
+        // Handle successful upload completion
+        getDownloadURL(storageRef)
+          .then((downloadURL) => {
+            console.log("File available at: ", downloadURL);
+            // Now you can trigger any further actions, like API calls, using this downloadURL
+          })
+          .catch((error) => {
+            console.error("Error getting download URL: ", error);
+          });
+      }
+    );
+  }
 
   useEffect(() => {
     if (image) {
