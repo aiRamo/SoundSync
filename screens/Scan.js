@@ -3,7 +3,7 @@ import { Button, Image, View, ScrollView, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import { collection, addDoc, doc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 export default function Scan() {
@@ -13,16 +13,22 @@ export default function Scan() {
   const [imageBlob, setImageBlob] = useState(null);
   const [inputFile, setInputFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  let id;
 
-  const checkCurrentUser = () => {
-    onAuthStateChanged(AUTH, (user) => {
-      if (user) {
-        // User is signed in
-        console.log("User is signed in:", user.uid);
-      } else {
-        // No user is signed in
-        console.log("No user is signed in.");
-      }
+  const checkCurrentUser = async () => {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(AUTH, (user) => {
+        if (user) {
+          // User is signed in
+          id = user.uid;
+          resolve(id);
+        } else {
+          // No user is signed in
+          console.log("No user is signed in.");
+          reject("No user is signed in.");
+        }
+        unsubscribe(); // Unsubscribe to the observer after resolving or rejecting
+      });
     });
   };
 
@@ -59,33 +65,17 @@ export default function Scan() {
 
   //firebase upload
   async function uploadImage(uri) {
-    const response = await fetch(uri);
-    const blob = await response.blob();
+    try {
+      // Upload the image to Firebase Storage
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const storageRef = ref(STORAGE, `images/${id}/${Date.now()}.jpg`);
+      await uploadBytesResumable(storageRef, blob);
 
-    const storageRef = ref(STORAGE, "images/");
-    const uploadTask = uploadBytesResumable(storageRef, blob);
-
-    //event listner
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        // Handle progress or state changes if needed
-      },
-      (error) => {
-        console.error("Error uploading image: ", error);
-      },
-      () => {
-        // Handle successful upload completion
-        getDownloadURL(storageRef)
-          .then((downloadURL) => {
-            console.log("File available at: ", downloadURL);
-            // Now you can trigger any further actions, like API calls, using this downloadURL
-          })
-          .catch((error) => {
-            console.error("Error getting download URL: ", error);
-          });
-      }
-    );
+      console.log("Image uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
   }
 
   useEffect(() => {

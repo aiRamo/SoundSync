@@ -2,6 +2,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { AUTH } from "../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ const Login = ({ navigation }) => {
         password
       );
       alert("Sign in successful");
+
       navigation.navigate("Home", {});
     } catch (error) {
       console.log(error);

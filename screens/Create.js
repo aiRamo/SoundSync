@@ -1,7 +1,8 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { AUTH, FIREBASE } from "../firebaseConfig";
+import { AUTH, FIREBASE, DB } from "../firebaseConfig";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore";
 
 const Create = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -17,7 +18,11 @@ const Create = ({ navigation }) => {
           email.trim(),
           password
         );
+        const docRef = await addDoc(collection(DB, "users"), {
+          name: email.trim(),
+        });
         alert("Account created succesfully");
+
         navigation.navigate("Home", {});
       } catch (error) {
         console.log(error);
