@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Button, Image, View, ScrollView, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { initializeApp } from "firebase/app";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { firebaseConfig } from "../firebaseConfig";
-
-const app = initializeApp(firebaseConfig);
-const functions = getFunctions(app);
+import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { collection, addDoc, doc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function Scan() {
   let temp = "";
@@ -15,7 +13,27 @@ export default function Scan() {
   const [imageBlob, setImageBlob] = useState(null);
   const [inputFile, setInputFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [fileContent, setFileContent] = useState("");
+  let id;
+
+  const checkCurrentUser = async () => {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(AUTH, (user) => {
+        if (user) {
+          // User is signed in
+          id = user.uid;
+          resolve(id);
+        } else {
+          // No user is signed in
+          console.log("No user is signed in.");
+          reject("No user is signed in.");
+        }
+        unsubscribe(); // Unsubscribe to the observer after resolving or rejecting
+      });
+    });
+  };
+
+  // Call the function to check the current user's status
+  checkCurrentUser();
 
   function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(",")[1]);
@@ -40,64 +58,25 @@ export default function Scan() {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      uploadImage(result.assets[0].uri);
+      //firebase upload
     }
   };
 
-  function saveBase64AsPDF(base64Data) {
-    // Decode base64 to binary
-    const binaryData = atob(base64PDF);
+  //firebase upload
+  async function uploadImage(uri) {
+    try {
+      // Upload the image to Firebase Storage
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const storageRef = ref(STORAGE, `images/${id}/${Date.now()}.jpg`);
+      await uploadBytesResumable(storageRef, blob);
 
-    // Convert binary data to array buffer
-    const arrayBuffer = new ArrayBuffer(binaryData.length);
-    const view = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < binaryData.length; i++) {
-      view[i] = binaryData.charCodeAt(i);
+      console.log("Image uploaded successfully");
+    } catch (error) {
+      console.error("Error uploading image:", error);
     }
-
-    // Create a Blob from the array buffer
-    const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
-
-    return pdfBlob
   }
-
-  /*
-  const readTextFileContent = async () => {
-    try {
-      const filePath = `${FileSystem.documentDirectory}here.txt`;
-      const fileContent = await FileSystem.readAsStringAsync(filePath);
-      return fileContent;
-    } catch (error) {
-      console.error("Error reading file content:", error);
-      return "";
-    }
-  };
-
-  const modifyAndSaveFileContent = async (newContent) => {
-    try {
-      const filePath = `${FileSystem.documentDirectory}here.txt`;
-      await FileSystem.writeAsStringAsync(filePath, newContent);
-      console.log("File content modified and saved successfully!");
-    } catch (error) {
-      console.error("Error modifying and saving file content:", error);
-    }
-  };
-  const handleModifyFile = async () => {
-    try {
-      // Modify and save the file content
-      const newContent = "BAZZZZZZZINNNNGGGAAAAAAAA";
-      await modifyAndSaveFileContent(newContent);
-
-      // Read and display the updated file content
-      const updatedContent = await readTextFileContent();
-      console.log("Updated file content:", updatedContent); // Display in the console
-
-      console.log("File content modified and displayed successfully!");
-    } catch (error) {
-      console.error("Error modifying and displaying file content:", error);
-    }
-  };
-  handleModifyFile();
-  */
 
   useEffect(() => {
     if (image) {
@@ -127,13 +106,7 @@ export default function Scan() {
 
       if (response.ok) {
         const notesJson = await response.json();
-
-        const path = String.raw`C:\Users\benfa\OneDrive\Desktop\React_Native_stuff\SoundSync\output`;
-        const pdfBlob = saveBase64AsPDF(notesJson.base6);
-
-        console.log(pdfBlob);
-        
-        console.log(notesJson);
+        console.log("Notes JSON:", notesJson);
 
         // Create an array to hold the table data
         const tableData = [
@@ -158,8 +131,6 @@ export default function Scan() {
             const hasDot = note.dot ? "dot" : "";
             const measureNumber = measure.number;
             if (note.pitch) {
-              temp = pitch.step[0] + pitch.octave[0];
-
               tableData.push([
                 ++count,
                 `${pitch.step[0]}${pitch.octave[0]}`,
