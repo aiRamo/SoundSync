@@ -5,6 +5,7 @@ import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, doc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { Buffer } from "buffer";
 
 export default function Scan() {
   let temp = "";
@@ -36,14 +37,21 @@ export default function Scan() {
   checkCurrentUser();
 
   function dataURItoBlob(dataURI) {
-    const byteString = atob(dataURI.split(",")[1]);
+    // Split the data URI to get the base64 part
+    console.log(dataURI);
+    const base64String = dataURI.split(",")[1];
+    console.log(base64String);
+
+    // Convert the base64 string to a Buffer
+    const buffer = Buffer.from(base64String, "base64");
+
+    // Get the MIME type from the data URI
     const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
+
+    // Create a Blob from the Buffer
+    const blob = new Blob([buffer], { type: mimeString });
+
+    return blob;
   }
 
   const pickImage = async () => {
@@ -51,7 +59,7 @@ export default function Scan() {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: undefined,
       quality: 1,
       base64: false,
     });
@@ -79,7 +87,13 @@ export default function Scan() {
   }
 
   useEffect(() => {
-    if (image) {
+    if (image && image.startsWith("file:///")) {
+      // Handle local file URI
+      const blob = new Blob([new Uint8Array()], { type: "image/jpeg" });
+      setImageBlob(blob);
+    } else if (image) {
+      // Handle data URI
+      console.log(image);
       setImageBlob(dataURItoBlob(image));
     }
   }, [image]);
@@ -95,6 +109,7 @@ export default function Scan() {
     try {
       setLoading(true);
 
+      //192.168.86.41
       const apiUrl = "http://192.168.86.41:3000/upload"; // Replace with your locally hosted API URL
       const formData = new FormData();
       formData.append("file", inputFile); // Use the 'file' variable instead of 'image'
@@ -183,7 +198,7 @@ export default function Scan() {
 
             <Image
               source={{ uri: image }}
-              style={{ height: 200, width: 600, alignSelf: "center" }}
+              style={{ height: 200, width: "100%", alignSelf: "center" }}
               resizeMode="contain"
             />
           </>
