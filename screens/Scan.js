@@ -3,16 +3,12 @@ import { Button, Image, View, ScrollView, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { collection, addDoc, doc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { Buffer } from "buffer";
 
 export default function Scan() {
-  let temp = "";
   const [holder, setHolder] = useState("");
   const [image, setImage] = useState(null);
-  const [imageBlob, setImageBlob] = useState(null);
-  const [inputFile, setInputFile] = useState(null);
   const [loading, setLoading] = useState(false);
   let id;
 
@@ -36,24 +32,6 @@ export default function Scan() {
   // Call the function to check the current user's status
   checkCurrentUser();
 
-  function dataURItoBlob(dataURI) {
-    // Split the data URI to get the base64 part
-    console.log(dataURI);
-    const base64String = dataURI.split(",")[1];
-    console.log(base64String);
-
-    // Convert the base64 string to a Buffer
-    const buffer = Buffer.from(base64String, "base64");
-
-    // Get the MIME type from the data URI
-    const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-
-    // Create a Blob from the Buffer
-    const blob = new Blob([buffer], { type: mimeString });
-
-    return blob;
-  }
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -66,7 +44,7 @@ export default function Scan() {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      uploadImage(result.assets[0].uri);
+      
       //firebase upload
     }
   };
@@ -77,7 +55,7 @@ export default function Scan() {
       // Upload the image to Firebase Storage
       const response = await fetch(uri);
       const blob = await response.blob();
-      const storageRef = ref(STORAGE, `images/${id}/${Date.now()}.jpg`);
+      const storageRef = ref(STORAGE, `images/${id}/inputFile/${id}.jpg`);
       await uploadBytesResumable(storageRef, blob);
 
       console.log("Image uploaded successfully");
@@ -86,37 +64,27 @@ export default function Scan() {
     }
   }
 
-  useEffect(() => {
-    if (image && image.startsWith("file:///")) {
-      // Handle local file URI
-      const blob = new Blob([new Uint8Array()], { type: "image/jpeg" });
-      setImageBlob(blob);
-    } else if (image) {
-      // Handle data URI
-      console.log(image);
-      setImageBlob(dataURItoBlob(image));
-    }
-  }, [image]);
-
-  useEffect(() => {
-    if (imageBlob) {
-      setInputFile(new File([imageBlob], "example.png", { type: "image/png" }));
-      console.log("Successfully set Input File.");
-    }
-  }, [imageBlob]);
-
   const handleClick = async () => {
     try {
+
+      await uploadImage(image);
       setLoading(true);
 
-      //192.168.86.41
-      const apiUrl = "http://192.168.86.41:3000/upload"; // Replace with your locally hosted API URL
-      const formData = new FormData();
-      formData.append("file", inputFile); // Use the 'file' variable instead of 'image'
+      //192.168.86.41 -- B
+      //192.168.1.238 -- A
+      const apiUrl = "http://192.168.1.238:3000/upload"; // Replace with your locally hosted API URL
 
+      const data = {
+        uid: id // This is the Firebase UID
+      };
+
+      // Fetch API to send the UID
       const response = await fetch(apiUrl, {
         method: "POST",
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
       });
 
       if (response.ok) {
@@ -212,7 +180,7 @@ export default function Scan() {
         )}
 
         {Array.isArray(holder) && (
-          <View style={{ marginVertical: 20, alignSelf: "center" }}>
+          <View style={{ marginVertical: 20, alignSelf: "left" }}>
             {holder.map((row, rowIndex) => (
               <View key={rowIndex} style={{ flexDirection: "row" }}>
                 {row.map((cell, cellIndex) => (
@@ -220,7 +188,7 @@ export default function Scan() {
                     key={`${rowIndex}-${cellIndex}`}
                     style={{
                       borderWidth: 1,
-                      padding: 1,
+                      padding: 5, // increased padding for readability
                       flex:
                         cellIndex === 6 ||
                         cellIndex === 3 ||
@@ -228,6 +196,7 @@ export default function Scan() {
                         cellIndex === 0
                           ? 3
                           : 2, // Make the first column wider
+                      minWidth: 50,  // minimum width for each cell
                     }}
                   >
                     <Text>{cell}</Text>

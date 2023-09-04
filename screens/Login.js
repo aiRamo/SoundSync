@@ -90,7 +90,7 @@ const Login = ({ navigation }) => {
       >
         <Text>Do you have an account?</Text>
         <TouchableOpacity
-          style={{ paddingLeft: 2 }}
+          style={{ paddingLeft: 2, marginBottom: 25 }}
           onPress={() => navigation.navigate("Create", {})}
         >
           <Text style={{ color: "cornflowerblue" }}>Sign up</Text>
