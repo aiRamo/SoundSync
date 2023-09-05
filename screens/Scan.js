@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Button, Image, View, ScrollView, Text } from "react-native";
+import { Button, Image, View, ScrollView, Modal, Dimensions, TouchableOpacity, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { onAuthStateChanged } from "firebase/auth";
-import { Buffer } from "buffer";
+import { WebView } from 'react-native-webview';
+
+const { width } = Dimensions.get('window');
+const A4_RATIO = 1.40;
+const webViewWidth = width * 0.98; // 90% of device width
+const webViewHeight = webViewWidth * A4_RATIO;
 
 export default function Scan() {
   const [holder, setHolder] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState(null);
+  const [previewVisible, setPreviewVisible] = useState(false);
   let id;
 
   const checkCurrentUser = async () => {
@@ -62,6 +69,12 @@ export default function Scan() {
     } catch (error) {
       console.error("Error uploading image:", error);
     }
+  }
+
+  // firebase output download for image preview
+  async function getFirebaseDownloadURL(firebasePath) {
+    const downloadURL = await getDownloadURL(ref(STORAGE, firebasePath));
+    return downloadURL;
   }
 
   const handleClick = async () => {
@@ -139,6 +152,14 @@ export default function Scan() {
 
         // Update the state with the table data
         setHolder(tableData);
+
+        // Assume the firebasePath is returned in the JSON response from your API
+        const firebasePath = notesJson.firebasePath; // Replace with the actual variable where firebasePath is stored
+        
+        const downloadURL = await getFirebaseDownloadURL(firebasePath);
+        setPdfUrl(downloadURL);
+        setPreviewVisible(true);
+
       } else {
         console.log("API call failed:", response.statusText);
       }
@@ -179,7 +200,41 @@ export default function Scan() {
           />
         )}
 
-        {Array.isArray(holder) && (
+        {pdfUrl && (
+          <Button title="open" color="green" onPress={() => setPreviewVisible(!previewVisible)} />
+        )}
+
+        {/* PDF rendering */}
+        {pdfUrl && (
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={previewVisible}
+            onRequestClose={() => {
+            }}
+          >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+
+              <Text style={{fontSize: 35, fontWeight: 600, color: '#0EED27', textAlign: 'center', marginBottom: 25}}>Here is your generated image</Text>
+
+              <View style={{ height: webViewHeight, width: webViewWidth, backgroundColor: 'rgba(0,0,0,0)' }}>
+                <WebView
+                  source={{ uri: pdfUrl }}
+                  style={{ height: webViewHeight, width: webViewWidth }}
+                />
+              </View>
+
+              <TouchableOpacity 
+                onPress={() => setPreviewVisible(!previewVisible)} 
+                style={{height: 30, width: 85, backgroundColor: 'white', marginTop: 15, justifyContent: 'center', borderRadius: 7}}
+              >
+                <Text style={{ alignSelf: 'center', fontSize: 15, fontWeight: 500, color: 'red'}}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
+        )}
+
+        {/*Array.isArray(holder) && (
           <View style={{ marginVertical: 20, alignSelf: "left" }}>
             {holder.map((row, rowIndex) => (
               <View key={rowIndex} style={{ flexDirection: "row" }}>
@@ -205,7 +260,8 @@ export default function Scan() {
               </View>
             ))}
           </View>
-        )}
+        )*/}
+
       </ScrollView>
     </View>
   );
