@@ -1,14 +1,42 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import React from "react";
 
 const Forgot = ({ navigation }) => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "darkslateblue" }}>
       <View
-        style={{ flex: 1, alignContent: "center", justifyContent: "center" }}
+        style={{
+          flex: 1,
+          backgroundColor: "darkslateblue",
+          alignItems: "center",
+        }}
+      >
+        <Image
+          source={require("../assets/SoundSync.png")}
+          style={{ width: 75, height: 75 }}
+        ></Image>
+        <Text
+          style={{
+            margin: 10,
+            fontSize: 30,
+            color: "white",
+            fontStyle: "italic",
+          }}
+        >
+          SoundSync
+        </Text>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          alignContent: "center",
+          justifyContent: "center",
+          backgroundColor: "white",
+          borderTopLeftRadius: 15,
+          borderTopRightRadius: 15,
+        }}
       >
         <View style={{ paddingBottom: 10 }}>
-          <Text style={{ margin: 10, fontSize: 30 }}>SoundSync</Text>
           <Text style={{ margin: 10 }}>
             Enter the email address associated with your account and we'll send
             you a link to reset your password.
@@ -42,6 +70,7 @@ const Forgot = ({ navigation }) => {
         style={{
           flexDirection: "row",
           justifyContent: "center",
+          backgroundColor: "white",
         }}
       >
         <Text>Do you have an account?</Text>

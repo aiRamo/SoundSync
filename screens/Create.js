@@ -1,4 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  KeyboardAvoidingView,
+} from "react-native";
 import React, { useState } from "react";
 import { AUTH, FIREBASE, DB } from "../firebaseConfig";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
@@ -34,12 +41,40 @@ const Create = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "darkslateblue" }}>
       <View
-        style={{ flex: 1, alignContent: "center", justifyContent: "center" }}
+        style={{
+          flex: 1,
+          backgroundColor: "darkslateblue",
+          alignItems: "center",
+        }}
+      >
+        <Image
+          source={require("../assets/SoundSync.png")}
+          style={{ width: 75, height: 75 }}
+        ></Image>
+        <Text
+          style={{
+            margin: 10,
+            fontSize: 30,
+            color: "white",
+            fontStyle: "italic",
+          }}
+        >
+          SoundSync
+        </Text>
+      </View>
+      <View
+        style={{
+          flex: 1.9,
+          alignContent: "center",
+          justifyContent: "center",
+          backgroundColor: "white",
+          borderTopLeftRadius: 15,
+          borderTopRightRadius: 15,
+        }}
       >
         <View style={{ paddingBottom: 10 }}>
-          <Text style={{ margin: 10, fontSize: 30 }}>SoundSync</Text>
           <Text style={{ margin: 10 }}>Email Address</Text>
           <TextInput
             style={{
@@ -65,6 +100,7 @@ const Create = ({ navigation }) => {
             placeholder="*****"
             onChangeText={(text) => setPassword(text)}
           />
+          <Text style={{ margin: 10 }}> Confirm Password</Text>
           <TextInput
             style={{
               borderWidth: 1,
@@ -92,20 +128,20 @@ const Create = ({ navigation }) => {
             <Text style={{ fontSize: 15, color: "white" }}>Create Account</Text>
           </TouchableOpacity>
         </View>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
-      >
-        <Text>Already have an account?</Text>
-        <TouchableOpacity
-          style={{ paddingLeft: 2 }}
-          onPress={() => navigation.navigate("Login", {})}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
         >
-          <Text style={{ color: "cornflowerblue" }}>Login Now</Text>
-        </TouchableOpacity>
+          <Text>Already have an account?</Text>
+          <TouchableOpacity
+            style={{ paddingLeft: 2 }}
+            onPress={() => navigation.navigate("Login", {})}
+          >
+            <Text style={{ color: "cornflowerblue" }}>Login Now</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
