@@ -1,7 +1,39 @@
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
+import { AUTH } from "../firebaseConfig";
+import React, { useState, useEffect } from "react";
 
 const Forgot = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+
+  const handlePasswordReset = () => {
+    const realEmail = email.trim();
+    if (realEmail) {
+      AUTH.sendPasswordResetEmail(realEmail)
+        .then(() => {
+          // Password reset email sent successfully
+
+          Alert.alert(
+            "Password Reset",
+            "Password reset email sent. Please check your inbox and follow the instructions."
+          );
+
+          navigation.navigate("Login"); // Navigate back to the login screen
+        })
+        .catch((error) => {
+          Alert.alert("Password Reset Error", error.message);
+        });
+    } else {
+      Alert.alert("Input Error", "Please enter your email address.");
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "darkslateblue" }}>
       <View
@@ -50,6 +82,8 @@ const Forgot = ({ navigation }) => {
               marginRight: 10,
             }}
             placeholder="test14@gmail.com"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
         </View>
         <View style={{ marginLeft: 10, marginRight: 10 }}>
@@ -60,6 +94,7 @@ const Forgot = ({ navigation }) => {
               padding: 10,
               alignItems: "center",
             }}
+            //onPress={handlePasswordReset}
             onPress={() => navigation.navigate("Login", {})}
           >
             <Text style={{ fontSize: 15, color: "white" }}>Continue</Text>
