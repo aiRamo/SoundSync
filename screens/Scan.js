@@ -1,43 +1,74 @@
-import React, { useState, useEffect } from "react";
-import { Button, Image, View, ScrollView, Modal, Dimensions, TouchableOpacity, Text } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Button,
+  Image,
+  View,
+  ScrollView,
+  Modal,
+  Dimensions,
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { onAuthStateChanged } from "firebase/auth";
-import { WebView } from 'react-native-webview';
+import renderNoteBoxes from "../components/renderNoteBoxes";
+import { compileNoteData } from "../components/compileNoteData";
+import {
+  checkCurrentUser,
+  uploadImage,
+  getFirebaseDownloadURL,
+} from "../components/firebaseUtils";
 
-const { width } = Dimensions.get('window');
-const A4_RATIO = 1.40;
-const webViewWidth = width * 0.98; // 90% of device width
-const webViewHeight = webViewWidth * A4_RATIO;
+const { width } = Dimensions.get("window");
+const A4_RATIO = 1.4;
+const ViewWidth = width * 0.82; // 90% of device width
+const ViewHeight = ViewWidth * A4_RATIO;
 
 export default function Scan() {
   const [holder, setHolder] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState(null);
+  const [pngURL, setpngURL] = useState(null);
   const [previewVisible, setPreviewVisible] = useState(false);
-  let id;
+  const [trackerBoxesVisible, setTrackerBoxesVisible] = useState(false);
+  const [noteCoordinateData, setNoteCoordinateData] = useState(false);
+  const [serverMessage, setServerMessage] = useState(""); // New state for the server message
 
-  const checkCurrentUser = async () => {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(AUTH, (user) => {
-        if (user) {
-          // User is signed in
-          id = user.uid;
-          resolve(id);
-        } else {
-          // No user is signed in
-          console.log("No user is signed in.");
-          reject("No user is signed in.");
-        }
-        unsubscribe(); // Unsubscribe to the observer after resolving or rejecting
-      });
-    });
-  };
+  let id;
+  let ws = useRef(null); // Reference for WebSocket
+
+  useEffect(() => {
+    ws.current = new WebSocket("ws://192.168.1.238:4000"); // Replace with your WebSocket server URL
+
+    ws.current.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
+
+    ws.current.onmessage = (event) => {
+      setServerMessage(event.data);
+    };
+
+    ws.current.onerror = (error) => {
+      console.log("WebSocket error:", error);
+    };
+
+    ws.current.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    return () => {
+      ws.current.close();
+    };
+  }, []);
 
   // Call the function to check the current user's status
-  checkCurrentUser();
+  checkCurrentUser()
+    .then((userId) => {
+      id = userId;
+    })
+    .catch((error) => {
+      console.log("No user signed in:", error);
+    });
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -51,36 +82,14 @@ export default function Scan() {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      
+
       //firebase upload
     }
   };
 
-  //firebase upload
-  async function uploadImage(uri) {
+  const callAPIandFormatNotesJSON = async () => {
     try {
-      // Upload the image to Firebase Storage
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const storageRef = ref(STORAGE, `images/${id}/inputFile/${id}.jpg`);
-      await uploadBytesResumable(storageRef, blob);
-
-      console.log("Image uploaded successfully");
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
-  }
-
-  // firebase output download for image preview
-  async function getFirebaseDownloadURL(firebasePath) {
-    const downloadURL = await getDownloadURL(ref(STORAGE, firebasePath));
-    return downloadURL;
-  }
-
-  const handleClick = async () => {
-    try {
-
-      await uploadImage(image);
+      await uploadImage(image, id);
       setLoading(true);
 
       //192.168.86.41 -- B
@@ -88,78 +97,35 @@ export default function Scan() {
       const apiUrl = "http://192.168.1.238:3000/upload"; // Replace with your locally hosted API URL
 
       const data = {
-        uid: id // This is the Firebase UID
+        uid: id, // This is the Firebase UID
       };
 
       // Fetch API to send the UID
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
         const notesJson = await response.json();
         console.log("Notes JSON:", notesJson);
 
-        // Create an array to hold the table data
-        const tableData = [
-          [
-            "Note Number",
-            "Pitch",
-            "Type",
-            "Staff Number",
-            "Chord",
-            "Dot",
-            "Measure Number",
-          ],
-        ];
-        let count = 0;
-        // Iterate through the notes and add their attributes to the table data array
-        notesJson.notes.forEach((measure) => {
-          measure.notes.forEach((note) => {
-            const pitch = note.pitch ? note.pitch[0] : "";
-            const type = note.rest ? "rest" : note.type ? note.type[0] : "";
-            const staffNumber = note.staff ? note.staff[0] : "";
-            const hasChord = note.chord ? "chord" : "";
-            const hasDot = note.dot ? "dot" : "";
-            const measureNumber = measure.number;
-            if (note.pitch) {
-              tableData.push([
-                ++count,
-                `${pitch.step[0]}${pitch.octave[0]}`,
-                type,
-                staffNumber,
-                hasChord,
-                hasDot,
-                measureNumber,
-              ]);
-            } else {
-              tableData.push([
-                ++count,
-                "",
-                type,
-                staffNumber,
-                hasChord,
-                hasDot,
-                measureNumber,
-              ]);
-            }
-          });
-        });
+        setNoteCoordinateData(notesJson.coordinateData);
+
+        const tableData = compileNoteData(notesJson);
 
         // Update the state with the table data
         setHolder(tableData);
 
         // Assume the firebasePath is returned in the JSON response from your API
-        const firebasePath = notesJson.firebasePath; // Replace with the actual variable where firebasePath is stored
-        
-        const downloadURL = await getFirebaseDownloadURL(firebasePath);
-        setPdfUrl(downloadURL);
-        setPreviewVisible(true);
+        const firebasePath = notesJson.firebasePath; // notesJson.frebasePath represents the firebase file path that holds the preview png.
 
+        const downloadURL = await getFirebaseDownloadURL(firebasePath);
+        setpngURL(downloadURL);
+        setPreviewVisible(true);
       } else {
         console.log("API call failed:", response.statusText);
       }
@@ -170,99 +136,201 @@ export default function Scan() {
     }
   };
 
+  useEffect(() => {
+    if (noteCoordinateData) {
+      console.log("Coordinates: " + JSON.stringify(noteCoordinateData));
+    }
+  }, [noteCoordinateData]);
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ScrollView style={{ width: "100%" }}>
-        <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.pickImageButtonContainer}>
           <Button title="Pick image" onPress={pickImage} />
         </View>
 
         {image && (
           <>
-            <View
-              style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}
-            >
-              <Button title="test" color="red" onPress={handleClick} />
+            <View style={styles.testButtonContainer}>
+              <Button
+                title="test"
+                color="red"
+                onPress={callAPIandFormatNotesJSON}
+              />
             </View>
 
             <Image
               source={{ uri: image }}
-              style={{ height: 200, width: "100%", alignSelf: "center" }}
+              style={styles.imagePreview}
               resizeMode="contain"
             />
           </>
         )}
 
         {loading && (
-          <Image
-            source={require("../assets/loader.gif")}
-            style={{ height: 50, width: 50, alignSelf: "center" }}
-          />
+          <>
+            <Image
+              source={require("../assets/loader.gif")}
+              style={styles.loader}
+            />
+            {serverMessage && (
+              <Text style={styles.serverMessage}>{serverMessage}</Text>
+            )}
+          </>
         )}
 
-        {pdfUrl && (
-          <Button title="open" color="green" onPress={() => setPreviewVisible(!previewVisible)} />
+        {pngURL && (
+          <TouchableOpacity
+            onPress={() => setPreviewVisible(!previewVisible)}
+            style={styles.openButton}
+          >
+            <Text style={styles.openButtonText}>Open</Text>
+          </TouchableOpacity>
         )}
 
-        {/* PDF rendering */}
-        {pdfUrl && (
+        {/* PNG rendering */}
+        {previewVisible && (
           <Modal
             animationType="slide"
             transparent={true}
             visible={previewVisible}
-            onRequestClose={() => {
-            }}
+            onRequestClose={() => {}}
           >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-
-              <Text style={{fontSize: 35, fontWeight: 600, color: '#0EED27', textAlign: 'center', marginBottom: 25}}>Here is your generated image</Text>
-
-              <View style={{ height: webViewHeight, width: webViewWidth, backgroundColor: 'rgba(0,0,0,0)' }}>
-                <WebView
-                  source={{ uri: pdfUrl }}
-                  style={{ height: webViewHeight, width: webViewWidth }}
-                />
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>
+                Here is your generated image
+              </Text>
+              <View style={styles.modalImageView}>
+                <Image source={{ uri: pngURL }} style={styles.previewImage} />
+                {trackerBoxesVisible &&
+                  renderNoteBoxes(noteCoordinateData, ViewWidth, ViewHeight)}
               </View>
+              <View style={{ display: "flex", flexDirection: "row" }}>
+                <TouchableOpacity
+                  onPress={() => setTrackerBoxesVisible(!trackerBoxesVisible)}
+                  style={styles.showNotesButton}
+                >
+                  <Text style={styles.blueButtonText}>Show Note Locations</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity 
-                onPress={() => setPreviewVisible(!previewVisible)} 
-                style={{height: 30, width: 85, backgroundColor: 'white', marginTop: 15, justifyContent: 'center', borderRadius: 7}}
-              >
-                <Text style={{ alignSelf: 'center', fontSize: 15, fontWeight: 500, color: 'red'}}>Close</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setPreviewVisible(!previewVisible)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.redButtonText}>Close</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </Modal>
         )}
-
-        {/*Array.isArray(holder) && (
-          <View style={{ marginVertical: 20, alignSelf: "left" }}>
-            {holder.map((row, rowIndex) => (
-              <View key={rowIndex} style={{ flexDirection: "row" }}>
-                {row.map((cell, cellIndex) => (
-                  <View
-                    key={`${rowIndex}-${cellIndex}`}
-                    style={{
-                      borderWidth: 1,
-                      padding: 5, // increased padding for readability
-                      flex:
-                        cellIndex === 6 ||
-                        cellIndex === 3 ||
-                        cellIndex === 2 ||
-                        cellIndex === 0
-                          ? 3
-                          : 2, // Make the first column wider
-                      minWidth: 50,  // minimum width for each cell
-                    }}
-                  >
-                    <Text>{cell}</Text>
-                  </View>
-                ))}
-              </View>
-            ))}
-          </View>
-        )*/}
-
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scrollView: {
+    width: "100%",
+  },
+  pickImageButtonContainer: {
+    width: "30%",
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  testButtonContainer: {
+    width: "30%",
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  imagePreview: {
+    height: 200,
+    width: "100%",
+    alignSelf: "center",
+  },
+  loader: {
+    marginTop: 20,
+    height: 50,
+    width: 50,
+    alignSelf: "center",
+  },
+  serverMessage: {
+    fontSize: 35,
+    color: "black",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    height: "90%",
+    width: "90%",
+    borderRadius: 15,
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(79, 90, 129, 0.73)",
+  },
+  modalTitle: {
+    fontSize: 35,
+    fontWeight: "600",
+    color: "#F4F5FF",
+    textAlign: "center",
+    marginBottom: 25,
+  },
+  modalImageView: {
+    height: ViewHeight,
+    width: ViewWidth,
+    backgroundColor: "rgba(0,0,0,0)",
+  },
+  previewImage: {
+    height: ViewHeight,
+    width: ViewWidth,
+  },
+  showNotesButton: {
+    height: 30,
+    width: 165,
+    backgroundColor: "white",
+    marginTop: 15,
+    justifyContent: "center",
+    borderRadius: 7,
+    marginHorizontal: 15,
+  },
+  closeButton: {
+    height: 30,
+    width: 85,
+    backgroundColor: "white",
+    marginTop: 15,
+    justifyContent: "center",
+    borderRadius: 7,
+    marginHorizontal: 15,
+  },
+  openButton: {
+    height: 35,
+    width: "30%",
+    backgroundColor: "green",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: 15,
+  },
+  openButtonText: {
+    color: "white",
+    fontWeight: 600,
+    alignSelf: "center",
+  },
+  blueButtonText: {
+    alignSelf: "center",
+    fontSize: 15,
+    fontWeight: "500",
+    color: "blue", // Replace with your color
+  },
+  redButtonText: {
+    alignSelf: "center",
+    fontSize: 15,
+    fontWeight: "500",
+    color: "red", // Replace with your color
+  },
+});
