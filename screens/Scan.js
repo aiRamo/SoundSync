@@ -19,9 +19,9 @@ import {
   getFirebaseDownloadURL,
 } from "../components/firebaseUtils";
 
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
-const ViewWidth = width * 0.82; // 90% of device width
+const ViewWidth = width * 0.8; // 90% of device width
 const ViewHeight = ViewWidth * A4_RATIO;
 
 export default function Scan() {
@@ -91,7 +91,7 @@ export default function Scan() {
     try {
       await uploadImage(image, id);
       setLoading(true);
-
+      setPreviewVisible(true);
       //192.168.86.41 -- B
       //192.168.1.238 -- A
       const apiUrl = "http://192.168.1.238:3000/upload"; // Replace with your locally hosted API URL
@@ -125,7 +125,6 @@ export default function Scan() {
 
         const downloadURL = await getFirebaseDownloadURL(firebasePath);
         setpngURL(downloadURL);
-        setPreviewVisible(true);
       } else {
         console.log("API call failed:", response.statusText);
       }
@@ -145,37 +144,27 @@ export default function Scan() {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.pickImageButtonContainer}>
-          <Button title="Pick image" onPress={pickImage} />
-        </View>
-
+        <TouchableOpacity
+          onPress={pickImage}
+          z
+          style={styles.pickImageButtonContainer}
+        >
+          <Text style={styles.openButtonText}>Pick Image</Text>
+        </TouchableOpacity>
         {image && (
           <>
-            <View style={styles.testButtonContainer}>
-              <Button
-                title="test"
-                color="red"
-                onPress={callAPIandFormatNotesJSON}
-              />
-            </View>
+            <TouchableOpacity
+              onPress={callAPIandFormatNotesJSON}
+              style={styles.testButtonContainer}
+            >
+              <Text style={styles.openButtonText}>Test</Text>
+            </TouchableOpacity>
 
             <Image
               source={{ uri: image }}
               style={styles.imagePreview}
               resizeMode="contain"
             />
-          </>
-        )}
-
-        {loading && (
-          <>
-            <Image
-              source={require("../assets/loader.gif")}
-              style={styles.loader}
-            />
-            {serverMessage && (
-              <Text style={styles.serverMessage}>{serverMessage}</Text>
-            )}
           </>
         )}
 
@@ -191,35 +180,61 @@ export default function Scan() {
         {/* PNG rendering */}
         {previewVisible && (
           <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={previewVisible}
             onRequestClose={() => {}}
           >
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>
-                Here is your generated image
-              </Text>
-              <View style={styles.modalImageView}>
-                <Image source={{ uri: pngURL }} style={styles.previewImage} />
-                {trackerBoxesVisible &&
-                  renderNoteBoxes(noteCoordinateData, ViewWidth, ViewHeight)}
-              </View>
-              <View style={{ display: "flex", flexDirection: "row" }}>
-                <TouchableOpacity
-                  onPress={() => setTrackerBoxesVisible(!trackerBoxesVisible)}
-                  style={styles.showNotesButton}
-                >
-                  <Text style={styles.blueButtonText}>Show Note Locations</Text>
-                </TouchableOpacity>
+              {loading && (
+                <>
+                  <Image
+                    source={require("../assets/loader.gif")}
+                    style={styles.loader}
+                  />
+                  {serverMessage && (
+                    <Text style={styles.serverMessage}>{serverMessage}</Text>
+                  )}
+                </>
+              )}
+              {!loading && (
+                <>
+                  <Text style={styles.modalTitle}>
+                    Here is your generated image
+                  </Text>
+                  <View style={styles.modalImageView}>
+                    <Image
+                      source={{ uri: pngURL }}
+                      style={styles.previewImage}
+                    />
+                    {trackerBoxesVisible &&
+                      renderNoteBoxes(
+                        noteCoordinateData,
+                        ViewWidth,
+                        ViewHeight
+                      )}
+                  </View>
+                  <View style={{ display: "flex", flexDirection: "row" }}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        setTrackerBoxesVisible(!trackerBoxesVisible)
+                      }
+                      style={styles.showNotesButton}
+                    >
+                      <Text style={styles.blueButtonText}>
+                        Show Note Locations
+                      </Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                  onPress={() => setPreviewVisible(!previewVisible)}
-                  style={styles.closeButton}
-                >
-                  <Text style={styles.redButtonText}>Close</Text>
-                </TouchableOpacity>
-              </View>
+                    <TouchableOpacity
+                      onPress={() => setPreviewVisible(!previewVisible)}
+                      style={styles.closeButton}
+                    >
+                      <Text style={styles.redButtonText}>Close</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
             </View>
           </Modal>
         )}
@@ -239,13 +254,22 @@ const styles = StyleSheet.create({
   },
   pickImageButtonContainer: {
     width: "30%",
+    backgroundColor: "blue",
+    height: 35,
     alignSelf: "center",
     marginBottom: 10,
+    justifyContent: "center",
+    borderRadius: 7,
+    marginTop: 15,
   },
   testButtonContainer: {
     width: "30%",
+    backgroundColor: "red",
+    height: 35,
     alignSelf: "center",
     marginBottom: 10,
+    justifyContent: "center",
+    borderRadius: 7,
   },
   imagePreview: {
     height: 200,
@@ -260,14 +284,15 @@ const styles = StyleSheet.create({
   },
   serverMessage: {
     fontSize: 35,
-    color: "black",
+    color: "#F4F5FF",
     textAlign: "center",
+    fontWeight: "600",
     marginVertical: 10,
   },
   modalContainer: {
-    flex: 1,
-    height: "90%",
-    width: "90%",
+    marginTop: height * 0.02,
+    height: height * 0.95,
+    width: width * 0.95,
     borderRadius: 15,
     alignSelf: "center",
     justifyContent: "center",
@@ -282,13 +307,13 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   modalImageView: {
-    height: ViewHeight,
-    width: ViewWidth,
     backgroundColor: "rgba(0,0,0,0)",
+    justifyContent: "center",
   },
   previewImage: {
     height: ViewHeight,
     width: ViewWidth,
+    alignSelf: "center",
   },
   showNotesButton: {
     height: 30,
@@ -315,6 +340,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     marginTop: 15,
+    borderRadius: 7,
   },
   openButtonText: {
     color: "white",
