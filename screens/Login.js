@@ -51,8 +51,8 @@ const Login = ({ navigation }) => {
         }}
       >
         <Image
-          source={require("../assets/SoundSync.png")}
-          style={{ width: 75, height: 75 }}
+          source={require("../assets/SoundSyncIcon.png")}
+          style={{ marginTop: 15, width: 150, height: 150 }}
         ></Image>
         <Text
           style={{
