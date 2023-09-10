@@ -12,6 +12,9 @@ import Profile from "./screens/Profile";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+const headerStyle = {
+  backgroundColor: "darkslateblue", // Change this to your desired background color
+};
 
 function HomeScreen() {
   return (
@@ -54,10 +57,22 @@ function HomeScreen() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Create" component={Create} />
-        <Stack.Screen name="Forgot" component={Forgot} />
+      <Stack.Navigator screenOptions={{ headerShown: true }}>
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{ headerStyle }}
+        />
+        <Stack.Screen
+          name="Create"
+          component={Create}
+          options={{ headerStyle }}
+        />
+        <Stack.Screen
+          name="Forgot"
+          component={Forgot}
+          options={{ headerStyle }}
+        />
         <Stack.Screen
           name="Home"
           component={HomeScreen}

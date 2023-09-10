@@ -38,7 +38,7 @@ export default function Scan() {
   let ws = useRef(null); // Reference for WebSocket
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://192.168.1.238:4000"); // Replace with your WebSocket server URL
+    ws.current = new WebSocket("ws://192.168.86.35:4000"); // Replace with your WebSocket server URL
 
     ws.current.onopen = () => {
       console.log("WebSocket connection opened");
@@ -94,7 +94,7 @@ export default function Scan() {
       setPreviewVisible(true);
       //192.168.86.41 -- B
       //192.168.1.238 -- A
-      const apiUrl = "http://192.168.1.238:3000/upload"; // Replace with your locally hosted API URL
+      const apiUrl = "http://192.168.86.35:3000/upload"; // Replace with your locally hosted API URL
 
       const data = {
         uid: id, // This is the Firebase UID
