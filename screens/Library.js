@@ -1,90 +1,44 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  image,
-  Image,
-  TouchableOpacity,
-  StatusBar,
-  StyleSheet,
-} from "react-native";
+import { View, Text, ScrollView, StatusBar, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
-import { checkCurrentUser } from "../components/firebaseUtils";
-import { ref, getDownloadURL } from "firebase/storage";
+import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { STORAGE } from "../firebaseConfig";
+import Card from "../components/Card";
 
 export default function Library() {
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrls, setImageUrls] = useState([]);
+  let count = 0;
 
   useEffect(() => {
-    // Create a reference to the image in Firebase Storage
-    const storageRef = ref(
-      STORAGE,
-      "images/eP42yMFVDcdvkwroV3OrFv4yutH2/inputFile/eP42yMFVDcdvkwroV3OrFv4yutH2.jpg"
-    ); // Replace with your image path
+    async function listFilesInFolder(folderPath) {
+      const folderRef = ref(STORAGE, folderPath);
+      const listResult = await listAll(folderRef);
+      const urls = await Promise.all(
+        listResult.items.map(async (itemRef) => {
+          try {
+            const url = await getDownloadURL(itemRef);
+            return url;
+          } catch (error) {
+            console.error("Error downloading image:", error);
+            return null;
+          }
+        })
+      );
+      setImageUrls(urls.filter((url) => url !== null));
+    }
 
-    // Get the download URL for the image
-    getDownloadURL(storageRef)
-      .then((url) => {
-        // Set the image URL in the state
-        setImageUrl(url);
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.error("Error downloading image:", error);
-      });
+    listFilesInFolder("images/eP42yMFVDcdvkwroV3OrFv4yutH2/BenTestFolder/");
   }, []);
 
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={styles.container2}>
-          {imageUrl ? (
-            <Image
-              source={{ uri: imageUrl }}
-              style={{ width: 200, height: 75 }}
-            />
-          ) : (
-            <Text>Loading image...</Text>
-          )}
-          <Text style={{ marginLeft: 10 }}>Music page 1</Text>
-
-          <TouchableOpacity style={styles.touching}>
-            <Text style={{ fontSize: 15, color: "white" }}>Load</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.container2}>
-          {imageUrl ? (
-            <Image
-              source={{ uri: imageUrl }}
-              style={{ width: 200, height: 75 }}
-            />
-          ) : (
-            <Text>Loading image...</Text>
-          )}
-
-          <Text style={{ marginLeft: 10 }}>Music page 2</Text>
-
-          <TouchableOpacity style={styles.touching}>
-            <Text style={{ fontSize: 15, color: "white" }}>Load</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.container2}>
-          {imageUrl ? (
-            <Image
-              source={{ uri: imageUrl }}
-              style={{ width: 200, height: 75 }}
-            />
-          ) : (
-            <Text>Loading image...</Text>
-          )}
-
-          <Text style={{ marginLeft: 10 }}>Music page 3</Text>
-
-          <TouchableOpacity style={styles.touching}>
-            <Text style={{ fontSize: 15, color: "white" }}>Load</Text>
-          </TouchableOpacity>
-        </View>
+        {imageUrls.map((imageUrl, index) => (
+          <Card
+            key={index}
+            imgeUrl={imageUrl}
+            title={`music page ${count++}`}
+          ></Card>
+        ))}
       </ScrollView>
     </View>
   );
@@ -97,19 +51,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginLeft: 10,
     marginRight: 10,
-  },
-  container2: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderColor: "black",
-    borderWidth: 1,
-    marginBottom: 10,
-  },
-  touching: {
-    marginLeft: 10,
-    borderRadius: 5,
-    backgroundColor: "darkslateblue",
-    padding: 10,
-    alignItems: "center",
   },
 });
