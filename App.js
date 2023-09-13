@@ -9,6 +9,7 @@ import Login from "./screens/Login";
 import Create from "./screens/Create";
 import Forgot from "./screens/Forgot";
 import Profile from "./screens/Profile";
+import Library from "./screens/Library";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -50,6 +51,16 @@ function HomeScreen() {
           ),
         }}
       ></Tab.Screen>
+      <Tab.Screen
+        name="Library"
+        component={Library}
+        options={{
+          title: "Library Page",
+          tabBarIcon: ({}) => (
+            <Ionicons name="library-outline" size={24} color="black" />
+          ),
+        }}
+      ></Tab.Screen>
     </Tab.Navigator>
   );
 }
@@ -76,7 +87,7 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "Home" }}
+          options={{ title: "Home", headerShown: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>
