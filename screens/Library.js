@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { STORAGE } from "../firebaseConfig";
 import Card from "../components/Card";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Library() {
   const [imageUrls, setImageUrls] = useState([]);
@@ -31,6 +32,9 @@ export default function Library() {
 
   return (
     <View style={styles.container}>
+      <View>
+        <Ionicons name="filter-sharp" size={30} color="black" />
+      </View>
       <ScrollView>
         {imageUrls.map((imageUrl, index) => (
           <Card
@@ -51,5 +55,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginLeft: 10,
     marginRight: 10,
+    marginTop: StatusBar.currentHeight,
   },
 });

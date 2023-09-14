@@ -7,6 +7,7 @@ import {
   Alert,
 } from "react-native";
 import { AUTH } from "../firebaseConfig";
+import { sendPasswordResetEmail } from "firebase/auth";
 import React, { useState, useEffect } from "react";
 
 const Forgot = ({ navigation }) => {
@@ -15,7 +16,7 @@ const Forgot = ({ navigation }) => {
   const handlePasswordReset = () => {
     const realEmail = email.trim();
     if (realEmail) {
-      AUTH.sendPasswordResetEmail(realEmail)
+      sendPasswordResetEmail(AUTH, realEmail)
         .then(() => {
           // Password reset email sent successfully
 
@@ -44,8 +45,8 @@ const Forgot = ({ navigation }) => {
         }}
       >
         <Image
-          source={require("../assets/SoundSync.png")}
-          style={{ width: 75, height: 75 }}
+          source={require("../assets/SoundSyncIcon.png")}
+          style={{ width: 130, height: 130 }}
         ></Image>
         <Text
           style={{
@@ -94,8 +95,8 @@ const Forgot = ({ navigation }) => {
               padding: 10,
               alignItems: "center",
             }}
-            //onPress={handlePasswordReset}
-            onPress={() => navigation.navigate("Login", {})}
+            onPress={handlePasswordReset}
+            // onPress={() => navigation.navigate("Login", {})}
           >
             <Text style={{ fontSize: 15, color: "white" }}>Continue</Text>
           </TouchableOpacity>

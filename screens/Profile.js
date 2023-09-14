@@ -1,8 +1,19 @@
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { AUTH } from "../firebaseConfig";
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
+  const handleSignOut = async () => {
+    try {
+      await AUTH.signOut();
+      navigation.navigate("Login", {});
+      // Redirect or perform any other action after signing out.
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -50,12 +61,24 @@ const Profile = () => {
           <TouchableOpacity
             style={{
               borderRadius: 5,
-              backgroundColor: "grey",
+              backgroundColor: "darkslateblue",
               padding: 10,
               alignItems: "center",
             }}
           >
             <Text style={{ fontSize: 15, color: "white" }}>Submit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              borderRadius: 5,
+              backgroundColor: "darkslateblue",
+              padding: 10,
+              alignItems: "center",
+              marginTop: 10,
+            }}
+            onPress={handleSignOut}
+          >
+            <Text style={{ fontSize: 15, color: "white" }}>Sign Out</Text>
           </TouchableOpacity>
         </View>
       </View>

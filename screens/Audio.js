@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Text, View, ScrollView, Button, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  ScrollView,
+  Button,
+  Dimensions,
+  StatusBar,
+} from "react-native";
 import { Audio } from "expo-av";
 import axios, * as others from "axios";
 //import { VictoryChart, VictoryLine, VictoryAxis} from "victory";
@@ -367,7 +374,14 @@ export default function AudioRecorder() {
 
   return (
     /*recording toggle button*/
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: StatusBar.currentHeight,
+      }}
+    >
       <ScrollView style={{ width: "100%" }}>
         <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
           <Button

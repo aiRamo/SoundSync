@@ -251,6 +251,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: StatusBar.currentHeight,
   },
   scrollView: {
     width: "100%",

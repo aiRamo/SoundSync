@@ -52,7 +52,7 @@ const Login = ({ navigation }) => {
       >
         <Image
           source={require("../assets/SoundSyncIcon.png")}
-          style={{ marginTop: 15, width: 150, height: 150 }}
+          style={{ marginTop: 15, width: 130, height: 130 }}
         ></Image>
         <Text
           style={{
@@ -68,7 +68,7 @@ const Login = ({ navigation }) => {
 
       <View
         style={{
-          flex: 1.9,
+          flex: 0.95,
           backgroundColor: "white",
           alignContent: "center",
           justifyContent: "center",
@@ -76,7 +76,7 @@ const Login = ({ navigation }) => {
           borderTopRightRadius: 15,
         }}
       >
-        <View style={{ paddingBottom: 10 }}>
+        <View style={{ paddingBottom: 10, marginTop: 80 }}>
           <Text style={{ margin: 10 }}>Email Address</Text>
           <TextInput
             style={{
