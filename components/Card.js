@@ -5,7 +5,10 @@ export default function Card({ imgeUrl, title }) {
   return (
     <View style={styles.container2}>
       {imgeUrl ? (
-        <Image source={{ uri: imgeUrl }} style={{ width: 200, height: 75 }} />
+        <Image
+          source={{ uri: imgeUrl }}
+          style={{ width: 200, height: 75, resizeMode: "contain" }}
+        />
       ) : (
         <Text>Loading image...</Text>
       )}
