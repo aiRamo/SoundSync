@@ -6,15 +6,19 @@ import {
   StatusBar,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { STORAGE } from "../firebaseConfig";
 import Card from "../components/Card";
 import { Entypo, AntDesign } from "@expo/vector-icons";
+import Drop from "../components/Drop";
+import { AUTH } from "../firebaseConfig";
 
-export default function Library() {
+export default function Library({ navigation }) {
   const [imageUrls, setImageUrls] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   useEffect(() => {
     async function listFilesInFolder(folderPath) {
@@ -37,9 +41,36 @@ export default function Library() {
     listFilesInFolder("images/eP42yMFVDcdvkwroV3OrFv4yutH2/BenTestFolder/");
   }, []);
 
+  const handleSignOut = async () => {
+    try {
+      await AUTH.signOut();
+      navigation.navigate("Login", {});
+      // Redirect or perform any other action after signing out.
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   const filteredImageUrls = imageUrls.filter((imageUrl, index) =>
     `music page ${index}`.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!isDropdownVisible);
+  };
+
+  const handleDropdownSelect = (option) => {
+    // Handle the selected option here
+    if (option === "Settings") {
+      // Handle the "Settings" action here
+    } else if (option === "Sign Out") {
+      handleSignOut();
+      // Handle the "Sign Out" action here
+    }
+
+    // Close the dropdown
+    setDropdownVisible(false);
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -62,7 +93,9 @@ export default function Library() {
             style={styles.search}
             onChangeText={(text) => setSearchQuery(text)}
           />
-          <Entypo name="dots-three-vertical" size={24} color="white" />
+          <TouchableOpacity onPress={toggleDropdown}>
+            <Entypo name="dots-three-vertical" size={24} color="white" />
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.container}>
@@ -79,6 +112,13 @@ export default function Library() {
             ></Card>
           ))}
         </ScrollView>
+        {/* Use the Dropdown component */}
+        <Drop
+          isVisible={isDropdownVisible}
+          options={["Settings", "Sign Out", "close"]}
+          onSelect={handleDropdownSelect}
+          onClose={() => setDropdownVisible(false)}
+        />
       </View>
     </View>
   );
