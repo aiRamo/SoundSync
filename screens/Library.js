@@ -62,6 +62,7 @@ export default function Library({ navigation }) {
   const handleDropdownSelect = (option) => {
     // Handle the selected option here
     if (option === "Settings") {
+      navigation.navigate("Profile", {});
       // Handle the "Settings" action here
     } else if (option === "Sign Out") {
       handleSignOut();
@@ -115,7 +116,7 @@ export default function Library({ navigation }) {
         {/* Use the Dropdown component */}
         <Drop
           isVisible={isDropdownVisible}
-          options={["Settings", "Sign Out", "close"]}
+          options={["Settings", "Sign Out", "Close"]}
           onSelect={handleDropdownSelect}
           onClose={() => setDropdownVisible(false)}
         />

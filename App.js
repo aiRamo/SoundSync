@@ -41,16 +41,7 @@ function HomeScreen() {
           ),
         }}
       ></Tab.Screen>
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          title: "Profile Page",
-          tabBarIcon: ({}) => (
-            <AntDesign name="profile" size={24} color="black" />
-          ),
-        }}
-      ></Tab.Screen>
+
       <Tab.Screen
         name="Library"
         component={Library}
@@ -88,6 +79,11 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{ title: "Home", headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{ headerStyle }}
         />
       </Stack.Navigator>
     </NavigationContainer>

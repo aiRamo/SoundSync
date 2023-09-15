@@ -19,13 +19,16 @@ import {
   uploadImage,
   getFirebaseDownloadURL,
 } from "../components/firebaseUtils";
+import { Entypo } from "@expo/vector-icons";
+import Drop from "../components/Drop";
+import { AUTH } from "../firebaseConfig";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
 const ViewWidth = width * 0.8; // 90% of device width
 const ViewHeight = ViewWidth * A4_RATIO;
 
-export default function Scan() {
+export default function Scan({ navigation }) {
   const [holder, setHolder] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,6 +37,7 @@ export default function Scan() {
   const [trackerBoxesVisible, setTrackerBoxesVisible] = useState(false);
   const [noteCoordinateData, setNoteCoordinateData] = useState(false);
   const [serverMessage, setServerMessage] = useState(""); // New state for the server message
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   let id;
   let ws = useRef(null); // Reference for WebSocket
@@ -41,7 +45,7 @@ export default function Scan() {
   useEffect(() => {
     //192.168.86.41 -- B
     //192.168.1.238 -- A
-    ws.current = new WebSocket("ws://10.183.164.13:4000"); // Replace with your WebSocket server URL
+    ws.current = new WebSocket("ws://192.168.86.44:4000"); // Replace with your WebSocket server URL
 
     ws.current.onopen = () => {
       console.log("WebSocket connection opened");
@@ -73,6 +77,34 @@ export default function Scan() {
       console.log("No user signed in:", error);
     });
 
+  const handleSignOut = async () => {
+    try {
+      await AUTH.signOut();
+      navigation.navigate("Login", {});
+      // Redirect or perform any other action after signing out.
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!isDropdownVisible);
+  };
+
+  const handleDropdownSelect = (option) => {
+    // Handle the selected option here
+    if (option === "Settings") {
+      navigation.navigate("Profile", {});
+      // Handle the "Settings" action here
+    } else if (option === "Sign Out") {
+      handleSignOut();
+      // Handle the "Sign Out" action here
+    }
+
+    // Close the dropdown
+    setDropdownVisible(false);
+  };
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -97,7 +129,7 @@ export default function Scan() {
       setPreviewVisible(true);
       //192.168.86.41 -- B
       //192.168.1.238 -- A
-      const apiUrl = "http://10.183.164.13:3000/upload"; // Replace with your locally hosted API URL
+      const apiUrl = "http://192.168.86.44:3000/upload"; // Replace with your locally hosted API URL
 
       const data = {
         uid: id, // This is the Firebase UID
@@ -145,103 +177,128 @@ export default function Scan() {
   }, [noteCoordinateData]);
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <TouchableOpacity
-          onPress={pickImage}
-          z
-          style={styles.pickImageButtonContainer}
+    <View style={{ flex: 1 }}>
+      <View style={{ backgroundColor: "darkslateblue" }}>
+        <View
+          style={{
+            marginTop: StatusBar.currentHeight,
+            flexDirection: "row",
+
+            justifyContent: "flex-end",
+          }}
         >
-          <Text style={styles.openButtonText}>Pick Image</Text>
-        </TouchableOpacity>
-        {image && (
-          <>
-            <TouchableOpacity
-              onPress={callAPIandFormatNotesJSON}
-              style={styles.testButtonContainer}
-            >
-              <Text style={styles.openButtonText}>Test</Text>
-            </TouchableOpacity>
-
-            <Image
-              source={{ uri: image }}
-              style={styles.imagePreview}
-              resizeMode="contain"
-            />
-          </>
-        )}
-
-        {pngURL && (
           <TouchableOpacity
-            onPress={() => setPreviewVisible(!previewVisible)}
-            style={styles.openButton}
+            style={{ marginBottom: 10 }}
+            onPress={toggleDropdown}
           >
-            <Text style={styles.openButtonText}>Open</Text>
+            <Entypo name="dots-three-vertical" size={24} color="white" />
           </TouchableOpacity>
-        )}
-
-        {/* PNG rendering */}
-        {previewVisible && (
-          <Modal
-            animationType="fade"
-            transparent={true}
-            visible={previewVisible}
-            onRequestClose={() => {}}
+          <Drop
+            isVisible={isDropdownVisible}
+            options={["Settings", "Sign Out", "Close"]}
+            onSelect={handleDropdownSelect}
+            onClose={() => setDropdownVisible(false)}
+          />
+        </View>
+      </View>
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          <TouchableOpacity
+            onPress={pickImage}
+            z
+            style={styles.pickImageButtonContainer}
           >
-            <View style={styles.modalContainer}>
-              {loading && (
-                <>
-                  <Image
-                    source={require("../assets/loader.gif")}
-                    style={styles.loader}
-                  />
-                  {serverMessage && (
-                    <Text style={styles.serverMessage}>{serverMessage}</Text>
-                  )}
-                </>
-              )}
-              {!loading && (
-                <>
-                  <Text style={styles.modalTitle}>
-                    Here is your generated image
-                  </Text>
-                  <View style={styles.modalImageView}>
-                    <Image
-                      source={{ uri: pngURL }}
-                      style={styles.previewImage}
-                    />
-                    {trackerBoxesVisible &&
-                      renderNoteBoxes(
-                        noteCoordinateData,
-                        ViewWidth,
-                        ViewHeight
-                      )}
-                  </View>
-                  <View style={{ display: "flex", flexDirection: "row" }}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        setTrackerBoxesVisible(!trackerBoxesVisible)
-                      }
-                      style={styles.showNotesButton}
-                    >
-                      <Text style={styles.blueButtonText}>
-                        Show Note Locations
-                      </Text>
-                    </TouchableOpacity>
+            <Text style={styles.openButtonText}>Pick Image</Text>
+          </TouchableOpacity>
+          {image && (
+            <>
+              <TouchableOpacity
+                onPress={callAPIandFormatNotesJSON}
+                style={styles.testButtonContainer}
+              >
+                <Text style={styles.openButtonText}>Test</Text>
+              </TouchableOpacity>
 
-                    <TouchableOpacity
-                      onPress={() => setPreviewVisible(!previewVisible)}
-                      style={styles.closeButton}
-                    >
-                      <Text style={styles.redButtonText}>Close</Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              )}
-            </View>
-          </Modal>
-        )}
-      </ScrollView>
+              <Image
+                source={{ uri: image }}
+                style={styles.imagePreview}
+                resizeMode="contain"
+              />
+            </>
+          )}
+
+          {pngURL && (
+            <TouchableOpacity
+              onPress={() => setPreviewVisible(!previewVisible)}
+              style={styles.openButton}
+            >
+              <Text style={styles.openButtonText}>Open</Text>
+            </TouchableOpacity>
+          )}
+
+          {/* PNG rendering */}
+          {previewVisible && (
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={previewVisible}
+              onRequestClose={() => {}}
+            >
+              <View style={styles.modalContainer}>
+                {loading && (
+                  <>
+                    <Image
+                      source={require("../assets/loader.gif")}
+                      style={styles.loader}
+                    />
+                    {serverMessage && (
+                      <Text style={styles.serverMessage}>{serverMessage}</Text>
+                    )}
+                  </>
+                )}
+                {!loading && (
+                  <>
+                    <Text style={styles.modalTitle}>
+                      Here is your generated image
+                    </Text>
+                    <View style={styles.modalImageView}>
+                      <Image
+                        source={{ uri: pngURL }}
+                        style={styles.previewImage}
+                      />
+                      {trackerBoxesVisible &&
+                        renderNoteBoxes(
+                          noteCoordinateData,
+                          ViewWidth,
+                          ViewHeight
+                        )}
+                    </View>
+                    <View style={{ display: "flex", flexDirection: "row" }}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          setTrackerBoxesVisible(!trackerBoxesVisible)
+                        }
+                        style={styles.showNotesButton}
+                      >
+                        <Text style={styles.blueButtonText}>
+                          Show Note Locations
+                        </Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => setPreviewVisible(!previewVisible)}
+                        style={styles.closeButton}
+                      >
+                        <Text style={styles.redButtonText}>Close</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                )}
+              </View>
+            </Modal>
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -251,7 +308,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: StatusBar.currentHeight,
   },
   scrollView: {
     width: "100%",
