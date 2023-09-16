@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { ref, getDownloadURL, listAll } from "firebase/storage";
+import { ref, getDownloadURL, listAll, getMetadata } from "firebase/storage";
 import { STORAGE } from "../firebaseConfig";
 import Card from "../components/Card";
 import { Entypo, AntDesign } from "@expo/vector-icons";
@@ -17,17 +17,26 @@ import { AUTH } from "../firebaseConfig";
 
 export default function Library({ navigation }) {
   const [imageUrls, setImageUrls] = useState([]);
+  const [imageDates, setImageDates] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [isDescendingOrder, setIsDescendingOrder] = useState(true);
 
   useEffect(() => {
     async function listFilesInFolder(folderPath) {
       const folderRef = ref(STORAGE, folderPath);
       const listResult = await listAll(folderRef);
+
       const urls = await Promise.all(
         listResult.items.map(async (itemRef) => {
           try {
             const url = await getDownloadURL(itemRef);
+            getMetadata(itemRef).then((metadata) => {
+              // Metadata now contains the metadata for 'images/forest.jpg'
+              const creationTime = metadata.timeCreated;
+
+              setImageDates((prevDates) => [...prevDates, creationTime]);
+            });
             return url;
           } catch (error) {
             console.error("Error downloading image:", error);
@@ -73,6 +82,16 @@ export default function Library({ navigation }) {
     setDropdownVisible(false);
   };
 
+  const toggleDescendingOrder = () => {
+    // Toggle the sorting order
+    setIsDescendingOrder(!isDescendingOrder);
+  };
+
+  // Sort the filteredImageUrls based on the sorting order
+  const sortedImageUrls = isDescendingOrder
+    ? [...filteredImageUrls].sort((a, b) => b.localeCompare(a)) // Descending order
+    : [...filteredImageUrls].sort((a, b) => a.localeCompare(b));
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -101,8 +120,16 @@ export default function Library({ navigation }) {
       </View>
       <View style={styles.container}>
         <View style={{ marginBottom: 10, flexDirection: "row" }}>
-          <AntDesign name="filter" size={24} color="black" />
-          <Text>Descending Order</Text>
+          <TouchableOpacity onPress={toggleDescendingOrder}>
+            <AntDesign
+              name={isDescendingOrder ? "arrowdown" : "arrowup"} // Change the icon based on the sorting order
+              size={24}
+              color="black"
+            />
+          </TouchableOpacity>
+          <Text>
+            {isDescendingOrder ? "Descending Order" : "Ascending Order"}
+          </Text>
         </View>
         <ScrollView>
           {filteredImageUrls.map((imageUrl, index) => (
@@ -110,6 +137,7 @@ export default function Library({ navigation }) {
               key={index}
               imgeUrl={imageUrl}
               title={`music page ${index}`}
+              date={imageDates[index]}
             ></Card>
           ))}
         </ScrollView>

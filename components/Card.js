@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 
-export default function Card({ imgeUrl, title }) {
+export default function Card({ imgeUrl, title, date }) {
   return (
     <View style={styles.container2}>
       {imgeUrl ? (
@@ -12,7 +12,10 @@ export default function Card({ imgeUrl, title }) {
       ) : (
         <Text>Loading image...</Text>
       )}
-      <Text style={{ marginLeft: 10 }}>{title}</Text>
+      <View style={{ flexDirection: "column", alignItems: "center" }}>
+        <Text>{title}</Text>
+        <Text style={{ fontSize: 8.5 }}>{date}</Text>
+      </View>
 
       <TouchableOpacity style={styles.touching}>
         <Text style={{ fontSize: 15, color: "white" }}>Load</Text>
