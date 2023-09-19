@@ -2,7 +2,7 @@ import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -50,7 +50,7 @@ const Profile = () => {
           <TouchableOpacity
             style={{
               borderRadius: 5,
-              backgroundColor: "grey",
+              backgroundColor: "darkslateblue",
               padding: 10,
               alignItems: "center",
             }}

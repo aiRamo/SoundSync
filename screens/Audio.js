@@ -1,12 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Text, View, ScrollView, Button, Dimensions } from "react-native";
+import {
+  Text,
+  View,
+  ScrollView,
+  Button,
+  Dimensions,
+  StatusBar,
+  TouchableOpacity,
+} from "react-native";
 import { Audio } from "expo-av";
 import axios, * as others from "axios";
 //import { VictoryChart, VictoryLine, VictoryAxis} from "victory";
 //import { PitchDetector } from 'react-native-pitch-detector';
 import { fft, complex } from "mathjs";
+import { Entypo } from "@expo/vector-icons";
+import Drop from "../components/Drop";
+import { AUTH } from "../firebaseConfig";
 
-export default function AudioRecorder() {
+export default function AudioRecorder({ navigation }) {
   const [recording, setRecording] = useState();
   const [sound, setSound] = useState();
   const [uri, setUri] = useState();
@@ -19,6 +30,7 @@ export default function AudioRecorder() {
   const [minMagnitude, setMinMagnitude] = useState([]);
   const [maxMagnitude, setMaxMagnitude] = useState([]);
   const [indexOfMaxMagnitude, setIdxMaxMag] = useState([]);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const musicNotes = [
     ["E1", 84.5],
     ["F1", 89.5],
@@ -101,6 +113,34 @@ export default function AudioRecorder() {
       //console.log(timeArray);
     }
   }, [timeArray]);
+
+  const handleSignOut = async () => {
+    try {
+      await AUTH.signOut();
+      navigation.navigate("Login", {});
+      // Redirect or perform any other action after signing out.
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!isDropdownVisible);
+  };
+
+  const handleDropdownSelect = (option) => {
+    // Handle the selected option here
+    if (option === "Settings") {
+      navigation.navigate("Profile", {});
+      // Handle the "Settings" action here
+    } else if (option === "Sign Out") {
+      handleSignOut();
+      // Handle the "Sign Out" action here
+    }
+
+    // Close the dropdown
+    setDropdownVisible(false);
+  };
 
   async function calculateTimeArray(soundArray) {
     const newTimeArray = new Array(soundArray.length);
@@ -367,17 +407,48 @@ export default function AudioRecorder() {
 
   return (
     /*recording toggle button*/
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <ScrollView style={{ width: "100%" }}>
-        <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
-          <Button
-            title={recording ? "Stop Recording" : "Record"}
-            color={recording ? "red" : "green"}
-            onPress={recording ? stopRecording : startRecording}
-            //onPress={recording ? stopPitch : startPitch}
+    <View style={{ flex: 1 }}>
+      <View style={{ backgroundColor: "darkslateblue" }}>
+        <View
+          style={{
+            marginTop: StatusBar.currentHeight,
+            flexDirection: "row",
+            justifyContent: "flex-end",
+          }}
+        >
+          <TouchableOpacity
+            style={{ marginBottom: 10 }}
+            onPress={toggleDropdown}
+          >
+            <Entypo name="dots-three-vertical" size={24} color="white" />
+          </TouchableOpacity>
+          <Drop
+            isVisible={isDropdownVisible}
+            options={["Settings", "Sign Out", "Close"]}
+            onSelect={handleDropdownSelect}
+            onClose={() => setDropdownVisible(false)}
           />
         </View>
-      </ScrollView>
+      </View>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 10,
+        }}
+      >
+        <ScrollView style={{ width: "100%" }}>
+          <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
+            <Button
+              title={recording ? "Stop Recording" : "Record"}
+              color={recording ? "red" : "green"}
+              onPress={recording ? stopRecording : startRecording}
+              //onPress={recording ? stopPitch : startPitch}
+            />
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 }

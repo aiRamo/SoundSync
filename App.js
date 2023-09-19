@@ -9,7 +9,7 @@ import Login from "./screens/Login";
 import Create from "./screens/Create";
 import Forgot from "./screens/Forgot";
 import Profile from "./screens/Profile";
-import { WaveMeter } from "./components/UI/scannerLoader";
+import Library from "./screens/Library";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,11 +46,12 @@ function HomeScreen() {
           tabBarActiveTintColor: "white",
         }}
       ></Tab.Screen>
+
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="Library"
+        component={Library}
         options={{
-          title: "Profile Page",
+          title: "Library Page",
           tabBarIcon: ({}) => (
             <AntDesign name="profile" size={24} color="white" />
           ),
@@ -90,6 +91,11 @@ export default function App() {
           name="Home"
           component={HomeScreen}
           options={{ title: "SoundSync" }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{ headerStyle }}
         />
       </Stack.Navigator>
     </NavigationContainer>

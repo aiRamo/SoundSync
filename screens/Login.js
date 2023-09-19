@@ -75,7 +75,7 @@ const Login = ({ navigation }) => {
           borderTopRightRadius: 15,
         }}
       >
-        <View style={{ paddingBottom: 10 }}>
+        <View style={{ paddingBottom: 10, marginTop: 80 }}>
           <Text style={{ margin: 10 }}>Email Address</Text>
           <TextInput
             style={{
