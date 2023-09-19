@@ -1,58 +1,113 @@
-import { View } from "react-native";
+import { View, Text } from "react-native";
 
 const renderNoteBoxes = (noteCoordinates, ViewWidth, ViewHeight) => {
-    const pageLayoutLeftMargin = parseInt(noteCoordinates.pageLayout.leftMargin, 10);
-    const pageLayoutTopMargin = parseInt(noteCoordinates.pageLayout.topMargin, 10);
-    const pageWidth = parseInt(noteCoordinates.pageLayout.pageWidth, 10);
-    const pageHeight = parseInt(noteCoordinates.pageLayout.pageHeight, 10);
+  const pageLayoutLeftMargin = parseInt(
+    noteCoordinates.pageLayout.leftMargin,
+    10
+  );
+  const pageLayoutTopMargin = parseInt(
+    noteCoordinates.pageLayout.topMargin,
+    10
+  );
+  const pageWidth = parseInt(noteCoordinates.pageLayout.pageWidth, 10);
+  const pageHeight = parseInt(noteCoordinates.pageLayout.pageHeight, 10);
 
-    return noteCoordinates.parts.map((part, partIndex) => {
-        let cumulativeMeasureWidth = 0;
-        let measureLeftMargin = 0; // Initialize measureLeftMargin
-        let yOffset = 0;
-        let staffDistance = 0;
+  let boxCounter = 0; // Incrementing counter for location debugging
+  let systemYOffset = 0; // Initialize systemYOffset to keep track of the vertical offset for new systems
 
-        return part.measures.map((measure, measureIndex) => {
-        measureLeftMargin = measure.leftMargin ? parseInt(measure.leftMargin, 10) : measureLeftMargin;
-        staffDistance = measure.staffDistance ? parseInt(measure.staffDistance, 10) : staffDistance;
+  return noteCoordinates.parts.map((part, partIndex) => {
+    let cumulativeMeasureWidth = 0;
+    let measureLeftMargin = 0;
+    let yOffset = 0;
+    let staffDistance = 0;
+    let topSysDist = 0;
 
-        const noteViews = measure.notes.map((note, noteIndex) => {
-            const noteDefaultX = parseInt(note.defaultX, 10);
-            const noteDefaultY = Math.abs(parseInt(note.defaultY, 10));
+    let partAdjustment = 0;
+    partAdjustment = -5 * partIndex;
 
-            if (parseInt(note.defaultY, 10) < 0) {
-            yOffset = ViewHeight * 0.04;
-            } else {
-            yOffset = ViewHeight * 0.028;
-            }
+    console.log(`Part adjustment for index ${partIndex} is ${partAdjustment}`);
 
-            // Calculate the left and top positions
-            const leftPosition = (((pageLayoutLeftMargin + measureLeftMargin + cumulativeMeasureWidth + noteDefaultX) / pageWidth) * ViewWidth) - 3;
-            const topPosition = (((pageLayoutTopMargin + noteDefaultY + staffDistance) / pageHeight) * ViewHeight) - yOffset;
+    systemYOffset = 0; // Reset systemYOffset for each new part
 
-            //console.log(`Part ${partIndex} | Measure ${measureIndex} | Note ${noteIndex} -> Left: ${leftPosition}, Top: ${topPosition}`);
+    return part.measures.map((measure, measureIndex) => {
+      measureLeftMargin = measure.leftMargin
+        ? parseInt(measure.leftMargin, 10)
+        : measureLeftMargin;
+      staffDistance = measure.staffDistance
+        ? parseInt(measure.staffDistance, 10) + 60
+        : staffDistance;
 
-            return (
+      if (measure.topSystemDistance !== null) {
+        topSysDist = parseInt(measure.topSystemDistance);
+      } else {
+        topSysDist = 0;
+      }
+
+      if (measure.systemDistance !== null) {
+        cumulativeMeasureWidth = 0;
+        systemYOffset +=
+          parseInt(measure.systemDistance, 10) + 140 + topSysDist;
+      }
+
+      const noteViews = measure.notes.map((note, noteIndex) => {
+        boxCounter++;
+        const noteDefaultX = parseInt(note.defaultX, 10);
+
+        yOffset =
+          parseInt(note.defaultY, 10) < 0
+            ? ViewHeight * 0.04
+            : ViewHeight * 0.028;
+
+        const leftPosition =
+          ((pageLayoutLeftMargin +
+            measureLeftMargin +
+            cumulativeMeasureWidth +
+            noteDefaultX) /
+            pageWidth) *
+            ViewWidth -
+          3;
+
+        let topPosition =
+          ((systemYOffset + pageLayoutTopMargin + staffDistance) / pageHeight) *
+            ViewHeight -
+          ViewHeight * 0.035;
+
+        topPosition += partAdjustment;
+
+        return (
+          <>
             <View
-                key={`${partIndex}-${measureIndex}-${noteIndex}`}
-                style={{
+              style={{
                 position: "absolute",
                 width: 8,
-                height: "3.5%",
+                height: "5.5%",
                 borderColor: "red",
                 borderWidth: 1,
                 top: topPosition,
                 left: leftPosition,
-                }}
+              }}
             />
-            );
-        });
+            <Text
+              style={{
+                position: "absolute",
+                height: "5.5%",
+                top: topPosition,
+                left: leftPosition + 12,
+                fontSize: 12,
+                alignSelf: "center",
+                opacity: 0,
+              }}
+            >
+              {boxCounter}
+            </Text>
+          </>
+        );
+      });
 
-        cumulativeMeasureWidth += parseInt(measure.width, 10);  // Update cumulativeMeasureWidth for each measure.
-
-        return noteViews;
-        });
+      cumulativeMeasureWidth += parseInt(measure.width, 10);
+      return noteViews;
     });
+  });
 };
 
 export default renderNoteBoxes;

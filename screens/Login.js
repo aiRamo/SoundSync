@@ -25,7 +25,6 @@ const Login = ({ navigation }) => {
         email.trim(),
         password
       );
-      alert("Sign in successful");
 
       navigation.navigate("Home", {});
     } catch (error) {
@@ -52,11 +51,11 @@ const Login = ({ navigation }) => {
       >
         <Image
           source={require("../assets/SoundSyncIcon.png")}
-          style={{ marginTop: 15, width: 150, height: 150 }}
+          style={{ marginTop: 30, width: 150, height: 150 }}
         ></Image>
         <Text
           style={{
-            margin: 10,
+            marginTop: 10,
             fontSize: 30,
             color: "white",
             fontStyle: "italic",
@@ -69,7 +68,7 @@ const Login = ({ navigation }) => {
       <View
         style={{
           flex: 1.9,
-          backgroundColor: "white",
+          backgroundColor: "#d6d6e6",
           alignContent: "center",
           justifyContent: "center",
           borderTopLeftRadius: 15,
@@ -127,7 +126,7 @@ const Login = ({ navigation }) => {
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            backgroundColor: "white",
+            backgroundColor: "#d6d6e6",
           }}
         >
           <Text>Do you have an account?</Text>

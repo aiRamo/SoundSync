@@ -9,6 +9,7 @@ import Login from "./screens/Login";
 import Create from "./screens/Create";
 import Forgot from "./screens/Forgot";
 import Profile from "./screens/Profile";
+import { WaveMeter } from "./components/UI/scannerLoader";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -20,14 +21,18 @@ function HomeScreen() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: { position: "absolute", backgroundColor: "darkslateblue" },
+      }}
     >
       <Tab.Screen
         name="Scan"
         component={Scan}
         options={{
           title: "Scan Page",
-          tabBarIcon: ({}) => <Ionicons name="scan" size={24} color="black" />,
+          tabBarIcon: ({}) => <Ionicons name="scan" size={24} color="white" />,
+          tabBarActiveTintColor: "white",
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -36,8 +41,9 @@ function HomeScreen() {
         options={{
           title: "Audio Page",
           tabBarIcon: ({}) => (
-            <FontAwesome name="file-audio-o" size={24} color="black" />
+            <FontAwesome name="file-audio-o" size={24} color="white" />
           ),
+          tabBarActiveTintColor: "white",
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -46,8 +52,9 @@ function HomeScreen() {
         options={{
           title: "Profile Page",
           tabBarIcon: ({}) => (
-            <AntDesign name="profile" size={24} color="black" />
+            <AntDesign name="profile" size={24} color="white" />
           ),
+          tabBarActiveTintColor: "white",
         }}
       ></Tab.Screen>
     </Tab.Navigator>
@@ -57,7 +64,13 @@ function HomeScreen() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "darkslateblue" },
+          headerTintColor: "white",
+        }}
+      >
         <Stack.Screen
           name="Login"
           component={Login}
@@ -76,7 +89,7 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "Home" }}
+          options={{ title: "SoundSync" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
