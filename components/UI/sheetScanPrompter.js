@@ -49,7 +49,7 @@ const SheetScanPrompt = ({ collectionName }) => {
   useEffect(() => {
     //192.168.86.41 -- B
     //192.168.1.238 -- A
-    ws.current = new WebSocket("ws://192.168.1.238:4000"); // Replace with your WebSocket server URL
+    ws.current = new WebSocket("ws://192.168.86.33:4000"); // Replace with your WebSocket server URL
 
     ws.current.onopen = () => {
       console.log("WebSocket connection opened");
@@ -106,7 +106,7 @@ const SheetScanPrompt = ({ collectionName }) => {
 
       //192.168.86.41 -- B
       //192.168.1.238 -- A
-      const apiUrl = "http://192.168.1.238:3000/upload"; // Replace with your locally hosted API URL (ipv4)
+      const apiUrl = "http://192.168.86.33:3000/upload"; // Replace with your locally hosted API URL (ipv4)
 
       const data = {
         uid: id, // This is the Firebase UID

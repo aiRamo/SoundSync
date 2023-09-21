@@ -88,9 +88,6 @@ export default function Library({ navigation }) {
   };
 
   // Sort the filteredImageUrls based on the sorting order
-  const sortedImageUrls = isDescendingOrder
-    ? [...filteredImageUrls].sort((a, b) => b.localeCompare(a)) // Descending order
-    : [...filteredImageUrls].sort((a, b) => a.localeCompare(b));
 
   return (
     <View style={{ flex: 1 }}>

@@ -90,7 +90,7 @@ export default function App() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "SoundSync" }}
+          options={{ title: "SoundSync", headerShown: false }}
         />
         <Stack.Screen
           name="Profile"
