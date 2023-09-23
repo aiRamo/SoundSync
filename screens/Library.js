@@ -15,18 +15,35 @@ import { Entypo, AntDesign } from "@expo/vector-icons";
 import Drop from "../components/Drop";
 import { AUTH } from "../firebaseConfig";
 
-export default function Library({ navigation }) {
+export default function Library({ navigation, route }) {
   const [imageUrls, setImageUrls] = useState([]);
   const [imageDates, setImageDates] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isDescendingOrder, setIsDescendingOrder] = useState(true);
+  const [user, setUser] = useState(null);
+  const { subfolderName } = route.params;
+
+  useEffect(() => {
+    // Check for user authentication status on component mount
+    const unsubscribe = AUTH.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        // User is signed in
+        setUser(authUser);
+      } else {
+        // User is signed out
+        setUser(null);
+      }
+    });
+
+    // Clean up the subscription when the component unmounts
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     async function listFilesInFolder(folderPath) {
       const folderRef = ref(STORAGE, folderPath);
       const listResult = await listAll(folderRef);
-
       const urls = await Promise.all(
         listResult.items.map(async (itemRef) => {
           try {
@@ -47,8 +64,11 @@ export default function Library({ navigation }) {
       setImageUrls(urls.filter((url) => url !== null));
     }
 
-    listFilesInFolder("images/eP42yMFVDcdvkwroV3OrFv4yutH2/BenTestFolder/");
-  }, []);
+    if (user) {
+      // Check if user is defined
+      listFilesInFolder(`images/${user.uid}/sheetCollections/${subfolderName}`);
+    }
+  }, [user]);
 
   const handleSignOut = async () => {
     try {
@@ -87,8 +107,6 @@ export default function Library({ navigation }) {
     setIsDescendingOrder(!isDescendingOrder);
   };
 
-  // Sort the filteredImageUrls based on the sorting order
-
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -98,7 +116,6 @@ export default function Library({ navigation }) {
       >
         <View
           style={{
-            marginTop: StatusBar.currentHeight,
             flexDirection: "row",
             alignItems: "center",
           }}
@@ -124,6 +141,12 @@ export default function Library({ navigation }) {
               color="black"
             />
           </TouchableOpacity>
+          <Drop
+            isVisible={isDropdownVisible}
+            options={["Settings", "Sign Out", "Close"]}
+            onSelect={handleDropdownSelect}
+            onClose={() => setDropdownVisible(false)}
+          />
           <Text>
             {isDescendingOrder ? "Descending Order" : "Ascending Order"}
           </Text>
@@ -138,13 +161,6 @@ export default function Library({ navigation }) {
             ></Card>
           ))}
         </ScrollView>
-        {/* Use the Dropdown component */}
-        <Drop
-          isVisible={isDropdownVisible}
-          options={["Settings", "Sign Out", "Close"]}
-          onSelect={handleDropdownSelect}
-          onClose={() => setDropdownVisible(false)}
-        />
       </View>
     </View>
   );

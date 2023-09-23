@@ -10,6 +10,7 @@ import Create from "./screens/Create";
 import Forgot from "./screens/Forgot";
 import Profile from "./screens/Profile";
 import Library from "./screens/Library";
+import Folder from "./screens/Folder";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,8 +49,8 @@ function HomeScreen() {
       ></Tab.Screen>
 
       <Tab.Screen
-        name="Library"
-        component={Library}
+        name="Folder"
+        component={Folder}
         options={{
           title: "Library Page",
           tabBarIcon: ({}) => (
@@ -92,6 +93,12 @@ export default function App() {
           component={HomeScreen}
           options={{ title: "SoundSync", headerShown: false }}
         />
+        <Stack.Screen
+          name="Library"
+          component={Library}
+          options={{ headerStyle }}
+        ></Stack.Screen>
+
         <Stack.Screen
           name="Profile"
           component={Profile}
