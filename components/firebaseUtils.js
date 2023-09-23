@@ -19,11 +19,11 @@ export const checkCurrentUser = async () => {
   });
 };
 
-export async function uploadImage(uri, id) {
+export async function uploadImage(uri, uid) {
   try {
     const response = await fetch(uri);
     const blob = await response.blob();
-    const storageRef = ref(STORAGE, `images/${id}/inputFile/${id}.jpg`);
+    const storageRef = ref(STORAGE, `images/${uid}/inputFile/${uid}.jpg`);
     await uploadBytesResumable(storageRef, blob);
     console.log("Image uploaded successfully");
   } catch (error) {

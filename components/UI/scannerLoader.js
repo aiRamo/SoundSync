@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Alert,
-  Dimensions,
-  SafeAreaView,
-  View,
-  StyleSheet,
-  Text as RNText,
-  TouchableOpacity,
-} from "react-native";
-
+import { Dimensions, SafeAreaView, StyleSheet } from "react-native";
 import {
   Skia,
   Canvas,
@@ -18,7 +9,6 @@ import {
   useComputedValue,
   useClockValue,
   useValue,
-  useImage,
   LinearGradient,
   Mask,
   Group,

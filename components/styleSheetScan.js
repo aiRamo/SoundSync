@@ -2,14 +2,13 @@ import { StyleSheet, Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
-const ViewWidth = width * 0.8; // 90% of device width
+const ViewWidth = width * 0.7; // 90% of device width
 const ViewHeight = ViewWidth * A4_RATIO;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#d6d6e6",
   },
   scrollView: {},
@@ -23,7 +22,7 @@ const styles = StyleSheet.create({
   pickImageButtonContainer: {
     width: width * 0.7,
     backgroundColor: "rgba(255,255,255,1)",
-    height: height * 0.5,
+    height: height * 0.65,
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
     width: width * 0.3,
     backgroundColor: "rgba(114, 110, 184, 1)",
     height: height * 0.045,
-    bottom: height * 0.105,
+    top: height * 0.8,
     alignSelf: "center",
     justifyContent: "center",
     borderRadius: 12,
@@ -69,7 +68,6 @@ const styles = StyleSheet.create({
   modalContainer: {
     height: height,
     width: width,
-    borderRadius: 15,
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
@@ -85,8 +83,8 @@ const styles = StyleSheet.create({
     width: width * 0.8,
   },
   nameInput: {
-    height: "60%",
-    width: "90%",
+    flex: 1,
+    width: "100%",
     alignSelf: "center",
     fontSize: 22,
     textAlign: "center",
@@ -155,11 +153,12 @@ const styles = StyleSheet.create({
   namePropmtContent: {
     position: "absolute",
     top: 0,
+    alignSelf: "center",
   },
   namePromptCard: {
     alignSelf: "center",
     justifyContent: "center",
-    top: height * 0.25,
+    top: height * 0.3,
     backgroundColor: "white",
     width: width * 0.66,
     height: width * 0.66 * 0.3,
