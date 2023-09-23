@@ -119,6 +119,7 @@ export default function Library() {
           />
         </View>
         <ScrollView>
+          <Text style={{ borderBottomWidth: 1, marginBottom: 5 }}>Folders</Text>
           {subfolders.map((subfolderName, index) => (
             <TouchableOpacity
               key={index}
