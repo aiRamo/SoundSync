@@ -31,10 +31,6 @@ export default function AudioRecorder({ navigation }) {
   const [maxMagnitude, setMaxMagnitude] = useState([]);
   const [indexOfMaxMagnitude, setIdxMaxMag] = useState([]);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingInterval, setRecordingInterval] = useState(null);
-  const [identifiedNotes, setIdentifiedNotes] = useState([]);
-
   const musicNotes = [
     ["E1", 84.5],
     ["F1", 89.5],
@@ -261,14 +257,17 @@ export default function AudioRecorder({ navigation }) {
 
       // Calculate the magnitudes of the complex values
       const magnitudes = fftResults.map((complexValue) => complexValue.abs());
-      setMagnitudes(magnitudes);
+      const halfmag = magnitudes.slice(magnitudes.length/2,((magnitudes.length/2) + Math.ceil(magnitudes.length*.025)));
+      console.log("half magnitude length", halfmag.length, "magnitude length", magnitudes.length);
+      setMagnitudes(halfmag);
 
       //console.log('Magnitudes:', magnitudes);
       //console.log('Magnitudes length:', magnitudes.length);
 
-      const minMagnitude = Math.min(...magnitudes);
-      const maxMagnitude = Math.max(...magnitudes);
-      const indexOfMaxMagnitude = magnitudes.indexOf(Math.max(...magnitudes));
+      const minMagnitude = Math.min(...halfmag);
+      const maxMagnitude = Math.max(...halfmag);
+      const indexOfMaxMagnitude = halfmag.indexOf(Math.max(...halfmag));
+      console.log("indexOfMaxMagnitude",indexOfMaxMagnitude);
       setMinMagnitude(minMagnitude);
       setMaxMagnitude(maxMagnitude);
       setIdxMaxMag(indexOfMaxMagnitude);
@@ -291,11 +290,14 @@ export default function AudioRecorder({ navigation }) {
     */
 
       // Calculate the frequency values corresponding to the magnitudes
-      const samplingRate = audioBuffer.sampleRate; // Sample rate of the audio
-      const nyquistFrequency = samplingRate / 2; // Nyquist frequency
+      const samplingRate = audioBuffer.sampleRate; // Sample rate of the audio 48000
+      console.log("samplingRate",samplingRate);
+      //const nyquistFrequency = samplingRate / 2; // Nyquist frequency 
 
-      const magnitudesLength = magnitudes.length;
-      const frequencyStep = nyquistFrequency / (magnitudesLength - 1); // Frequency step
+      const magnitudesLength = halfmag.length;
+      console.log("magnitudesLength",magnitudesLength);
+      const frequencyStep = samplingRate / (magnitudes.length - 1); // Frequency step
+      console.log("frequencyStep",frequencyStep);
       const ffttimeArray = [];
 
       for (let i = 0; i < magnitudesLength; i++) {
@@ -342,24 +344,15 @@ export default function AudioRecorder({ navigation }) {
         }
       }
     }*/
-      // Process the identified note and update state
-      const identifiedNote = identifyNote(freqMaxMag);
-
       for (let row = 0; row < musicNotes.length; row++) {
         if (freqMaxMag < musicNotes[row][1]) {
           const note = musicNotes[row][0];
-          identifiedNote = musicNotes[row][0];
           console.log(
-            `Match found! Frequency (${freqMaxMag}) is within range of ${identifiedNote}.`
+            `Match found! Frequency (${freqMaxMag}) is within range of ${note}.`
           );
-          break; // Exit the loop when a note is identified
+          row = musicNotes.length;
         }
       }
-
-
-      // Update the identified notes state
-      setIdentifiedNotes([...identifiedNotes, identifiedNote]);
-
     } catch (error) {
       console.error("Error fetching or processing audio data:", error);
       return null;
@@ -375,44 +368,26 @@ export default function AudioRecorder({ navigation }) {
       : undefined;
   }, [sound]);
 
-  const startRecording = async () => {
+  async function startRecording() {
     try {
+      console.log("Requesting permissions..");
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
 
-      setIsRecording(true);
-
-      const recordingOptions = {
-        android: {
-          extension: ".wav",
-          outputFormat: Audio.RECORDING_OPTIONS_OUTPUT_FORMAT_LINEAR_PCM,
-          audioEncoder: Audio.RECORDING_OPTIONS_AUDIO_ENCODER_LINEAR_PCM,
-        },
-        ios: {
-          extension: ".wav",
-          audioQuality: Audio.RECORDING_OPTIONS_IOS_AUDIO_QUALITY_HIGH,
-          outputFormat: Audio.RECORDING_OPTIONS_IOS_OUTPUT_FORMAT_LINEARPCM,
-          sampleRate: 44100,
-          numberOfChannels: 1,
-          bitRate: 128000,
-        },
-      };
-
-      const recording = new Audio.Recording();
-
-      await recording.prepareToRecordAsync(recordingOptions);
-      await recording.startAsync();
-
-      setRecordingObject(recording);
+      console.log("Starting recording..");
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+      console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
     }
-  };
+  }
 
-/*
   async function stopRecording() {
     console.log("Stopping recording..");
     setRecording(undefined);
@@ -425,27 +400,6 @@ export default function AudioRecorder({ navigation }) {
     console.log("Recording stopped and stored at", uri);
     playSound();
   }
-
-  */
-  const stopRecording = async () => {
-    setIsRecording(false);
-  
-    // Clear the recording interval
-    if (recordingInterval) {
-      clearInterval(recordingInterval);
-    }
-  
-    // Stop the recording and save the final audio
-    if (recording) {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      setUri(uri);
-      playSound(); // Process the final audio chunk
-    }
-  
-    // Reset the recording object
-    setRecording(null);
-  };
 
   //async function startPitch() {
   //await PitchDetector.start();
@@ -493,24 +447,11 @@ export default function AudioRecorder({ navigation }) {
         <ScrollView style={{ width: "100%" }}>
           <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
             <Button
-            /*
               title={recording ? "Stop Recording" : "Record"}
               color={recording ? "red" : "green"}
               onPress={recording ? stopRecording : startRecording}
               //onPress={recording ? stopPitch : startPitch}
-              */
-              title={isRecording ? "Stop Recording" : "Start Recording"}
-              color={isRecording ? "red" : "green"}
-              onPress={isRecording ? stopRecording : startRecording}
             />
-          </View>
-          <View style={{ marginTop: 20 }}>
-            <Text>Identified Notes:</Text>
-            <ScrollView style={{ maxHeight: 100 }}>
-              {identifiedNotes.map((note, index) => (
-                <Text key={index}>{note}</Text>
-              ))}
-            </ScrollView>
           </View>
         </ScrollView>
       </View>
