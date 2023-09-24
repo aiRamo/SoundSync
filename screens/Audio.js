@@ -31,6 +31,10 @@ export default function AudioRecorder({ navigation }) {
   const [maxMagnitude, setMaxMagnitude] = useState([]);
   const [indexOfMaxMagnitude, setIdxMaxMag] = useState([]);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingInterval, setRecordingInterval] = useState(null);
+  const [identifiedNotes, setIdentifiedNotes] = useState([]);
+
   const musicNotes = [
     ["E1", 84.5],
     ["F1", 89.5],
@@ -338,15 +342,24 @@ export default function AudioRecorder({ navigation }) {
         }
       }
     }*/
+      // Process the identified note and update state
+      const identifiedNote = identifyNote(freqMaxMag);
+
       for (let row = 0; row < musicNotes.length; row++) {
         if (freqMaxMag < musicNotes[row][1]) {
           const note = musicNotes[row][0];
+          identifiedNote = musicNotes[row][0];
           console.log(
-            `Match found! Frequency (${freqMaxMag}) is within range of ${note}.`
+            `Match found! Frequency (${freqMaxMag}) is within range of ${identifiedNote}.`
           );
-          row = musicNotes.length;
+          break; // Exit the loop when a note is identified
         }
       }
+
+
+      // Update the identified notes state
+      setIdentifiedNotes([...identifiedNotes, identifiedNote]);
+
     } catch (error) {
       console.error("Error fetching or processing audio data:", error);
       return null;
@@ -362,26 +375,44 @@ export default function AudioRecorder({ navigation }) {
       : undefined;
   }, [sound]);
 
-  async function startRecording() {
+  const startRecording = async () => {
     try {
-      console.log("Requesting permissions..");
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
 
-      console.log("Starting recording..");
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
-      setRecording(recording);
-      console.log("Recording started");
+      setIsRecording(true);
+
+      const recordingOptions = {
+        android: {
+          extension: ".wav",
+          outputFormat: Audio.RECORDING_OPTIONS_OUTPUT_FORMAT_LINEAR_PCM,
+          audioEncoder: Audio.RECORDING_OPTIONS_AUDIO_ENCODER_LINEAR_PCM,
+        },
+        ios: {
+          extension: ".wav",
+          audioQuality: Audio.RECORDING_OPTIONS_IOS_AUDIO_QUALITY_HIGH,
+          outputFormat: Audio.RECORDING_OPTIONS_IOS_OUTPUT_FORMAT_LINEARPCM,
+          sampleRate: 44100,
+          numberOfChannels: 1,
+          bitRate: 128000,
+        },
+      };
+
+      const recording = new Audio.Recording();
+
+      await recording.prepareToRecordAsync(recordingOptions);
+      await recording.startAsync();
+
+      setRecordingObject(recording);
     } catch (err) {
       console.error("Failed to start recording", err);
     }
-  }
+  };
 
+/*
   async function stopRecording() {
     console.log("Stopping recording..");
     setRecording(undefined);
@@ -394,6 +425,27 @@ export default function AudioRecorder({ navigation }) {
     console.log("Recording stopped and stored at", uri);
     playSound();
   }
+
+  */
+  const stopRecording = async () => {
+    setIsRecording(false);
+  
+    // Clear the recording interval
+    if (recordingInterval) {
+      clearInterval(recordingInterval);
+    }
+  
+    // Stop the recording and save the final audio
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
+      setUri(uri);
+      playSound(); // Process the final audio chunk
+    }
+  
+    // Reset the recording object
+    setRecording(null);
+  };
 
   //async function startPitch() {
   //await PitchDetector.start();
@@ -441,11 +493,24 @@ export default function AudioRecorder({ navigation }) {
         <ScrollView style={{ width: "100%" }}>
           <View style={{ width: "30%", alignSelf: "center", marginBottom: 10 }}>
             <Button
+            /*
               title={recording ? "Stop Recording" : "Record"}
               color={recording ? "red" : "green"}
               onPress={recording ? stopRecording : startRecording}
               //onPress={recording ? stopPitch : startPitch}
+              */
+              title={isRecording ? "Stop Recording" : "Start Recording"}
+              color={isRecording ? "red" : "green"}
+              onPress={isRecording ? stopRecording : startRecording}
             />
+          </View>
+          <View style={{ marginTop: 20 }}>
+            <Text>Identified Notes:</Text>
+            <ScrollView style={{ maxHeight: 100 }}>
+              {identifiedNotes.map((note, index) => (
+                <Text key={index}>{note}</Text>
+              ))}
+            </ScrollView>
           </View>
         </ScrollView>
       </View>
