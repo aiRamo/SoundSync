@@ -96,9 +96,9 @@ export default function AudioRecorder() {
         }
         return wavData.buffer;
     }
-    async function processAudioDataFromURI(uri) {
+    async function processAudioDataFromURI(audioURI) {
         try {
-            /*
+            
             // Fetch the audio data from the URI (assuming it's a URL)
             const response = await fetch(audioURI);
             const audioBlob = await response.blob();
@@ -106,7 +106,7 @@ export default function AudioRecorder() {
             const audioContext = new(window.AudioContext || window.webkitAudioContext)();
             const arrayBuffer = await audioBlob.arrayBuffer();
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-            */
+
             // Extract the raw audio samples from one channel
             const channelData = audioBuffer.getChannelData(0);
             const rawAudioData = new Float32Array(channelData);
@@ -219,58 +219,23 @@ export default function AudioRecorder() {
             } :
             undefined;
     }, [sound]);
-    async function startRecording() {
-        try {
-            console.log('Requesting permissions..');
-            await Audio.requestPermissionsAsync();
-            await Audio.setAudioModeAsync({
-                allowsRecordingIOS: true,
-                playsInSilentModeIOS: true,
-            });
-            console.log('Starting recording..');
-            //const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-            //setRecording(recording);
-            if (recordingInterval) {
-              clearInterval(recordingInterval);
-            }
-        
-            const audioRecording = new Audio.Recording();
-            await audioRecording.prepareToRecordAsync(recordingOptions);
-        
-            // Add an event listener to get real-time audio data
-            audioRecording.setOnRecordingStatusUpdate(status => {
-              if (status.isRecording) {
-                // Pass the audio data to the processing function
-                audioProcessing(status.buffer);
-              }
-            });
-        
-            await audioRecording.startAsync();
-        
-            setRecording(audioRecording); // Store the recording object in state
-        
-            const chunks = [];
-            const chunkDuration = 0.5; // 0.5 seconds
-            let recordingInterval;
-        
-            const processNextChunk = async () => {
-              await audioRecording.stopAndUnloadAsync();
-              const { uri } = audioRecording.getURI();
-              chunks.push(uri);
-        
-              // Process the chunk in the background
-              await processAudioData(uri);
-        
-              // Start recording the next chunk
-              await audioRecording.prepareToRecordAsync(recordingOptions);
-              await audioRecording.startAsync();
-            };
 
-            console.log('Recording started');
-        } catch (err) {
-            console.error('Failed to start recording', err);
-        }
-    }
+    async function startRecording() {
+      try {
+          console.log('Requesting permissions..');
+          await Audio.requestPermissionsAsync();
+          await Audio.setAudioModeAsync({
+              allowsRecordingIOS: true,
+              playsInSilentModeIOS: true,
+          });
+          console.log('Starting recording..');
+          const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+          setRecording(recording);
+          console.log('Recording started');
+      } catch (err) {
+          console.error('Failed to start recording', err);
+      }
+  }
     async function stopRecording() {
         console.log('Stopping recording..');
         setRecording(undefined);
