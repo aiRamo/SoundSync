@@ -6,7 +6,7 @@ import CollectionNamePrompt from "../components/UI/collectionNamePrompter";
 import Header from "../components/UI/header";
 import FadeTransition from "../components/UI/fadeTransition";
 
-export default function Scan({ navigation }) {
+export default function Scan({ navigation, route }) {
   /*
     scannerPhase is in groups of 2 for each UI element for Scan. 
     The first phase (even number) represents an entrance, and plays the fade in accordingly
@@ -15,6 +15,11 @@ export default function Scan({ navigation }) {
   const [scannerPhase, setScannerPhase] = useState(0);
   const [collectionName, onChangeCollectionName] = useState("");
   const [confirmNameButton, setConfirmNameButton] = useState(false);
+
+  if (route.params != null) {
+    const { imgeUrl } = route.params;
+    console.log(imgeUrl);
+  }
 
   useEffect(() => {
     if (collectionName === "") {

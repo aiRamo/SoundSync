@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 
-export default function Card({ imgeUrl, title, date }) {
+export default function Card({ imgeUrl, title, date, navigation }) {
   return (
     <View style={styles.container2}>
       {imgeUrl ? (
@@ -17,7 +17,12 @@ export default function Card({ imgeUrl, title, date }) {
         <Text style={{ fontSize: 8.5 }}>{date}</Text>
       </View>
 
-      <TouchableOpacity style={styles.touching}>
+      <TouchableOpacity
+        style={styles.touching}
+        onPress={() =>
+          navigation.navigate("Home", { screen: "Scan", params: { imgeUrl } })
+        }
+      >
         <Text style={{ fontSize: 15, color: "white" }}>Load</Text>
       </TouchableOpacity>
     </View>

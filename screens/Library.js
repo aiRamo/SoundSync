@@ -132,35 +132,38 @@ export default function Library({ navigation, route }) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.container}>
-        <View style={{ marginBottom: 10, flexDirection: "row" }}>
-          <TouchableOpacity onPress={toggleDescendingOrder}>
-            <AntDesign
-              name={isDescendingOrder ? "arrowdown" : "arrowup"} // Change the icon based on the sorting order
-              size={24}
-              color="black"
+      <View style={{ backgroundColor: "#d6d6e6", flex: 1 }}>
+        <View style={styles.container}>
+          <View style={{ marginBottom: 10, flexDirection: "row" }}>
+            <TouchableOpacity onPress={toggleDescendingOrder}>
+              <AntDesign
+                name={isDescendingOrder ? "arrowdown" : "arrowup"} // Change the icon based on the sorting order
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
+            <Drop
+              isVisible={isDropdownVisible}
+              options={["Settings", "Sign Out", "Close"]}
+              onSelect={handleDropdownSelect}
+              onClose={() => setDropdownVisible(false)}
             />
-          </TouchableOpacity>
-          <Drop
-            isVisible={isDropdownVisible}
-            options={["Settings", "Sign Out", "Close"]}
-            onSelect={handleDropdownSelect}
-            onClose={() => setDropdownVisible(false)}
-          />
-          <Text>
-            {isDescendingOrder ? "Descending Order" : "Ascending Order"}
-          </Text>
+            <Text>
+              {isDescendingOrder ? "Descending Order" : "Ascending Order"}
+            </Text>
+          </View>
+          <ScrollView>
+            {filteredImageUrls.map((imageUrl, index) => (
+              <Card
+                key={index}
+                imgeUrl={imageUrl}
+                title={`music page ${index}`}
+                date={imageDates[index]}
+                navigation={navigation}
+              ></Card>
+            ))}
+          </ScrollView>
         </View>
-        <ScrollView>
-          {filteredImageUrls.map((imageUrl, index) => (
-            <Card
-              key={index}
-              imgeUrl={imageUrl}
-              title={`music page ${index}`}
-              date={imageDates[index]}
-            ></Card>
-          ))}
-        </ScrollView>
       </View>
     </View>
   );
