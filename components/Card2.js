@@ -6,7 +6,13 @@ import React from "react";
 export default function Card2({ title }) {
   return (
     <View>
-      <View style={{ borderWidth: 1, marginBottom: 10 }}>
+      <View
+        style={{
+          borderBottomWidth: 1,
+          marginBottom: 10,
+          borderBottomColor: "darkslateblue",
+        }}
+      >
         <View style={styles.container2}>
           <Entypo name="folder" size={24} color="darkslateblue" />
           <Text style={{ marginLeft: 10 }}>{title}</Text>

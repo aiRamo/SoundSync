@@ -120,7 +120,13 @@ export default function Library() {
             />
           </View>
           <ScrollView>
-            <Text style={{ borderBottomWidth: 1, marginBottom: 5 }}>
+            <Text
+              style={{
+                borderBottomWidth: 1,
+                marginBottom: 5,
+                borderBottomColor: "darkslateblue",
+              }}
+            >
               Folders
             </Text>
             {subfolders.map((subfolderName, index) => (
