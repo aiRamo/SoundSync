@@ -16,11 +16,14 @@ export default function Scan({ navigation, route }) {
   const [collectionName, onChangeCollectionName] = useState("");
   const [confirmNameButton, setConfirmNameButton] = useState(false);
   const [folder, setFolder] = useState("");
+  const [img, setImg] = useState("");
 
   useEffect(() => {
     if (route.params != null) {
+      const { imgeUrl } = route.params;
       const { folder } = route.params;
       setFolder(folder);
+      setImg(imgeUrl);
       setScannerPhase(4);
     }
   }, [route.params]);
@@ -54,7 +57,9 @@ export default function Scan({ navigation, route }) {
           {(scannerPhase === 2 || scannerPhase === 3) && (
             <SheetScanPrompt collectionName={collectionName} />
           )}
-          {scannerPhase === 4 && <SheetScanPrompt collectionName={folder} />}
+          {scannerPhase === 4 && (
+            <SheetScanPrompt collectionName={folder} imgUrl={img} />
+          )}
         </FadeTransition>
       </View>
     </View>
