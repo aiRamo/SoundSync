@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import React from "react";
 
-export default function Card({ imgeUrl, title, date, navigation }) {
+export default function Card({ imgeUrl, title, date, navigation, folder }) {
   return (
     <View style={styles.container2}>
       {imgeUrl ? (
@@ -20,7 +20,10 @@ export default function Card({ imgeUrl, title, date, navigation }) {
       <TouchableOpacity
         style={styles.touching}
         onPress={() =>
-          navigation.navigate("Home", { screen: "Scan", params: { imgeUrl } })
+          navigation.navigate("Home", {
+            screen: "Scan",
+            params: { imgeUrl, folder },
+          })
         }
       >
         <Text style={{ fontSize: 15, color: "white" }}>Load</Text>

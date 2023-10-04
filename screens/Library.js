@@ -160,6 +160,7 @@ export default function Library({ navigation, route }) {
                 title={`music page ${index}`}
                 date={imageDates[index]}
                 navigation={navigation}
+                folder={subfolderName}
               ></Card>
             ))}
           </ScrollView>
