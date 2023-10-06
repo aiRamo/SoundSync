@@ -20,7 +20,7 @@ import { checkCurrentUser } from "../firebaseUtils";
 
 import styles from "../styleSheetScan";
 
-const SheetScanPrompt = ({ collectionName }) => {
+const SheetScanPrompt = ({ collectionName, imgUrl }) => {
   const [image, setImage] = useState(require("../../assets/addScan.png"));
   const [loading, setLoading] = useState(false);
   const [doneLoading, setDoneLoading] = useState(false);
@@ -31,6 +31,7 @@ const SheetScanPrompt = ({ collectionName }) => {
   const [serverMessage, setServerMessage] = useState("Scanning Image");
   const [loadingPhase, setLoadingPhase] = useState("");
   const [UID, setUID] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
 
   const loadingImage = useImage(require("../../assets/SoundSyncIcon.png"));
 
@@ -104,6 +105,13 @@ const SheetScanPrompt = ({ collectionName }) => {
       setLoadingPhase("bottom");
     }
   }, [serverMessage]);
+
+  useEffect(() => {
+    if (imgUrl != null) {
+      console.log(imgUrl);
+      setImage(imgUrl);
+    }
+  }, [imgUrl]);
 
   const imageList = fetchImagesFromCollection(UID, collectionName);
 

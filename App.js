@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import Home from "./screens/Home";
 import Scan from "./screens/Scan";
 import AudioRecorder from "./screens/Audio";
@@ -11,6 +12,7 @@ import Forgot from "./screens/Forgot";
 import Profile from "./screens/Profile";
 import Library from "./screens/Library";
 import Folder from "./screens/Folder";
+import Tracker from "./screens/Tracker";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -55,6 +57,17 @@ function HomeScreen() {
           title: "Library Page",
           tabBarIcon: ({}) => (
             <AntDesign name="profile" size={24} color="white" />
+          ),
+          tabBarActiveTintColor: "white",
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="Tracker"
+        component={Tracker}
+        options={{
+          title: "Tracker {age",
+          tabBarIcon: ({}) => (
+            <MaterialIcons name="multitrack-audio" size={24} color="white" />
           ),
           tabBarActiveTintColor: "white",
         }}

@@ -109,27 +109,37 @@ export default function Library() {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.container}>
-        <View style={{ marginBottom: 10, flexDirection: "row" }}>
-          <Drop
-            isVisible={isDropdownVisible}
-            options={["Settings", "Sign Out", "Close"]}
-            onSelect={handleDropdownSelect}
-            onClose={() => setDropdownVisible(false)}
-          />
-        </View>
-        <ScrollView>
-          <Text style={{ borderBottomWidth: 1, marginBottom: 5 }}>Folders</Text>
-          {subfolders.map((subfolderName, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleSubfolderSelection(subfolderName)}
+      <View style={{ backgroundColor: "#d6d6e6", flex: 1 }}>
+        <View style={styles.container}>
+          <View style={{ marginBottom: 10, flexDirection: "row" }}>
+            <Drop
+              isVisible={isDropdownVisible}
+              options={["Settings", "Sign Out", "Close"]}
+              onSelect={handleDropdownSelect}
+              onClose={() => setDropdownVisible(false)}
+            />
+          </View>
+          <ScrollView>
+            <Text
+              style={{
+                borderBottomWidth: 1,
+                marginBottom: 5,
+                borderBottomColor: "darkslateblue",
+              }}
             >
-              <Card2 title={subfolderName} date="" />
-              {/* You can customize the Card component to display subfolders */}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+              Folders
+            </Text>
+            {subfolders.map((subfolderName, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleSubfolderSelection(subfolderName)}
+              >
+                <Card2 title={subfolderName} date="" />
+                {/* You can customize the Card component to display subfolders */}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
       </View>
     </View>
   );
