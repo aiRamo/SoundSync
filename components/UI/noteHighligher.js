@@ -3,7 +3,7 @@ import { View, Text } from "react-native";
 
 const NoteHighlighter = ({ notePositions }) => {
   return (
-    <>
+    <React.Fragment key={`fragment_${index}`}>
       {Object.keys(notePositions).map((key, index) => {
         const { leftPosition, topPosition } = notePositions[key];
         return (
@@ -37,7 +37,7 @@ const NoteHighlighter = ({ notePositions }) => {
           </>
         );
       })}
-    </>
+    </React.Fragment>
   );
 };
 
