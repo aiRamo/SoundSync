@@ -1,7 +1,13 @@
 import NoteHighlighter from "./UI/noteHighligher";
+import { sendNoteCoordinatesToSheetCollection } from "./firebaseUtils";
 
 // Function to render note boxes and calculate their positions
-const calculateNoteCoordinates = (noteCoordinates, ViewWidth, ViewHeight) => {
+const calculateNoteCoordinates = (
+  noteCoordinates,
+  collectionName,
+  ViewWidth,
+  ViewHeight
+) => {
   const notePositions = {};
 
   // Parse layout margins and dimensions
@@ -72,6 +78,10 @@ const calculateNoteCoordinates = (noteCoordinates, ViewWidth, ViewHeight) => {
       cumulativeMeasureWidth += parseInt(measure.width, 10);
     });
   });
+
+  const notePositionsJSON = JSON.stringify(notePositions);
+
+  sendNoteCoordinatesToSheetCollection(notePositionsJSON, collectionName);
 
   return <NoteHighlighter notePositions={notePositions} />;
 };

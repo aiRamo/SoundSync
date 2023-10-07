@@ -1,4 +1,9 @@
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  uploadString,
+} from "firebase/storage";
 import { onAuthStateChanged } from "firebase/auth";
 import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig"; // make sure the path is correct
 
@@ -17,6 +22,48 @@ export const checkCurrentUser = async () => {
       unsubscribe(); // Unsubscribe to the observer after resolving or rejecting
     });
   });
+};
+
+export const sendNoteCoordinatesToSheetCollection = async (
+  notePositionsJSON,
+  collectionName
+) => {
+  try {
+    // Get the current user's UID
+    const UID = await checkCurrentUser();
+
+    // Create a Blob from the JSON string
+    const blob = new Blob([JSON.stringify(notePositionsJSON)], {
+      type: "application/json",
+    });
+
+    // Create a storage reference
+    const storageRef = ref(
+      STORAGE,
+      `images/${UID}/sheetCollections/${collectionName}/notePositions.json`
+    );
+
+    // Upload the Blob to Firebase Storage
+    const uploadTask = await uploadBytesResumable(storageRef, blob);
+
+    // Optionally, get the download URL if you need it
+    const downloadURL = await getDownloadURL(uploadTask.ref);
+
+    console.log(
+      `JSON file uploaded successfully. Download URL: ${downloadURL}`
+    );
+  } catch (error) {
+    console.error("An error occurred:", error);
+    if (error.code) {
+      console.error("Error code:", error.code);
+    }
+    if (error.message) {
+      console.error("Error message:", error.message);
+    }
+    if (error.serverResponse) {
+      console.error("Server response:", error.serverResponse);
+    }
+  }
 };
 
 export async function uploadImage(uri, uid) {

@@ -37,6 +37,7 @@ const ScannerModalContent = ({ loadingData, doneLoadingData, actions }) => {
             {doneLoadingData.trackerBoxesVisible &&
               calculateNoteCoordinates(
                 doneLoadingData.noteCoordinateData,
+                doneLoadingData.collectionName,
                 ViewWidth,
                 ViewHeight
               )}

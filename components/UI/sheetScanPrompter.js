@@ -55,6 +55,7 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
     pngURL,
     trackerBoxesVisible,
     noteCoordinateData,
+    collectionName,
   };
 
   const actionsForScannerModal = {
