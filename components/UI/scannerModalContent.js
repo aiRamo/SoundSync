@@ -1,6 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import styles from "../styleSheetScan"; // Replace with the actual path to your styles
+
+// calculateNoteCoordinates.js parses the noteCoordinateData JSON and returns a list of components representing the note's page location.
+// These components are where the noteHighlighter comes from.
 import calculateNoteCoordinates from "../calculateNoteCoordinates";
 import WaveMeter from "./scannerLoader";
 

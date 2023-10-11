@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { View } from "react-native";
 import styles from "../components/styleSheetScan";
-import SheetScanPrompt from "../components/UI/sheetScanPrompter";
+
+// collectionNamePrompter.js prompts the user to provide a collectionName via a modal.
+// This collectionName is sent back to Scan.js to be used with sheetScanPrompter.
 import CollectionNamePrompt from "../components/UI/collectionNamePrompter";
+
+// sheetScanPrompter.js hosts functionality towards selecting a photo and communicating with the Audiveris API
+// SheetScanPrompt is the modal component that appears after picking a collectionName
+// this hosts all functionality for the scanner system besides the collectionName prompter.
+import SheetScanPrompt from "../components/UI/sheetScanPrompter";
+
 import Header from "../components/UI/header";
 import FadeTransition from "../components/UI/fadeTransition";
 
