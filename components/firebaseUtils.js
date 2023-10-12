@@ -5,7 +5,9 @@ import {
   uploadString,
 } from "firebase/storage";
 import { onAuthStateChanged } from "firebase/auth";
-import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig"; // make sure the path is correct
+import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
+
+// make sure the path is correct
 
 export const checkCurrentUser = async () => {
   return new Promise((resolve, reject) => {

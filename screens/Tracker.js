@@ -8,8 +8,13 @@ import {
 } from "react-native";
 import Header from "../components/UI/header";
 import React from "react";
+import { useDataContext } from "../components/DataContext";
 
 export default function Tracker({ navigation }) {
+  const { data } = useDataContext();
+
+  console.log(data);
+
   return (
     <View style={{ flex: 1 }}>
       <Header style navigation={navigation} />

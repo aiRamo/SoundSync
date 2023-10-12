@@ -6,12 +6,22 @@ export const callAPIandFormatNotesJSON = async (
   UID,
   image,
   collectionName,
-  setters
+  setters,
+  data,
+  dispatch
 ) => {
   try {
     setters.setPreviewVisible(true);
     await uploadImage(image, UID);
     setters.setLoading(true);
+
+    const UPDATE_DATA = "UPDATE_DATA";
+
+    // Inside your function
+    const updateData = (newData) => {
+      // Dispatch an action to update the JSON object
+      dispatch({ type: UPDATE_DATA, payload: newData });
+    };
 
     const data = {
       uid: UID, // This is the Firebase UID
@@ -37,6 +47,8 @@ export const callAPIandFormatNotesJSON = async (
 
       // Assume the firebasePath is returned in the JSON response from your API
       const firebasePath = notesJson.firebasePath; // notesJson.frebasePath represents the firebase file path that holds the preview png.
+
+      updateData(notesJson);
 
       const downloadURL = await getFirebaseDownloadURL(firebasePath);
       setters.setpngURL(downloadURL);
