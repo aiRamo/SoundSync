@@ -7,20 +7,24 @@ export const callAPIandFormatNotesJSON = async (
   image,
   collectionName,
   setters,
-  data,
-  dispatch
+  data1,
+  dispatch1,
+  data2,
+  dispatch2
 ) => {
   try {
     setters.setPreviewVisible(true);
     await uploadImage(image, UID);
     setters.setLoading(true);
 
-    const UPDATE_DATA = "UPDATE_DATA";
+    const UPDATE_DATA1 = "UPDATE_DATA1";
+    const UPDATE_DATA2 = "UPDATE_DATA2";
 
     // Inside your function
-    const updateData = (newData) => {
+    const updateData = (newData, newData2) => {
       // Dispatch an action to update the JSON object
-      dispatch({ type: UPDATE_DATA, payload: newData });
+      dispatch1({ type: UPDATE_DATA1, payload: newData });
+      dispatch2({ type: UPDATE_DATA2, payload: newData2 });
     };
 
     const data = {
@@ -48,9 +52,10 @@ export const callAPIandFormatNotesJSON = async (
       // Assume the firebasePath is returned in the JSON response from your API
       const firebasePath = notesJson.firebasePath; // notesJson.frebasePath represents the firebase file path that holds the preview png.
 
-      updateData(notesJson);
-
       const downloadURL = await getFirebaseDownloadURL(firebasePath);
+      console.log(downloadURL);
+
+      updateData(notesJson, downloadURL);
       setters.setpngURL(downloadURL);
     } else {
       console.log("API call failed:", response.statusText);

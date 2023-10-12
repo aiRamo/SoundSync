@@ -14,6 +14,7 @@ import Library from "./screens/Library";
 import Folder from "./screens/Folder";
 import Tracker from "./screens/Tracker";
 import { DataProvider } from "./components/DataContext";
+import { DataProvider2 } from "./components/DataContext2";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -80,47 +81,49 @@ function HomeScreen() {
 export default function App() {
   return (
     <DataProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            headerShown: true,
-            headerStyle: { backgroundColor: "darkslateblue" },
-            headerTintColor: "white",
-          }}
-        >
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerStyle }}
-          />
-          <Stack.Screen
-            name="Create"
-            component={Create}
-            options={{ headerStyle }}
-          />
-          <Stack.Screen
-            name="Forgot"
-            component={Forgot}
-            options={{ headerStyle }}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ title: "SoundSync", headerShown: false }}
-          />
-          <Stack.Screen
-            name="Library"
-            component={Library}
-            options={{ headerStyle }}
-          ></Stack.Screen>
+      <DataProvider2>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: true,
+              headerStyle: { backgroundColor: "darkslateblue" },
+              headerTintColor: "white",
+            }}
+          >
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerStyle }}
+            />
+            <Stack.Screen
+              name="Create"
+              component={Create}
+              options={{ headerStyle }}
+            />
+            <Stack.Screen
+              name="Forgot"
+              component={Forgot}
+              options={{ headerStyle }}
+            />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ title: "SoundSync", headerShown: false }}
+            />
+            <Stack.Screen
+              name="Library"
+              component={Library}
+              options={{ headerStyle }}
+            ></Stack.Screen>
 
-          <Stack.Screen
-            name="Profile"
-            component={Profile}
-            options={{ headerStyle }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+            <Stack.Screen
+              name="Profile"
+              component={Profile}
+              options={{ headerStyle }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </DataProvider2>
     </DataProvider>
   );
 }

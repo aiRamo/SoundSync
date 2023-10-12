@@ -1,30 +1,29 @@
-// DataContext.js
-
+// DataContext1.js
 import React, { createContext, useContext, useReducer } from "react";
 
-const DataContext = createContext();
+const DataContext1 = createContext();
 
-export const useDataContext = () => useContext(DataContext);
+export const useDataContext = () => useContext(DataContext1);
 
-export const DataProvider = ({ children }) => {
-  const [data, dispatch] = useReducer(dataReducer, initialData);
-
-  return (
-    <DataContext.Provider value={{ data, dispatch }}>
-      {children}
-    </DataContext.Provider>
-  );
-};
-
-const initialData = {
+const initialData1 = {
   key: "value",
 };
 
-const dataReducer = (state, action) => {
+const reducer1 = (state, action) => {
   switch (action.type) {
-    case "UPDATE_DATA":
+    case "UPDATE_DATA1":
       return { ...state, ...action.payload };
     default:
       return state;
   }
+};
+
+export const DataProvider = ({ children }) => {
+  const [data1, dispatch1] = useReducer(reducer1, initialData1);
+
+  return (
+    <DataContext1.Provider value={{ data1, dispatch1 }}>
+      {children}
+    </DataContext1.Provider>
+  );
 };
