@@ -16,8 +16,10 @@ export default function Tracker({ navigation }) {
   const { data2 } = useDataContext2();
   const [image, setImage] = useState(require("../assets/addScan.png"));
 
-  console.log(data1);
-  console.log(data2);
+  handlePress = () => {
+    console.log(data1);
+    // Add any additional code you want to run when the TouchableOpacity is pressed here.
+  };
 
   useEffect(() => {
     if (data2 != "") {
@@ -61,6 +63,7 @@ export default function Tracker({ navigation }) {
           marginTop: 10,
           alignItems: "center",
         }}
+        onPress={this.handlePress}
       >
         <Text style={{ color: "white" }}>Highlight Notes</Text>
       </TouchableOpacity>

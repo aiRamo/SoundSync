@@ -65,6 +65,9 @@ export const callAPIandFormatNotesJSON = async (
       const downloadURL = await getFirebaseDownloadURL(firebasePath);
       console.log(downloadURL);
 
+      // console.log(
+      //   "here coordinate data: " + JSON.stringify(notesJson.coordinateData)
+      // );
       updateData(notesJson, downloadURL);
       setters.setpngURL(downloadURL);
     } else {
