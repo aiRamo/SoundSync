@@ -11,10 +11,14 @@ import React, { useState, useEffect } from "react";
 import { useDataContext } from "../components/DataContext";
 import { useDataContext2 } from "../components/DataContext2";
 
+import { downloadAllItemsInCollection } from "../components/firebaseUtils";
+
 export default function Tracker({ navigation, collectionName }) {
   const { data1 } = useDataContext();
   const { data2 } = useDataContext2();
   const [image, setImage] = useState(require("../assets/addScan.png"));
+  const [coordinateData, setCoordinateData] = useState(null);
+  const [noteData, setNoteData] = useState(null);
 
   handlePress = () => {
     console.log(data1);
@@ -26,6 +30,27 @@ export default function Tracker({ navigation, collectionName }) {
       setImage(data2);
     }
   }, [data2]);
+
+  useEffect(() => {
+    if (collectionName !== null) {
+      const fetchData = async () => {
+        const { imageUrls, jsonData } = await downloadAllItemsInCollection(
+          collectionName
+        );
+        if (imageUrls.length > 0) {
+          setImage(imageUrls[0]); // Assuming there's only one image
+        }
+        if (jsonData.length === 2) {
+          setCoordinateData(jsonData[0]); // Assuming the first JSON object is coordinateData
+          setNoteData(jsonData[1]); // Assuming the second JSON object is noteData
+          console.log("Coordinate Data:", jsonData[0]);
+          console.log("Note Data:", jsonData[1]);
+        }
+      };
+
+      fetchData();
+    }
+  }, [collectionName]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>

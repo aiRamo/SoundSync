@@ -85,3 +85,51 @@ export async function getFirebaseDownloadURL(firebasePath) {
   const downloadURL = await getDownloadURL(ref(STORAGE, firebasePath));
   return downloadURL;
 }
+
+// Invoked by Tracker
+// Retrieves the image and JSON files form Firebase Storage and returns them in 2 separate arrays
+
+export const downloadAllItemsInCollection = async (collectionName) => {
+  try {
+    const UID = await checkCurrentUser();
+
+    const storageRef = ref(
+      STORAGE,
+      `images/${UID}/sheetCollections/${collectionName}`
+    );
+
+    // Fetch all the items (files) in the folder
+    const res = await listAll(storageRef);
+
+    const downloadPromises = res.items.map(async (itemRef) => {
+      const downloadURL = await getDownloadURL(itemRef);
+      return downloadURL;
+    });
+
+    const downloadURLs = await Promise.all(downloadPromises);
+
+    // Separate image URLs and JSON URLs
+    const imageUrls = downloadURLs.filter((url) => url.endsWith(".jpg"));
+    const jsonUrls = downloadURLs.filter((url) => url.endsWith(".json"));
+
+    // Fetch JSON data from URLs
+    const fetchJSONPromises = jsonUrls.map(async (url) => {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
+    });
+
+    const jsonData = await Promise.all(fetchJSONPromises);
+
+    // Return only the first image URL for testing
+    const firstImageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
+
+    return {
+      imageUrls: firstImageUrl,
+      jsonData,
+    };
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+};
