@@ -11,10 +11,11 @@ import React, { useState, useEffect } from "react";
 import { useDataContext } from "../components/DataContext";
 import { useDataContext2 } from "../components/DataContext2";
 
-export default function Tracker({ navigation, collectionName }) {
+export default function Tracker({ navigation, collectionName, route }) {
   const { data1 } = useDataContext();
   const { data2 } = useDataContext2();
   const [image, setImage] = useState(require("../assets/addScan.png"));
+  const [collectionName1, setCollectionName] = useState("");
 
   handlePress = () => {
     console.log(data1);
@@ -26,6 +27,18 @@ export default function Tracker({ navigation, collectionName }) {
       setImage(data2);
     }
   }, [data2]);
+
+  useEffect(() => {
+    if (route.params != null) {
+      const { imgeUrl } = route.params;
+      const { folder } = route.params;
+      console.log(folder);
+      setCollectionName(folder);
+      setImage(imgeUrl);
+
+      console.log("here collection name " + collectionName1);
+    }
+  }, [route.params]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
