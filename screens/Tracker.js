@@ -17,7 +17,7 @@ export default function Tracker({ navigation, collectionName, route }) {
   const { data1 } = useDataContext();
   const { data2 } = useDataContext2();
   const [image, setImage] = useState(require("../assets/addScan.png"));
-  const [collectionName1, setCollectionName] = useState("");
+  const [collectionName1, setCollectionName] = useState(""); // Used with the context, will replace with navigation prop in the future
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
 
@@ -33,10 +33,10 @@ export default function Tracker({ navigation, collectionName, route }) {
   }, [data2]);
 
   useEffect(() => {
-    if (collectionName !== null) {
+    if (collectionName1 !== null) {
       const fetchData = async () => {
         const { imageUrls, jsonData } = await downloadAllItemsInCollection(
-          collectionName
+          collectionName1
         );
         if (imageUrls.length > 0) {
           setImage(imageUrls[0]); // Assuming there's only one image
@@ -50,7 +50,7 @@ export default function Tracker({ navigation, collectionName, route }) {
       };
       fetchData();
     }
-  }, [collectionName]);
+  }, [collectionName1]);
 
   useEffect(() => {
     if (route.params != null) {
