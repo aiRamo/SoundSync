@@ -1,10 +1,10 @@
 import {
   View,
+  ScrollView,
   Text,
   TouchableOpacity,
   Image,
   StyleSheet,
-  Button,
 } from "react-native";
 import Header from "../components/UI/header";
 import React, { useState, useEffect } from "react";
@@ -26,27 +26,23 @@ export default function Tracker({ navigation }) {
   }, [data2]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
       <Header style navigation={navigation} />
-      <TouchableOpacity
-        style={{
-          borderRadius: 5,
-          backgroundColor: "red",
-          padding: 10,
-          marginLeft: 10,
-          marginRight: 10,
-          marginTop: 10,
-          alignItems: "center",
-        }}
-      >
-        <Text>Highlight Notes</Text>
-      </TouchableOpacity>
+
       <View
         style={{
           alignItems: "center",
-          justifyContent: "center",
+          backgroundColor: "white",
+          marginLeft: 50,
+          marginRight: 50,
+          marginTop: 50,
+          borderRadius: 20,
+          flex: 0.9,
         }}
       >
+        {image == require("../assets/addScan.png") && (
+          <Image source={image} style={{ resizeMode: "contain" }} />
+        )}
         {image != require("../assets/addScan.png") && (
           <Image
             source={{ uri: image }}
@@ -54,6 +50,20 @@ export default function Tracker({ navigation }) {
           />
         )}
       </View>
+
+      <TouchableOpacity
+        style={{
+          borderRadius: 5,
+          backgroundColor: "darkslateblue",
+          padding: 10,
+          marginLeft: 50,
+          marginRight: 50,
+          marginTop: 10,
+          alignItems: "center",
+        }}
+      >
+        <Text style={{ color: "white" }}>Highlight Notes</Text>
+      </TouchableOpacity>
     </View>
   );
 }
