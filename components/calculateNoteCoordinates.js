@@ -2,7 +2,7 @@
 import NoteHighlighter from "./UI/noteHighligher";
 
 // Sends the rebuilt notePositionsJSON to the firebase storage location by the relevant collectionName
-import { sendNoteCoordinatesToSheetCollection } from "./firebaseUtils";
+import { sendJSONToSheetCollection } from "./firebaseUtils";
 
 // Calculates each note's position on the page using a percentage-based approach (EX. 40% from the left of the page, 20% from the top.)
 const calculateNoteCoordinates = (
@@ -84,7 +84,11 @@ const calculateNoteCoordinates = (
 
   const notePositionsJSON = JSON.stringify(notePositions);
 
-  sendNoteCoordinatesToSheetCollection(notePositionsJSON, collectionName);
+  sendJSONToSheetCollection(
+    notePositionsJSON,
+    collectionName,
+    "notePositions.json"
+  );
 
   return <NoteHighlighter notePositions={notePositions} />;
 };

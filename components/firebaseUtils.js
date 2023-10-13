@@ -26,23 +26,24 @@ export const checkCurrentUser = async () => {
   });
 };
 
-export const sendNoteCoordinatesToSheetCollection = async (
-  notePositionsJSON,
-  collectionName
+export const sendJSONToSheetCollection = async (
+  JSONObject,
+  collectionName,
+  fileName
 ) => {
   try {
     // Get the current user's UID
     const UID = await checkCurrentUser();
 
     // Create a Blob from the JSON string
-    const blob = new Blob([JSON.stringify(notePositionsJSON)], {
+    const blob = new Blob([JSON.stringify(JSONObject)], {
       type: "application/json",
     });
 
     // Create a storage reference
     const storageRef = ref(
       STORAGE,
-      `images/${UID}/sheetCollections/${collectionName}/notePositions.json`
+      `images/${UID}/sheetCollections/${collectionName}/${fileName}`
     );
 
     // Upload the Blob to Firebase Storage
