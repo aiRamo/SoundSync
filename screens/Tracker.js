@@ -11,7 +11,7 @@ import React, { useState, useEffect } from "react";
 import { useDataContext } from "../components/DataContext";
 import { useDataContext2 } from "../components/DataContext2";
 
-export default function Tracker({ navigation }) {
+export default function Tracker({ navigation, collectionName }) {
   const { data1 } = useDataContext();
   const { data2 } = useDataContext2();
   const [image, setImage] = useState(require("../assets/addScan.png"));
