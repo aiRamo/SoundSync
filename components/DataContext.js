@@ -8,7 +8,6 @@ export const useDataContext = () => useContext(DataContext1);
 const initialData1 = {
   key: "value",
 };
-
 const reducer1 = (state, action) => {
   switch (action.type) {
     case "UPDATE_DATA1":

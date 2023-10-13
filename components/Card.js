@@ -21,7 +21,7 @@ export default function Card({ imgeUrl, title, date, navigation, folder }) {
         style={styles.touching}
         onPress={() =>
           navigation.navigate("Home", {
-            screen: "Scan",
+            screen: "Tracker",
             params: { imgeUrl, folder },
           })
         }

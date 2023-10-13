@@ -13,10 +13,11 @@ import { useDataContext2 } from "../components/DataContext2";
 
 import { downloadAllItemsInCollection } from "../components/firebaseUtils";
 
-export default function Tracker({ navigation, collectionName }) {
+export default function Tracker({ navigation, collectionName, route }) {
   const { data1 } = useDataContext();
   const { data2 } = useDataContext2();
   const [image, setImage] = useState(require("../assets/addScan.png"));
+  const [collectionName1, setCollectionName] = useState("");
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
 
@@ -47,10 +48,21 @@ export default function Tracker({ navigation, collectionName }) {
           console.log("Note Data:", jsonData[1]);
         }
       };
-
       fetchData();
     }
   }, [collectionName]);
+
+  useEffect(() => {
+    if (route.params != null) {
+      const { imgeUrl } = route.params;
+      const { folder } = route.params;
+      console.log(folder);
+      setCollectionName(folder);
+      setImage(imgeUrl);
+
+      console.log("here collection name " + collectionName1);
+    }
+  }, [route.params]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
