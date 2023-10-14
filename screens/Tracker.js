@@ -16,36 +16,32 @@ import { downloadAllItemsInCollection } from "../components/firebaseUtils";
 export default function Tracker({ navigation, collectionName, route }) {
   const { data1 } = useDataContext();
   const { data2 } = useDataContext2();
+  const [isDefaultImage, setIsDefaultImage] = useState(true);
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [collectionName1, setCollectionName] = useState(""); // Used with the context, will replace with navigation prop in the future
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
 
-  handlePress = () => {
-    console.log(data1);
-    // Add any additional code you want to run when the TouchableOpacity is pressed here.
-  };
-
   useEffect(() => {
-    if (data2 != "") {
-      setImage(data2);
-    }
-  }, [data2]);
-
-  useEffect(() => {
-    if (collectionName1 !== null) {
+    if (collectionName1 !== "") {
+      console.log(`fetching data... collectionName = ${collectionName1}`);
       const fetchData = async () => {
-        const { imageUrls, jsonData } = await downloadAllItemsInCollection(
-          collectionName1
-        );
-        if (imageUrls.length > 0) {
-          setImage(imageUrls[0]); // Assuming there's only one image
-        }
-        if (jsonData.length === 2) {
-          setCoordinateData(jsonData[0]); // Assuming the first JSON object is coordinateData
-          setNoteData(jsonData[1]); // Assuming the second JSON object is noteData
-          console.log("Coordinate Data:", jsonData[0]);
-          console.log("Note Data:", jsonData[1]);
+        const result = await downloadAllItemsInCollection(collectionName1);
+        if (result) {
+          // Check if result is not null
+          const { firstImageUrl, jsonData } = result;
+          if (firstImageUrl && firstImageUrl.length > 0) {
+            // Null and length check
+            setImage(firstImageUrl); // Assuming there's only one image
+            setIsDefaultImage(false); // Set to false when you have a new image
+          }
+          if (jsonData && jsonData.length >= 2) {
+            // Null and length check
+            setCoordinateData(jsonData[0]); // Assuming the first JSON object is coordinateData
+            setNoteData(jsonData[1]); // Assuming the second JSON object is noteData
+            console.log("Coordinate Data:", jsonData[0]);
+            console.log("Note Data:", jsonData[1]);
+          }
         }
       };
       fetchData();
@@ -54,11 +50,9 @@ export default function Tracker({ navigation, collectionName, route }) {
 
   useEffect(() => {
     if (route.params != null) {
-      const { imgeUrl } = route.params;
       const { folder } = route.params;
       console.log(folder);
       setCollectionName(folder);
-      setImage(imgeUrl);
 
       console.log("here collection name " + collectionName1);
     }
@@ -79,10 +73,12 @@ export default function Tracker({ navigation, collectionName, route }) {
           flex: 0.9,
         }}
       >
-        {image == require("../assets/addScan.png") && (
-          <Image source={image} style={{ resizeMode: "contain" }} />
-        )}
-        {image != require("../assets/addScan.png") && (
+        {isDefaultImage ? (
+          <Image
+            source={require("../assets/addScan.png")}
+            style={{ resizeMode: "contain" }}
+          />
+        ) : (
           <Image
             source={{ uri: image }}
             style={{ resizeMode: "contain", height: "100%", width: "100%" }}
