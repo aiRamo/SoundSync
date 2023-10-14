@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Alert,
 } from "react-native";
 import Header from "../components/UI/header";
 import React, { useState, useEffect } from "react";
@@ -21,6 +22,24 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [collectionName1, setCollectionName] = useState(""); // Used with the context, will replace with navigation prop in the future
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
+  const arrayData = ["A1", "B1", "B3", "B5", "D7", "F1"];
+  let timer;
+  let count = 0;
+
+  log = () => {
+    console.log(arrayData[count]);
+    Alert.alert("Note:", arrayData[count]);
+    if (count == arrayData.length - 1) {
+      window.clearInterval(timer);
+      count = 0;
+    }
+    count++;
+  };
+
+  handlePress = () => {
+    timer = window.setInterval(log, 1000);
+    // Add any additional code you want to run when the TouchableOpacity is pressed here.
+  };
 
   useEffect(() => {
     if (collectionName1 !== "") {
