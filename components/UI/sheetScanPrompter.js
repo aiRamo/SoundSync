@@ -30,8 +30,6 @@ import ScannerModalContent from "./scannerModalContent";
 
 // checkCurrentUser validates that user is logged in and returns the user's UID.
 import { checkCurrentUser } from "../firebaseUtils";
-import { useDataContext } from "../DataContext";
-import { useDataContext2 } from "../DataContext2";
 
 import styles from "../styleSheetScan";
 
@@ -48,8 +46,6 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
   const [serverMessage, setServerMessage] = useState("Scanning Image");
   const [loadingPhase, setLoadingPhase] = useState("");
   const [UID, setUID] = useState(null);
-  const { data1, dispatch1 } = useDataContext();
-  const { data2, dispatch2 } = useDataContext2();
 
   const loadingImage = useImage(require("../../assets/SoundSyncIcon.png"));
 
@@ -135,16 +131,7 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
   const imageList = fetchImagesFromCollection(UID, collectionName);
 
   const callAPIandWaitForResponse = async () => {
-    await callAPIandFormatNotesJSON(
-      UID,
-      image,
-      collectionName,
-      settersForAPI,
-      data1,
-      dispatch1,
-      data2,
-      dispatch2
-    );
+    await callAPIandFormatNotesJSON(UID, image, collectionName, settersForAPI);
   };
 
   const [contentHeight, setContentHeight] = useState(0);

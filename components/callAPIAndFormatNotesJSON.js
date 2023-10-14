@@ -10,26 +10,12 @@ export const callAPIandFormatNotesJSON = async (
   UID,
   image,
   collectionName,
-  setters,
-  data1,
-  dispatch1,
-  data2,
-  dispatch2
+  setters
 ) => {
   try {
     setters.setPreviewVisible(true);
     await uploadImage(image, UID);
     setters.setLoading(true);
-
-    const UPDATE_DATA1 = "UPDATE_DATA1";
-    const UPDATE_DATA2 = "UPDATE_DATA2";
-
-    // Inside your function
-    const updateData = (newData, newData2) => {
-      // Dispatch an action to update the JSON object
-      dispatch1({ type: UPDATE_DATA1, payload: newData });
-      dispatch2({ type: UPDATE_DATA2, payload: newData2 });
-    };
 
     const data = {
       uid: UID, // This is the Firebase UID
@@ -68,7 +54,7 @@ export const callAPIandFormatNotesJSON = async (
       // console.log(
       //   "here coordinate data: " + JSON.stringify(notesJson.coordinateData)
       // );
-      updateData(notesJson, downloadURL);
+
       setters.setpngURL(downloadURL);
     } else {
       console.log("API call failed:", response.statusText);

@@ -9,14 +9,10 @@ import {
 } from "react-native";
 import Header from "../components/UI/header";
 import React, { useState, useEffect } from "react";
-import { useDataContext } from "../components/DataContext";
-import { useDataContext2 } from "../components/DataContext2";
 
 import { downloadAllItemsInCollection } from "../components/firebaseUtils";
 
 export default function Tracker({ navigation, collectionName, route }) {
-  const { data1 } = useDataContext();
-  const { data2 } = useDataContext2();
   const [isDefaultImage, setIsDefaultImage] = useState(true);
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [collectionName1, setCollectionName] = useState(""); // Used with the context, will replace with navigation prop in the future
