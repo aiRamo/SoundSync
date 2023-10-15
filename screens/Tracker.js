@@ -18,7 +18,8 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [collectionName1, setCollectionName] = useState(""); // Used with the context, will replace with navigation prop in the future
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
-  const arrayData = ["A1", "B1", "B3", "B5", "D7", "F1"];
+  const arrayData = ["A4", "B4", "D4", "B2", "B3", "A2"];
+  let noteArray = [];
   let timer;
   let count = 0;
 
@@ -55,7 +56,8 @@ export default function Tracker({ navigation, collectionName, route }) {
             setCoordinateData(jsonData[0]); // Assuming the first JSON object is coordinateData
             setNoteData(jsonData[1]); // Assuming the second JSON object is noteData
             console.log("Coordinate Data:", jsonData[0]);
-            console.log("Note Data:", jsonData[1]);
+            console.log("Note Data:", JSON.stringify(jsonData[1]));
+            retrieve(jsonData[1]);
           }
         }
       };
@@ -72,6 +74,20 @@ export default function Tracker({ navigation, collectionName, route }) {
       console.log("here collection name " + collectionName1);
     }
   }, [route.params]);
+
+  function retrieve(array) {
+    for (const part of array) {
+      for (const note of part.notes) {
+        for (const pitch of note.pitch) {
+          const step = pitch.step[0];
+          const octave = pitch.octave[0];
+          const temp = step + octave;
+          noteArray.push(temp);
+        }
+      }
+    }
+    console.log(noteArray);
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
