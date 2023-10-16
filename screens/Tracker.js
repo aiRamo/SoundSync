@@ -30,6 +30,9 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [noteArray, setNoteArray] = useState([]);
   const [currentNoteEvaluated, setCurrentNoteEvaluated] = useState("");
   const [audioNote, setAudioNote] = useState("");
+  const [isMatch, setIsMatch] = useState(false);
+  const currentNoteRef = useRef(null);
+  const audioNoteRef = useRef(null);
 
   const arrayData = [
     "A4",
@@ -113,6 +116,7 @@ export default function Tracker({ navigation, collectionName, route }) {
         //TODO: You are conditionally compiling the two texts at 239
         if (currentNote === nextNoteInData) {
           console.log("MATCH FOUND");
+          setIsMatch(true);
           // Increment currIndex using the ref
           currIndexRef++;
           setCurrIndex(currIndexRef);
@@ -144,6 +148,34 @@ export default function Tracker({ navigation, collectionName, route }) {
       setAudioNote("");
     }
   }, [highlightNotes]);
+
+  useEffect(() => {
+    if (isMatch) {
+      const originalColor = { color: "black" };
+      const green = { color: "green" };
+
+      if (currentNoteRef.current) {
+        currentNoteRef.current.setNativeProps({ style: { color: green } });
+      }
+      if (audioNoteRef.current) {
+        audioNoteRef.current.setNativeProps({ style: { color: green } });
+      }
+
+      setTimeout(() => {
+        if (currentNoteRef.current) {
+          currentNoteRef.current.setNativeProps({
+            style: { color: originalColor },
+          });
+        }
+        if (audioNoteRef.current) {
+          audioNoteRef.current.setNativeProps({
+            style: { color: originalColor },
+          });
+        }
+        setIsMatch(false);
+      }, 2000);
+    }
+  }, [isMatch]);
 
   useEffect(() => {
     if (collectionName1 !== "") {
@@ -201,8 +233,7 @@ export default function Tracker({ navigation, collectionName, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
-      <Header style navigation={navigation} />
-
+      <Header style navigation={navigation} />{" "}
       <View
         style={{
           alignItems: "center",
@@ -214,6 +245,7 @@ export default function Tracker({ navigation, collectionName, route }) {
           width: ViewWidth,
         }}
       >
+        {" "}
         {isDefaultImage ? (
           <Image
             source={require("../assets/addScan.png")}
@@ -229,14 +261,14 @@ export default function Tracker({ navigation, collectionName, route }) {
             }}
           />
         )}
-
         {highlightNotes && coordinateData && (
           <NoteHighlighter
             notePositions={JSON.parse(coordinateData)}
             currIndex={currIndex}
           />
-        )}
+        )}{" "}
         <Text
+          ref={currentNoteRef}
           style={{
             position: "absolute",
             top: "45%",
@@ -244,9 +276,11 @@ export default function Tracker({ navigation, collectionName, route }) {
             fontSize: 56,
           }}
         >
-          {currentNoteEvaluated}
-        </Text>
+          {" "}
+          {currentNoteEvaluated}{" "}
+        </Text>{" "}
         <Text
+          ref={audioNoteRef}
           style={{
             position: "absolute",
             top: "45%",
@@ -254,10 +288,10 @@ export default function Tracker({ navigation, collectionName, route }) {
             fontSize: 55,
           }}
         >
-          {audioNote}
-        </Text>
+          {" "}
+          {audioNote}{" "}
+        </Text>{" "}
       </View>
-
       <TouchableOpacity
         style={{
           borderRadius: 5,
@@ -270,8 +304,8 @@ export default function Tracker({ navigation, collectionName, route }) {
         }}
         onPress={handlePress}
       >
-        <Text style={{ color: "white" }}>Highlight Notes</Text>
-      </TouchableOpacity>
+        <Text style={{ color: "white" }}> Highlight Notes </Text>{" "}
+      </TouchableOpacity>{" "}
     </View>
   );
 }
