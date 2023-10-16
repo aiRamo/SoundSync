@@ -13,25 +13,39 @@ import { useImage } from "@shopify/react-native-skia";
 import * as ImagePicker from "expo-image-picker";
 
 import useWebSocket from "../useWebSocket";
+
+// fetchImagesFromCollection.js returns a list of the given images in a certain collection's directory.
+// This is done by passing in the UID and collectionName from Scan.js
 import fetchImagesFromCollection from "../fetchImagesFromCollection";
+
+// callAPIAndFormatNotesJSON.js handles the client-server communication between the app and the API.
+// The API response data is returned back to this page and bundled together to be sent to scannerModalContent.js
+// the 'image' state is used to provide the input photo to the API via Firebase. 'pngURL' is the actual photo created afterwards.
 import { callAPIandFormatNotesJSON } from "../callAPIAndFormatNotesJSON";
+
+// scannerModalContent.js is responsible for displaying all data to the user.
+// This includes noteCoordinateData (JSON) and pngURL (firebase address of output image).
+// This is where all post-API functionality occurs, such as the creation and upload of the noteHighlighter data.
 import ScannerModalContent from "./scannerModalContent";
+
+// checkCurrentUser validates that user is logged in and returns the user's UID.
 import { checkCurrentUser } from "../firebaseUtils";
 
 import styles from "../styleSheetScan";
 
 const SheetScanPrompt = ({ collectionName, imgUrl }) => {
-  const [image, setImage] = useState(require("../../assets/addScan.png"));
+  //Boolean states - These 4 are used to control conditional rendering in the ScannerModal
   const [loading, setLoading] = useState(false);
   const [doneLoading, setDoneLoading] = useState(false);
-  const [pngURL, setpngURL] = useState(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [trackerBoxesVisible, setTrackerBoxesVisible] = useState(false);
+
+  const [image, setImage] = useState(require("../../assets/addScan.png"));
+  const [pngURL, setpngURL] = useState(null);
   const [noteCoordinateData, setNoteCoordinateData] = useState(false);
   const [serverMessage, setServerMessage] = useState("Scanning Image");
   const [loadingPhase, setLoadingPhase] = useState("");
   const [UID, setUID] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
 
   const loadingImage = useImage(require("../../assets/SoundSyncIcon.png"));
 

@@ -2,10 +2,12 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
-  uploadString,
+  listAll,
 } from "firebase/storage";
 import { onAuthStateChanged } from "firebase/auth";
-import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig"; // make sure the path is correct
+import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
+
+// make sure the path is correct
 
 export const checkCurrentUser = async () => {
   return new Promise((resolve, reject) => {
@@ -24,23 +26,24 @@ export const checkCurrentUser = async () => {
   });
 };
 
-export const sendNoteCoordinatesToSheetCollection = async (
-  notePositionsJSON,
-  collectionName
+export const sendJSONToSheetCollection = async (
+  JSONObject,
+  collectionName,
+  fileName
 ) => {
   try {
     // Get the current user's UID
     const UID = await checkCurrentUser();
 
     // Create a Blob from the JSON string
-    const blob = new Blob([JSON.stringify(notePositionsJSON)], {
+    const blob = new Blob([JSON.stringify(JSONObject)], {
       type: "application/json",
     });
 
     // Create a storage reference
     const storageRef = ref(
       STORAGE,
-      `images/${UID}/sheetCollections/${collectionName}/notePositions.json`
+      `images/${UID}/sheetCollections/${collectionName}/${fileName}`
     );
 
     // Upload the Blob to Firebase Storage
@@ -82,3 +85,79 @@ export async function getFirebaseDownloadURL(firebasePath) {
   const downloadURL = await getDownloadURL(ref(STORAGE, firebasePath));
   return downloadURL;
 }
+
+// Invoked by Tracker
+// Retrieves the image and JSON files form Firebase Storage and returns them in 2 separate arrays
+
+export const downloadAllItemsInCollection = async (collectionName) => {
+  try {
+    console.log("Starting downloadAllItemsInCollection function...");
+    const UID = await checkCurrentUser();
+    console.log("UID:", UID);
+
+    const storageRef = ref(
+      STORAGE,
+      `images/${UID}/sheetCollections/${collectionName}`
+    );
+    //console.log("Storage Reference:", storageRef);
+
+    // Fetch all the items (files) in the folder
+    const res = await listAll(storageRef);
+    //console.log("List All Response:", res);
+
+    const downloadPromises = res.items.map(async (itemRef) => {
+      const downloadURL = await getDownloadURL(itemRef);
+      return downloadURL;
+    });
+
+    const downloadURLs = await Promise.all(downloadPromises);
+    console.log("All Download URLs:", downloadURLs);
+
+    //console.log("Download URLs:", downloadURLs);
+
+    // Separate image URLs and JSON URLs
+    const imageUrls = downloadURLs.filter((url) => !url.includes(".json"));
+    const jsonUrls = downloadURLs.filter((url) => url.includes(".json"));
+    //console.log("Image URLs:", imageUrls);
+    //console.log("JSON URLs:", jsonUrls);
+
+    // Sort JSON URLs based on file names
+    const sortedJsonUrls = jsonUrls.sort((a, b) => {
+      if (
+        a.includes("notePositions.json") &&
+        !b.includes("notePositions.json")
+      ) {
+        return -1;
+      }
+      if (
+        !a.includes("notePositions.json") &&
+        b.includes("notePositions.json")
+      ) {
+        return 1;
+      }
+      return 0;
+    });
+
+    // Fetch JSON data from URLs
+    const fetchJSONPromises = sortedJsonUrls.map(async (url) => {
+      const response = await fetch(url);
+      const data = await response.json();
+      return data;
+    });
+
+    const jsonData = await Promise.all(fetchJSONPromises);
+    //console.log("JSON Data:", jsonData);
+
+    // Return only the first image URL for testing
+    const firstImageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
+    console.log("Image URL:", firstImageUrl);
+
+    return {
+      firstImageUrl,
+      jsonData,
+    };
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+};

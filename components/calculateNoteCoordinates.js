@@ -1,7 +1,10 @@
+// NoteHighlighter takes the parsed and rebuilt JSON object and renders a list of each note's location via a visual highlight on the screen.
 import NoteHighlighter from "./UI/noteHighligher";
-import { sendNoteCoordinatesToSheetCollection } from "./firebaseUtils";
 
-// Function to render note boxes and calculate their positions
+// Sends the rebuilt notePositionsJSON to the firebase storage location by the relevant collectionName
+import { sendJSONToSheetCollection } from "./firebaseUtils";
+
+// Calculates each note's position on the page using a percentage-based approach (EX. 40% from the left of the page, 20% from the top.)
 const calculateNoteCoordinates = (
   noteCoordinates,
   collectionName,
@@ -81,9 +84,15 @@ const calculateNoteCoordinates = (
 
   const notePositionsJSON = JSON.stringify(notePositions);
 
-  sendNoteCoordinatesToSheetCollection(notePositionsJSON, collectionName);
+  sendJSONToSheetCollection(
+    notePositionsJSON,
+    collectionName,
+    "notePositions.json"
+  );
 
-  return <NoteHighlighter notePositions={notePositions} />;
+  const parsedNotePositions = JSON.parse(notePositionsJSON);
+
+  return <NoteHighlighter notePositions={parsedNotePositions} currIndex={6} />;
 };
 
 export default calculateNoteCoordinates;

@@ -1,5 +1,9 @@
 import { compileNoteData } from "./compileNoteData";
-import { uploadImage, getFirebaseDownloadURL } from "./firebaseUtils";
+import {
+  uploadImage,
+  getFirebaseDownloadURL,
+  sendJSONToSheetCollection,
+} from "./firebaseUtils";
 import API_URL from "../API_URL.json";
 
 export const callAPIandFormatNotesJSON = async (
@@ -33,12 +37,24 @@ export const callAPIandFormatNotesJSON = async (
 
       setters.setNoteCoordinateData(notesJson.coordinateData);
 
-      const tableData = compileNoteData(notesJson);
+      //const tableData = compileNoteData(notesJson);
+
+      sendJSONToSheetCollection(
+        notesJson.notes,
+        collectionName,
+        "noteData.json"
+      );
 
       // Assume the firebasePath is returned in the JSON response from your API
       const firebasePath = notesJson.firebasePath; // notesJson.frebasePath represents the firebase file path that holds the preview png.
 
       const downloadURL = await getFirebaseDownloadURL(firebasePath);
+      console.log(downloadURL);
+
+      // console.log(
+      //   "here coordinate data: " + JSON.stringify(notesJson.coordinateData)
+      // );
+
       setters.setpngURL(downloadURL);
     } else {
       console.log("API call failed:", response.statusText);
