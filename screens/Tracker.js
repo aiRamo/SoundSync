@@ -108,7 +108,9 @@ export default function Tracker({ navigation, collectionName, route }) {
         const currentNote = arrayData[count];
         const nextNoteInData = noteArray[currIndexRef]; // Access the ref
 
-        // Check if the currentNote matches the nextNoteInData
+        //TODO: Make a state that controls a conditional compile that toggles the Font for both of the texts to be green.
+        //TODO: Pause the program for 2 seconds, then turn OFF the conditional compile state so the texts go back to black.
+        //TODO: You are conditionally compiling the two texts at 239
         if (currentNote === nextNoteInData) {
           console.log("MATCH FOUND");
           // Increment currIndex using the ref
@@ -118,6 +120,8 @@ export default function Tracker({ navigation, collectionName, route }) {
       }
 
       count++;
+
+      //
 
       if (count < arrayData.length) {
         timer = setTimeout(evaluateNote, 100);
@@ -232,7 +236,6 @@ export default function Tracker({ navigation, collectionName, route }) {
             currIndex={currIndex}
           />
         )}
-
         <Text
           style={{
             position: "absolute",
