@@ -90,7 +90,9 @@ const calculateNoteCoordinates = (
     "notePositions.json"
   );
 
-  return <NoteHighlighter notePositions={notePositions} />;
+  const parsedNotePositions = JSON.parse(notePositionsJSON);
+
+  return <NoteHighlighter notePositions={parsedNotePositions} currIndex={6} />;
 };
 
 export default calculateNoteCoordinates;

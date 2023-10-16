@@ -4,13 +4,20 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  StyleSheet,
+  Dimensions,
   Alert,
 } from "react-native";
 import Header from "../components/UI/header";
 import React, { useState, useEffect } from "react";
 
+import NoteHighlighter from "../components/UI/noteHighligher";
+
 import { downloadAllItemsInCollection } from "../components/firebaseUtils";
+
+const { width, height } = Dimensions.get("window");
+const A4_RATIO = 1.4;
+const ViewWidth = width * 0.7; // 90% of device width
+const ViewHeight = ViewWidth * A4_RATIO;
 
 export default function Tracker({ navigation, collectionName, route }) {
   const [isDefaultImage, setIsDefaultImage] = useState(true);
@@ -18,22 +25,31 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [collectionName1, setCollectionName] = useState(""); // Used with the context, will replace with navigation prop in the future
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
-  const arrayData = ["A4", "B4", "D4", "B2", "B3", "A2"];
+  const [highlightNotes, setHighlightNotes] = useState(false);
+  const [currIndex, setCurrIndex] = useState(-1);
+  const arrayData = ["A4", "B4", "D4", "B2", "B3", "A2", "B3"];
   let noteArray = [];
   let timer;
   let count = 0;
 
   log = () => {
     console.log(arrayData[count]);
-    Alert.alert("Note:", arrayData[count]);
-    if (count == arrayData.length - 1) {
+    //Alert.alert("Note:", arrayData[count]);
+
+    const currIndex = count;
+
+    setCurrIndex(currIndex);
+
+    if (count == arrayData.length) {
       window.clearInterval(timer);
       count = 0;
+      setHighlightNotes(false);
     }
     count++;
   };
 
   handlePress = () => {
+    setHighlightNotes(true);
     timer = window.setInterval(log, 1000);
     // Add any additional code you want to run when the TouchableOpacity is pressed here.
   };
@@ -97,11 +113,11 @@ export default function Tracker({ navigation, collectionName, route }) {
         style={{
           alignItems: "center",
           backgroundColor: "white",
-          marginLeft: 50,
-          marginRight: 50,
-          marginTop: 50,
-          borderRadius: 20,
-          flex: 0.9,
+          alignSelf: "center",
+          marginTop: 25,
+          borderRadius: 0,
+          height: ViewHeight,
+          width: ViewWidth,
         }}
       >
         {isDefaultImage ? (
@@ -112,7 +128,18 @@ export default function Tracker({ navigation, collectionName, route }) {
         ) : (
           <Image
             source={{ uri: image }}
-            style={{ resizeMode: "contain", height: "100%", width: "100%" }}
+            style={{
+              resizeMode: "contain",
+              height: ViewHeight,
+              width: ViewWidth,
+            }}
+          />
+        )}
+
+        {highlightNotes && coordinateData && (
+          <NoteHighlighter
+            notePositions={JSON.parse(coordinateData)}
+            currIndex={currIndex}
           />
         )}
       </View>
