@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import Header from "../components/UI/header";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import NoteHighlighter from "../components/UI/noteHighligher";
 
@@ -22,37 +22,124 @@ const ViewHeight = ViewWidth * A4_RATIO;
 export default function Tracker({ navigation, collectionName, route }) {
   const [isDefaultImage, setIsDefaultImage] = useState(true);
   const [image, setImage] = useState(require("../assets/addScan.png"));
-  const [collectionName1, setCollectionName] = useState(""); // Used with the context, will replace with navigation prop in the future
+  const [collectionName1, setCollectionName] = useState("");
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
   const [highlightNotes, setHighlightNotes] = useState(false);
-  const [currIndex, setCurrIndex] = useState(-1);
-  const arrayData = ["A4", "B4", "D4", "B2", "B3", "A2", "B3"];
-  let noteArray = [];
+  const [currIndex, setCurrIndex] = useState(0);
+  const [noteArray, setNoteArray] = useState([]);
+  const [currentNoteEvaluated, setCurrentNoteEvaluated] = useState("");
+  const [audioNote, setAudioNote] = useState("");
+
+  const arrayData = [
+    "A4",
+    "A#4",
+    "A4",
+    "B4",
+    "B#4",
+    "C4",
+    "C4",
+    "C#4",
+    "E4",
+    "C4",
+    "D4",
+    "D4",
+    "B4",
+    "B#4",
+    "B4",
+    "C4",
+    "C4",
+    "C#4",
+    "E4",
+    "C4",
+    "G4",
+    "C4",
+    "C#4",
+    "E4",
+    "C4",
+    "G4",
+    "G#4",
+    "A#4",
+    "A4",
+    "B4",
+    "A4",
+    "A#4",
+    "A#4",
+    "A4",
+    "B4",
+    "A4",
+    "C4",
+    "C4",
+    "C#4",
+    "E4",
+    "G4",
+    "A#4",
+    "A#4",
+    "A#4",
+    "A#4",
+  ];
+
   let timer;
   let count = 0;
 
-  log = () => {
-    console.log(arrayData[count]);
-    //Alert.alert("Note:", arrayData[count]);
+  let currIndexRef = 0; // Create a ref for currIndex
 
-    const currIndex = count;
+  const evaluateNote = () => {
+    if (count < arrayData.length) {
+      console.log(
+        "Audio Note: " +
+          arrayData[count] +
+          " | Current Note Evaluated: " +
+          noteArray[currIndexRef] + // Access the ref
+          " | Count: " +
+          count
+      );
 
-    setCurrIndex(currIndex);
+      if (currentNoteEvaluated !== noteArray[currIndexRef]) {
+        setCurrentNoteEvaluated(noteArray[currIndexRef]);
+      }
 
-    if (count == arrayData.length) {
-      window.clearInterval(timer);
-      count = 0;
-      setHighlightNotes(false);
+      if (audioNote !== arrayData[count]) {
+        setAudioNote(arrayData[count]);
+      }
+
+      // Check if both noteArray and coordinateData are not empty
+      if (noteArray.length > 0 && coordinateData) {
+        const currentNote = arrayData[count];
+        const nextNoteInData = noteArray[currIndexRef]; // Access the ref
+
+        // Check if the currentNote matches the nextNoteInData
+        if (currentNote === nextNoteInData) {
+          console.log("MATCH FOUND");
+          // Increment currIndex using the ref
+          currIndexRef++;
+          setCurrIndex(currIndexRef);
+        }
+      }
+
+      count++;
+
+      if (count < arrayData.length) {
+        timer = setTimeout(evaluateNote, 100);
+      } else {
+        // All notes have been evaluated
+        setHighlightNotes(false);
+      }
     }
-    count++;
   };
 
-  handlePress = () => {
+  const handlePress = () => {
     setHighlightNotes(true);
-    timer = window.setInterval(log, 1000);
-    // Add any additional code you want to run when the TouchableOpacity is pressed here.
+    count = 0; // Reset count to 0
+    evaluateNote(); // Start the evaluation
   };
+
+  useEffect(() => {
+    if (highlightNotes === false) {
+      setCurrIndex(0); // Reset currIndex to 0 when highlightNotes becomes false
+      setAudioNote("");
+    }
+  }, [highlightNotes]);
 
   useEffect(() => {
     if (collectionName1 !== "") {
@@ -73,7 +160,8 @@ export default function Tracker({ navigation, collectionName, route }) {
             setNoteData(jsonData[1]); // Assuming the second JSON object is noteData
             console.log("Coordinate Data:", jsonData[0]);
             console.log("Note Data:", JSON.stringify(jsonData[1]));
-            retrieve(jsonData[1]);
+            const retrievedNoteArray = await retrieve(jsonData[1]); // Get the noteArray
+            setNoteArray(retrievedNoteArray); // Set the noteArray in state
           }
         }
       };
@@ -91,7 +179,8 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [route.params]);
 
-  function retrieve(array) {
+  async function retrieve(array) {
+    let noteArray = [];
     for (const part of array) {
       for (const note of part.notes) {
         for (const pitch of note.pitch) {
@@ -102,7 +191,8 @@ export default function Tracker({ navigation, collectionName, route }) {
         }
       }
     }
-    console.log(noteArray);
+    console.log(noteArray[2]);
+    return noteArray; // Return the noteArray
   }
 
   return (
@@ -142,6 +232,27 @@ export default function Tracker({ navigation, collectionName, route }) {
             currIndex={currIndex}
           />
         )}
+
+        <Text
+          style={{
+            position: "absolute",
+            top: "45%",
+            left: "30%",
+            fontSize: 56,
+          }}
+        >
+          {currentNoteEvaluated}
+        </Text>
+        <Text
+          style={{
+            position: "absolute",
+            top: "45%",
+            left: "55%",
+            fontSize: 56,
+          }}
+        >
+          {audioNote}
+        </Text>
       </View>
 
       <TouchableOpacity
@@ -154,7 +265,7 @@ export default function Tracker({ navigation, collectionName, route }) {
           marginTop: 10,
           alignItems: "center",
         }}
-        onPress={this.handlePress}
+        onPress={handlePress}
       >
         <Text style={{ color: "white" }}>Highlight Notes</Text>
       </TouchableOpacity>
