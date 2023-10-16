@@ -248,7 +248,7 @@ export default function Tracker({ navigation, collectionName, route }) {
             position: "absolute",
             top: "45%",
             left: "55%",
-            fontSize: 56,
+            fontSize: 55,
           }}
         >
           {audioNote}
