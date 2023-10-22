@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     width: "100%",
     height: "100%",
-    alignSelf: "center",
+    alignSelf: "flex-start",
   },
   serverMessage: {
     fontSize: 35,
@@ -81,6 +81,35 @@ const styles = StyleSheet.create({
     marginTop: height * 0.02,
     marginBottom: height * 0,
     width: width * 0.8,
+  },
+  imageCounterBar: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: height * 0.075,
+    left: 0,
+    right: 0,
+  },
+  caretIconLeft: {
+    width: 30,
+    height: 30,
+    position: "absolute",
+    left: width * 0.15,
+  },
+
+  caretIconRight: {
+    width: 30,
+    height: 30,
+    position: "absolute",
+    right: width * 0.15,
+  },
+
+  imageCounterText: {
+    fontSize: 22,
+    fontWeight: "400",
+    color: "rgba(0,0,0,1)",
+    textAlign: "center",
   },
   nameInput: {
     flex: 1,

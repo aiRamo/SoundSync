@@ -62,7 +62,5 @@ export const callAPIandFormatNotesJSON = async (
   } catch (error) {
     console.error("Error calling API:", error);
   } finally {
-    setters.setLoading(false); // Hide loading circle
-    setters.setDoneLoading(true);
   }
 };

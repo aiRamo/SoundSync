@@ -128,7 +128,7 @@ export default function Tracker({ navigation, collectionName, route }) {
       //
 
       if (count < arrayData.length) {
-        timer = setTimeout(evaluateNote, 100);
+        timer = setTimeout(evaluateNote, 1000);
       } else {
         // All notes have been evaluated
         setHighlightNotes(false);
@@ -146,34 +146,32 @@ export default function Tracker({ navigation, collectionName, route }) {
     if (highlightNotes === false) {
       setCurrIndex(0); // Reset currIndex to 0 when highlightNotes becomes false
       setAudioNote("");
+      setCurrentNoteEvaluated("");
     }
   }, [highlightNotes]);
 
   useEffect(() => {
     if (isMatch) {
-      const originalColor = { color: "black" };
-      const green = { color: "green" };
-
       if (currentNoteRef.current) {
-        currentNoteRef.current.setNativeProps({ style: { color: green } });
+        currentNoteRef.current.setNativeProps({ style: { color: "red" } });
       }
       if (audioNoteRef.current) {
-        audioNoteRef.current.setNativeProps({ style: { color: green } });
+        audioNoteRef.current.setNativeProps({ style: { color: "red" } });
       }
 
       setTimeout(() => {
         if (currentNoteRef.current) {
           currentNoteRef.current.setNativeProps({
-            style: { color: originalColor },
+            style: { color: "black" },
           });
         }
         if (audioNoteRef.current) {
           audioNoteRef.current.setNativeProps({
-            style: { color: originalColor },
+            style: { color: "black" },
           });
         }
         setIsMatch(false);
-      }, 2000);
+      }, 1000);
     }
   }, [isMatch]);
 
@@ -233,7 +231,7 @@ export default function Tracker({ navigation, collectionName, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
-      <Header style navigation={navigation} />{" "}
+      <Header style navigation={navigation} />
       <View
         style={{
           alignItems: "center",
@@ -245,7 +243,6 @@ export default function Tracker({ navigation, collectionName, route }) {
           width: ViewWidth,
         }}
       >
-        {" "}
         {isDefaultImage ? (
           <Image
             source={require("../assets/addScan.png")}
@@ -266,7 +263,7 @@ export default function Tracker({ navigation, collectionName, route }) {
             notePositions={JSON.parse(coordinateData)}
             currIndex={currIndex}
           />
-        )}{" "}
+        )}
         <Text
           ref={currentNoteRef}
           style={{
@@ -276,9 +273,8 @@ export default function Tracker({ navigation, collectionName, route }) {
             fontSize: 56,
           }}
         >
-          {" "}
-          {currentNoteEvaluated}{" "}
-        </Text>{" "}
+          {currentNoteEvaluated}
+        </Text>
         <Text
           ref={audioNoteRef}
           style={{
@@ -288,9 +284,8 @@ export default function Tracker({ navigation, collectionName, route }) {
             fontSize: 55,
           }}
         >
-          {" "}
-          {audioNote}{" "}
-        </Text>{" "}
+          {audioNote}
+        </Text>
       </View>
       <TouchableOpacity
         style={{
@@ -304,8 +299,8 @@ export default function Tracker({ navigation, collectionName, route }) {
         }}
         onPress={handlePress}
       >
-        <Text style={{ color: "white" }}> Highlight Notes </Text>{" "}
-      </TouchableOpacity>{" "}
+        <Text style={{ color: "white" }}> Highlight Notes </Text>
+      </TouchableOpacity>
     </View>
   );
 }

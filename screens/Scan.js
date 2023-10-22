@@ -9,7 +9,7 @@ import CollectionNamePrompt from "../components/UI/collectionNamePrompter";
 // sheetScanPrompter.js hosts functionality towards selecting a photo and communicating with the Audiveris API
 // SheetScanPrompt is the modal component that appears after picking a collectionName
 // this hosts all functionality for the scanner system besides the collectionName prompter.
-import SheetScanPrompt from "../components/UI/sheetScanPrompter";
+import SheetScanPrompt from "../components/sheetScanPrompter";
 
 import Header from "../components/UI/header";
 import FadeTransition from "../components/UI/fadeTransition";
