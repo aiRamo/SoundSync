@@ -178,8 +178,10 @@ export default function Tracker({ navigation, collectionName, route }) {
   useEffect(() => {
     if (collectionName1 !== "") {
       console.log(`fetching data... collectionName = ${collectionName1}`);
+
       const fetchData = async () => {
         const result = await downloadAllItemsInCollection(collectionName1);
+
         if (result) {
           // Check if result is not null
           const { firstImageUrl, jsonData } = result;
