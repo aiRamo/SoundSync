@@ -234,75 +234,79 @@ export default function Tracker({ navigation, collectionName, route }) {
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
       <Header style navigation={navigation} />
-      <View
-        style={{
-          alignItems: "center",
-          backgroundColor: "white",
-          alignSelf: "center",
-          marginTop: 25,
-          borderRadius: 0,
-          height: ViewHeight,
-          width: ViewWidth,
-        }}
-      >
-        {isDefaultImage ? (
-          <Image
-            source={require("../assets/addScan.png")}
-            style={{ resizeMode: "contain" }}
-          />
-        ) : (
-          <Image
-            source={{ uri: image }}
+
+      <ScrollView>
+        <View
+          style={{
+            alignItems: "center",
+            backgroundColor: "white",
+            alignSelf: "center",
+            marginTop: 25,
+            borderRadius: 0,
+            height: ViewHeight,
+            width: ViewWidth,
+          }}
+        >
+          {isDefaultImage ? (
+            <Image
+              source={require("../assets/addScan.png")}
+              style={{ resizeMode: "contain" }}
+            />
+          ) : (
+            <Image
+              source={{ uri: image }}
+              style={{
+                resizeMode: "contain",
+                height: ViewHeight,
+                width: ViewWidth,
+              }}
+            />
+          )}
+
+          {highlightNotes && coordinateData && (
+            <NoteHighlighter
+              notePositions={JSON.parse(coordinateData)}
+              currIndex={currIndex}
+            />
+          )}
+          <Text
+            ref={currentNoteRef}
             style={{
-              resizeMode: "contain",
-              height: ViewHeight,
-              width: ViewWidth,
+              position: "absolute",
+              top: "45%",
+              left: "30%",
+              fontSize: 56,
             }}
-          />
-        )}
-        {highlightNotes && coordinateData && (
-          <NoteHighlighter
-            notePositions={JSON.parse(coordinateData)}
-            currIndex={currIndex}
-          />
-        )}
-        <Text
-          ref={currentNoteRef}
-          style={{
-            position: "absolute",
-            top: "45%",
-            left: "30%",
-            fontSize: 56,
-          }}
-        >
-          {currentNoteEvaluated}
-        </Text>
-        <Text
-          ref={audioNoteRef}
-          style={{
-            position: "absolute",
-            top: "45%",
-            left: "55%",
-            fontSize: 55,
-          }}
-        >
-          {audioNote}
-        </Text>
-      </View>
-      <TouchableOpacity
-        style={{
-          borderRadius: 5,
-          backgroundColor: "darkslateblue",
-          padding: 10,
-          marginLeft: 50,
-          marginRight: 50,
-          marginTop: 10,
-          alignItems: "center",
-        }}
-        onPress={handlePress}
-      >
-        <Text style={{ color: "white" }}> Highlight Notes </Text>
-      </TouchableOpacity>
+          >
+            {currentNoteEvaluated}
+          </Text>
+          <Text
+            ref={audioNoteRef}
+            style={{
+              position: "absolute",
+              top: "45%",
+              left: "55%",
+              fontSize: 55,
+            }}
+          >
+            {audioNote}
+          </Text>
+          <TouchableOpacity
+            style={{
+              borderRadius: 5,
+              backgroundColor: "darkslateblue",
+              padding: 10,
+              marginLeft: 50,
+              marginRight: 50,
+              marginTop: 10,
+              alignItems: "center",
+            }}
+            onPress={handlePress}
+          >
+            <Text style={{ color: "white" }}> Highlight Notes </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }

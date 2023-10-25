@@ -144,6 +144,7 @@ export const downloadAllItemsInCollection = async (collectionName) => {
         const response = await fetch(url, {
           mode: "no-cors",
         });
+        console.log("here the url " + url);
         const data = await response.json();
         console.log("data" + data);
         return data;
