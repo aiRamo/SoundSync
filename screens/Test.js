@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { ScrollView, View, Image } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { ScrollView, View, Image, TouchableOpacity, Text } from "react-native";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { STORAGE } from "../firebaseConfig";
 import { AUTH } from "../firebaseConfig";
 
-export default function Test({ navigation, route }) {
+export default function Test({ route }) {
   const [user, setUser] = useState(null);
   const [collection, setCollection] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
+  const [count, setCount] = useState(0);
+  const scrollViewRef = useRef(null);
 
   useEffect(() => {
     if (route.params != null) {
@@ -17,7 +19,6 @@ export default function Test({ navigation, route }) {
   }, [route.params]);
 
   useEffect(() => {
-    // Check for user authentication status on component mount
     const unsubscribe = AUTH.onAuthStateChanged((authUser) => {
       if (authUser) {
         // User is signed in
@@ -40,10 +41,10 @@ export default function Test({ navigation, route }) {
         const urls = await Promise.all(
           listResult.items.map(async (itemRef) => {
             try {
-              // Check the file extension to determine if it's an image
               const fileName = itemRef.name.toLowerCase();
 
               if (!fileName.endsWith(".json")) {
+                setCount((prevCount) => prevCount + 1);
                 const url = await getDownloadURL(itemRef);
                 return url;
               }
@@ -64,9 +65,46 @@ export default function Test({ navigation, route }) {
     }
   }, [user, collection]);
 
+  const startAutoScroll = () => {
+    const scrollDuration = 2000;
+    const scrollDistance = 500;
+    let index = 0;
+
+    console.log(count);
+    let scrollPosition = 0;
+    const scrollView = scrollViewRef.current;
+
+    const contentHeight = imageUrls.length * 500;
+
+    const scrollInterval = setInterval(() => {
+      if (index < count) {
+        scrollView.scrollTo({ y: scrollPosition, animated: true });
+        scrollPosition += scrollDistance;
+        index++;
+      } else {
+        clearInterval(scrollInterval);
+      }
+    }, scrollDuration);
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView>
+      <TouchableOpacity
+        style={{
+          borderRadius: 5,
+          backgroundColor: "darkslateblue",
+          padding: 10,
+          marginBottom: 10,
+          marginLeft: 50,
+          marginRight: 50,
+          marginTop: 10,
+          alignItems: "center",
+        }}
+        onPress={startAutoScroll}
+      >
+        <Text style={{ color: "white" }}> Start Scrolling </Text>
+      </TouchableOpacity>
+      <ScrollView ref={scrollViewRef}>
         <View
           style={{
             flexDirection: "column",
