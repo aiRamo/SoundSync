@@ -233,8 +233,22 @@ export default function Tracker({ navigation, collectionName, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
-      <Header style navigation={navigation} />
-
+      <Header navigation={navigation} />
+      <TouchableOpacity
+        style={{
+          borderRadius: 5,
+          backgroundColor: "darkslateblue",
+          padding: 10,
+          marginLeft: 212,
+          marginRight: 232,
+          marginTop: 10,
+          marginBottom: 10,
+          alignItems: "center",
+        }}
+        onPress={handlePress}
+      >
+        <Text style={{ color: "white" }}> Highlight Notes </Text>
+      </TouchableOpacity>
       <ScrollView>
         <View
           style={{
@@ -291,20 +305,6 @@ export default function Tracker({ navigation, collectionName, route }) {
           >
             {audioNote}
           </Text>
-          <TouchableOpacity
-            style={{
-              borderRadius: 5,
-              backgroundColor: "darkslateblue",
-              padding: 10,
-              marginLeft: 50,
-              marginRight: 50,
-              marginTop: 10,
-              alignItems: "center",
-            }}
-            onPress={handlePress}
-          >
-            <Text style={{ color: "white" }}> Highlight Notes </Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

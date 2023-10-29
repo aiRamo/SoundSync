@@ -33,20 +33,18 @@ const Header = ({ navigation }) => {
     <View
       style={{
         backgroundColor: "darkslateblue",
-        height: "8%",
       }}
     >
       <View
         style={{
           marginTop: StatusBar.currentHeight,
-          flexDirection: "row",
           justifyContent: "flex-end",
+          alignItems: "flex-end",
+          marginTop: 5,
+          marginBottom: 5,
         }}
       >
-        <TouchableOpacity
-          style={{ marginBottom: 10, top: "1.6%", right: "1%" }}
-          onPress={toggleDropdown}
-        >
+        <TouchableOpacity onPress={toggleDropdown}>
           <Entypo name="dots-three-vertical" size={24} color="white" />
         </TouchableOpacity>
         <Drop

@@ -8,7 +8,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { FIREBASE, STORAGE, DB, AUTH } from "../firebaseConfig";
 
 // make sure the path is correct
-
 export const checkCurrentUser = async () => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(AUTH, (user) => {
@@ -141,12 +140,19 @@ export const downloadAllItemsInCollection = async (collectionName) => {
     // Fetch JSON data from URLs
     const fetchJSONPromises = sortedJsonUrls.map(async (url) => {
       try {
+        console.log("here the url " + url);
         const response = await fetch(url, {
+          // headers: {
+          // "Access-Control-Allow-Origin": "*",
+          //},
+          // mode: "cors",
           mode: "no-cors",
         });
-        console.log("here the url " + url);
+        if (!response.ok) {
+          throw new Error(`Fetch failed with status: ${response.status}`);
+        }
         const data = await response.json();
-        console.log("data" + data);
+        console.log("DATA DING DING" + data);
         return data;
       } catch (error) {
         console.error("An error occurred while fetching JSON data:", error);

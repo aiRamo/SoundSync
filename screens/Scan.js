@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ScrollView } from "react-native";
 import { View } from "react-native";
 import styles from "../components/styleSheetScan";
 
@@ -35,26 +36,28 @@ export default function Scan({ navigation }) {
   return (
     <View style={{ flex: 1 }}>
       <Header navigation={navigation} />
-      <View style={styles.container}>
-        <FadeTransition
-          phase={scannerPhase}
-          key={scannerPhase}
-          setPhase={setScannerPhase}
-        >
-          {(scannerPhase === 0 || scannerPhase === 1) && (
-            <CollectionNamePrompt
-              collectionName={collectionName}
-              onChangeCollectionName={onChangeCollectionName}
-              confirmNameButton={confirmNameButton}
-              setScannerPhase={setScannerPhase}
-              scannerPhase={scannerPhase}
-            />
-          )}
-          {(scannerPhase === 2 || scannerPhase === 3) && (
-            <SheetScanPrompt collectionName={collectionName} />
-          )}
-        </FadeTransition>
-      </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <FadeTransition
+            phase={scannerPhase}
+            key={scannerPhase}
+            setPhase={setScannerPhase}
+          >
+            {(scannerPhase === 0 || scannerPhase === 1) && (
+              <CollectionNamePrompt
+                collectionName={collectionName}
+                onChangeCollectionName={onChangeCollectionName}
+                confirmNameButton={confirmNameButton}
+                setScannerPhase={setScannerPhase}
+                scannerPhase={scannerPhase}
+              />
+            )}
+            {(scannerPhase === 2 || scannerPhase === 3) && (
+              <SheetScanPrompt collectionName={collectionName} />
+            )}
+          </FadeTransition>
+        </View>
+      </ScrollView>
     </View>
   );
 }

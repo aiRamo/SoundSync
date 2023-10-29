@@ -13,13 +13,13 @@ import { STORAGE } from "../firebaseConfig";
 import Card2 from "../components/Card2";
 import { Entypo, AntDesign } from "@expo/vector-icons";
 import Drop from "../components/Drop";
+import Header from "../components/UI/header";
 import { AUTH } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Library() {
   const navigation = useNavigation();
 
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [user, setUser] = useState(null);
   const [subfolders, setSubfolders] = useState([]);
 
@@ -55,70 +55,18 @@ export default function Library() {
     setSubfolders(subfolders);
   }
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!isDropdownVisible);
-  };
-
-  const handleDropdownSelect = (option) => {
-    // Handle the selected option here
-    if (option === "Settings") {
-      navigation.navigate("Profile", {});
-      // Handle the "Settings" action here
-    } else if (option === "Sign Out") {
-      handleSignOut();
-      // Handle the "Sign Out" action here
-    }
-
-    // Close the dropdown
-    setDropdownVisible(false);
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await AUTH.signOut();
-      navigation.navigate("Login", {});
-      // Redirect or perform any other action after signing out.
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   // Function to handle subfolder selection
   const handleSubfolderSelection = (subfolderName) => {
     // Navigate to the SubfolderScreen with the selected subfolder name
-    navigation.navigate("Test", { subfolderName });
+    //navigation.navigate("Test", { subfolderName });
+    navigation.navigate("Library", { subfolderName });
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          backgroundColor: "darkslateblue",
-        }}
-      >
-        <View
-          style={{
-            marginTop: StatusBar.currentHeight,
-            justifyContent: "flex-end",
-            alignItems: "flex-end",
-            marginBottom: 5,
-          }}
-        >
-          <TouchableOpacity onPress={toggleDropdown}>
-            <Entypo name="dots-three-vertical" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <Header navigation={navigation} />
       <View style={{ backgroundColor: "#d6d6e6", flex: 1 }}>
         <View style={styles.container}>
-          <View style={{ marginBottom: 10, flexDirection: "row" }}>
-            <Drop
-              isVisible={isDropdownVisible}
-              options={["Settings", "Sign Out", "Close"]}
-              onSelect={handleDropdownSelect}
-              onClose={() => setDropdownVisible(false)}
-            />
-          </View>
           <ScrollView>
             <Text
               style={{
