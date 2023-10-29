@@ -39,38 +39,18 @@ const Login = ({ navigation }) => {
       style={{
         flex: 1,
         backgroundColor: "darkslateblue",
+        alignContent: "center",
+        justifyContent: "center",
       }}
     >
       <View
         style={{
-          flex: 1,
-          flexDirection: "column",
-          backgroundColor: "darkslateblue",
-          alignItems: "center",
-        }}
-      >
-        <Image
-          source={require("../assets/SoundSyncIcon.png")}
-          style={{ marginTop: 30, width: 150, height: 150 }}
-        ></Image>
-        <Text
-          style={{
-            marginTop: 10,
-            fontSize: 30,
-            color: "white",
-            fontStyle: "italic",
-          }}
-        >
-          SoundSync
-        </Text>
-      </View>
-
-      <View
-        style={{
-          flex: 1.9,
+          flex: 0.5,
           backgroundColor: "#d6d6e6",
           alignContent: "center",
           justifyContent: "center",
+          marginLeft: 300,
+          marginRight: 300,
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
         }}
@@ -127,6 +107,9 @@ const Login = ({ navigation }) => {
             flexDirection: "row",
             justifyContent: "center",
             backgroundColor: "#d6d6e6",
+
+            borderBottomLeftRadius: 15,
+            borderBottomRightRadius: 15,
           }}
         >
           <Text>Do you have an account?</Text>
