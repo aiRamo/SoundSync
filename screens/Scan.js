@@ -1,3 +1,10 @@
+//TODO/TOFIX
+// - Make it so the 'here is your generated image' part of the modal works as a scrollview for each image found in firebase.
+// - Make it so the loading wave gif thingy correctly replays after every image has been called upon.
+// - Make it so that the Show Note Locations button will only work on the currently viewed page.
+// - Make it so that the firebase storage can hold a copy of each JSON file. (2 for each image).
+// - Make it so, after ALL OF THIS, the scanner will have an option to take the user to the Tracker page with the completed scan.
+
 import React, { useState, useEffect } from "react";
 import { View } from "react-native";
 import styles from "../components/styleSheetScan";
