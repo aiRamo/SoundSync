@@ -13,6 +13,7 @@ import Profile from "./screens/Profile";
 import Library from "./screens/Library";
 import Folder from "./screens/Folder";
 import Tracker from "./screens/Tracker";
+import Test from "./screens/Test";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,7 +66,18 @@ function HomeScreen() {
         name="Tracker"
         component={Tracker}
         options={{
-          title: "Tracker {age",
+          title: "Tracker",
+          tabBarIcon: ({}) => (
+            <MaterialIcons name="multitrack-audio" size={24} color="white" />
+          ),
+          tabBarActiveTintColor: "white",
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="Test"
+        component={Test}
+        options={{
+          title: "Test",
           tabBarIcon: ({}) => (
             <MaterialIcons name="multitrack-audio" size={24} color="white" />
           ),

@@ -44,7 +44,7 @@ const Header = ({ navigation }) => {
         }}
       >
         <TouchableOpacity
-          style={{ marginBottom: 10, top: "1.6%", right: "60%" }}
+          style={{ marginBottom: 10, top: "1.6%", right: "1%" }}
           onPress={toggleDropdown}
         >
           <Entypo name="dots-three-vertical" size={24} color="white" />

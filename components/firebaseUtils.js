@@ -140,9 +140,18 @@ export const downloadAllItemsInCollection = async (collectionName) => {
 
     // Fetch JSON data from URLs
     const fetchJSONPromises = sortedJsonUrls.map(async (url) => {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data;
+      try {
+        const response = await fetch(url, {
+          mode: "no-cors",
+        });
+        console.log("here the url " + url);
+        const data = await response.json();
+        console.log("data" + data);
+        return data;
+      } catch (error) {
+        console.error("An error occurred while fetching JSON data:", error);
+        return null; // or handle the error in an appropriate way
+      }
     });
 
     const jsonData = await Promise.all(fetchJSONPromises);

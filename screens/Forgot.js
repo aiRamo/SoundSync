@@ -36,35 +36,22 @@ const Forgot = ({ navigation }) => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "darkslateblue" }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "darkslateblue",
+        justifyContent: "center",
+        alignContent: "center",
+      }}
+    >
       <View
         style={{
-          flex: 1,
-          backgroundColor: "darkslateblue",
-          alignItems: "center",
-        }}
-      >
-        <Image
-          source={require("../assets/SoundSyncIcon.png")}
-          style={{ width: 130, height: 130 }}
-        ></Image>
-        <Text
-          style={{
-            margin: 10,
-            fontSize: 30,
-            color: "white",
-            fontStyle: "italic",
-          }}
-        >
-          SoundSync
-        </Text>
-      </View>
-      <View
-        style={{
-          flex: 1,
+          flex: 0.5,
           alignContent: "center",
           justifyContent: "center",
-          backgroundColor: "white",
+          backgroundColor: "#d6d6e6",
+          marginLeft: 300,
+          marginRight: 300,
           borderTopLeftRadius: 15,
           borderTopRightRadius: 15,
         }}
@@ -106,7 +93,12 @@ const Forgot = ({ navigation }) => {
         style={{
           flexDirection: "row",
           justifyContent: "center",
-          backgroundColor: "white",
+          backgroundColor: "#d6d6e6",
+          marginLeft: 300,
+          marginRight: 300,
+          borderBottomLeftRadius: 15,
+          borderBottomRightRadius: 15,
+          paddingBottom: 5,
         }}
       >
         <Text>Do you have an account?</Text>
