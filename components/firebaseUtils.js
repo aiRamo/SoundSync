@@ -136,7 +136,7 @@ export const downloadAllItemsInCollection = async (collectionName) => {
       }
       return 0;
     });
-
+    //
     // Fetch JSON data from URLs
     const fetchJSONPromises = sortedJsonUrls.map(async (url) => {
       try {
@@ -146,13 +146,13 @@ export const downloadAllItemsInCollection = async (collectionName) => {
           // "Access-Control-Allow-Origin": "*",
           //},
           // mode: "cors",
-          mode: "no-cors",
+          mode: "cors",
         });
         if (!response.ok) {
           throw new Error(`Fetch failed with status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("DATA DING DING" + data);
+
         return data;
       } catch (error) {
         console.error("An error occurred while fetching JSON data:", error);

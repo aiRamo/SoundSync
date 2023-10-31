@@ -34,7 +34,7 @@ export default function Tracker({ navigation, collectionName, route }) {
   const currentNoteRef = useRef(null);
   const audioNoteRef = useRef(null);
 
-  const arrayData = [
+  /*const arrayData = [
     "A4",
     "A#4",
     "A4",
@@ -80,6 +80,52 @@ export default function Tracker({ navigation, collectionName, route }) {
     "A#4",
     "A#4",
     "A#4",
+  ];
+*/
+  const arrayData = [
+    "E4",
+    "A4",
+    "C4",
+    "E4",
+    "B4",
+    "D4",
+    "E4",
+    "C5",
+    "C4",
+    "A2",
+    "A3",
+    "B2",
+    "B3",
+    "C3",
+    "C4",
+    "E4",
+    "B4",
+    "D4",
+    "E4",
+    "A4",
+    "C4",
+    "E4",
+    "B4",
+    "D4",
+    "B2",
+    "B3",
+    "A2",
+    "A3",
+    "B2",
+    "B3",
+    "C5",
+    "E4",
+    "C3",
+    "C4",
+    "B4",
+    "E4",
+    "D4",
+    "E4",
+    "D4",
+    "E4",
+    "D4",
+    "B2",
+    "B3",
   ];
 
   let timer;
@@ -227,7 +273,7 @@ export default function Tracker({ navigation, collectionName, route }) {
         }
       }
     }
-    console.log(noteArray[2]);
+
     return noteArray; // Return the noteArray
   }
 

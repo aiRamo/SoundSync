@@ -6,6 +6,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
     <React.Fragment>
       {Object.keys(notePositions).map((key, index) => {
         const { leftPosition, topPosition } = notePositions[key];
+
         const isHighlighted = index === currIndex; // Check if this is the currently highlighted box
         return (
           <>
@@ -18,7 +19,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
                 borderColor: isHighlighted ? "red" : "transparent", // Highlighted box has red border, others are transparent
                 borderWidth: 1,
                 top: topPosition,
-                left: leftPosition,
+                left: leftPosition + 37.5,
               }}
             />
             <Text
