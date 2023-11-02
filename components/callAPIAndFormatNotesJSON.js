@@ -13,9 +13,9 @@ export const callAPIandFormatNotesJSON = async (
   setters
 ) => {
   try {
-    setters.setPreviewVisible(true);
+    //setters.setPreviewVisible(true);
     await uploadImage(image, UID);
-    setters.setLoading(true);
+    //setters.setLoading(true);
 
     const data = {
       uid: UID, // This is the Firebase UID

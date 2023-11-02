@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableOpacity,
   Text,
+  Platform,
 } from "react-native";
 import CaretLeft from "../../assets/caret-left.png";
 import CaretRight from "../../assets/caret-right.png";
@@ -89,7 +90,7 @@ const SheetScanPromptContent = ({
           >
             <Image
               source={require("../../assets/addScan.png")}
-              style={styles.pickImageButtonImage}
+              style={styles.imagePreview}
             />
           </TouchableOpacity>
         </View>
@@ -106,37 +107,7 @@ const SheetScanPromptContent = ({
         </>
       )}
 
-      {previewVisible && (
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={previewVisible}
-          onRequestClose={() => {}}
-        >
-          {Platform.OS === "ios" ? (
-            <BlurView intensity={15} style={styles.modalContainer}>
-              <ScannerModalContent
-                loadingData={loadingDataForScannerModal}
-                doneLoadingData={doneLoadingDataForScannerModal}
-                actions={actionsForScannerModal}
-              />
-            </BlurView>
-          ) : (
-            <View
-              style={{
-                ...styles.modalContainer,
-                backgroundColor: "rgba(0, 0, 0, 0.85)",
-              }}
-            >
-              <ScannerModalContent
-                loadingData={loadingDataForScannerModal}
-                doneLoadingData={doneLoadingDataForScannerModal}
-                actions={actionsForScannerModal}
-              />
-            </View>
-          )}
-        </Modal>
-      )}
+      {previewVisible && <Text>Working...</Text>}
     </View>
   );
 };

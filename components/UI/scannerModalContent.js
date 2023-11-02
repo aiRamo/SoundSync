@@ -17,11 +17,6 @@ const ScannerModalContent = ({ loadingData, doneLoadingData, actions }) => {
     <>
       {loadingData.loading && (
         <>
-          <WaveMeter
-            externalPhase={loadingData.loadingPhase}
-            image={loadingData.loadingImage}
-            style={{ transform: [{ scale: 0.25 }] }}
-          />
           {loadingData.serverMessage && (
             <Text style={styles.serverMessage}>
               {loadingData.serverMessage}

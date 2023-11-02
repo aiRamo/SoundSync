@@ -64,7 +64,7 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
     toggleTrackerBoxesVisible: () =>
       setTrackerBoxesVisible(!trackerBoxesVisible),
     togglePreviewVisibleAndDoneLoading: () => {
-      setPreviewVisible(!previewVisible);
+      //setPreviewVisible(!previewVisible);
       setDoneLoading(!doneLoading);
 
       setServerMessage("Scanning image");
@@ -132,14 +132,15 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
   const callAPIandWaitForResponse = async () => {
     for (let img of imageList) {
       // Call the API for each image and await the response
+      console.log(imageList[0]);
       await callAPIandFormatNotesJSON(UID, img, collectionName, settersForAPI);
 
       // Optional: Add a delay between API calls if needed
       // await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    setLoading(false); // Hide loading circle
-    setDoneLoading(true);
+    //setLoading(false); // Hide loading circle
+    //setDoneLoading(true);
   };
 
   return (
