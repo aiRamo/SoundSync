@@ -21,7 +21,7 @@ const CollectionNamePrompt = ({
 
   return (
     <View style={styles.namePropmtContent}>
-      <Text style={styles.introTitle}> First, Let's Give It a Name</Text>
+      <Text style={styles.introTitle}> First, Lets Give It a Name</Text>
       <View style={styles.namePromptCard}>
         <TextInput
           style={styles.nameInput}
@@ -29,18 +29,19 @@ const CollectionNamePrompt = ({
           onChangeText={onChangeCollectionName}
         />
       </View>
-      {confirmNameButton && (
-        <TouchableOpacity
-          onPress={() => {
-            setPlaceholder(collectionName);
-            setScannerPhase(scannerPhase + 1);
-          }}
+      <TouchableOpacity
+        onPress={() => {
+          setPlaceholder(collectionName);
+          setScannerPhase(scannerPhase + 1);
+        }}
+        disabled={collectionName == ""}
+      >
+        <View
+          style={[styles.confirmNameButton, collectionName && { opacity: 1 }]}
         >
-          <View style={styles.confirmNameButton}>
-            <Text style={styles.openButtonText}>Confirm</Text>
-          </View>
-        </TouchableOpacity>
-      )}
+          <Text style={styles.openButtonText}>Confirm</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
