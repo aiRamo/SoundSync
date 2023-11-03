@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     width: "12vw",
     backgroundColor: "rgba(114, 110, 184, 1)",
     height: "4vh",
-    top: "85vh",
+    top: "87vh",
     alignSelf: "center",
     justifyContent: "center",
     borderRadius: 12,
@@ -102,10 +102,16 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   caretIconLeft: {
-    left: width * 0.32,
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+    right: 2,
   },
   caretIconRight: {
-    right: width * 0.32,
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+    left: 2,
   },
   imageCounterText: {
     position: "absolute",

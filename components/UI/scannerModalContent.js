@@ -16,7 +16,9 @@ const ScannerModalContent = ({
   doneLoading,
   pngURL,
   collectionName,
+  onChangeCollectionName,
   noteCoordinateData,
+  setScannerPhase,
 }) => {
   React.useEffect(() => {
     console.log(pngURL);
@@ -54,7 +56,8 @@ const ScannerModalContent = ({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                console.log("Close...");
+                onChangeCollectionName("");
+                setScannerPhase(5);
               }}
               style={styles.closeButton}
             >

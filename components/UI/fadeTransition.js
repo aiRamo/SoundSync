@@ -44,7 +44,11 @@ const FadeTransition = ({ children, phase, setPhase }) => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      setPhase(phase + 1);
+      if (phase == 5) {
+        setPhase(0);
+      } else {
+        setPhase(phase + 1);
+      }
     });
   };
 

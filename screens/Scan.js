@@ -19,6 +19,9 @@ import CollectionNamePrompt from "../components/UI/collectionNamePrompter";
 // this hosts all functionality for the scanner system besides the collectionName prompter.
 import SheetScanPrompt from "../components/sheetScanPrompter";
 
+// scannerModalContent.js is responsible for displaying all data to the user.
+// This includes noteCoordinateData (JSON) and pngURL (firebase address of output image).
+// This is where all post-API functionality occurs, such as the creation and upload of the noteHighlighter data.
 import ScannerModalContent from "../components/UI/scannerModalContent";
 
 import useWebSocket from "../components/useWebSocket";
@@ -90,7 +93,9 @@ export default function Scan({ navigation }) {
                 doneLoading={doneLoading}
                 pngURL={pngURL}
                 collectionName={collectionName}
+                onChangeCollectionName={onChangeCollectionName}
                 noteCoordinateData={noteCoordinateData}
+                setScannerPhase={setScannerPhase}
               />
             )}
           </FadeTransition>

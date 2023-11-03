@@ -28,15 +28,11 @@ const SheetScanPrompt = ({
 }) => {
   //Boolean states - These 4 are used to control conditional rendering in the ScannerModal
   const [loading, setLoading] = useState(false);
-  const [previewVisible, setPreviewVisible] = useState(false);
-  const [trackerBoxesVisible, setTrackerBoxesVisible] = useState(false);
 
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [imageList, setImageList] = useState([]);
   const [loadingPhase, setLoadingPhase] = useState("");
   const [UID, setUID] = useState(null);
-
-  const loadingImage = useImage(require("../assets/SoundSyncIcon.png"));
 
   const settersForAPI = {
     setLoading,
@@ -90,8 +86,16 @@ const SheetScanPrompt = ({
     for (let img of imageList) {
       // Call the API for each image and await the response
       console.log(imageList[0]);
+      console.log(UID);
+      console.log(collectionName);
+      console.log(settersForAPI);
       count += 1;
-      await callAPIandFormatNotesJSON(UID, img, collectionName, settersForAPI);
+      await callAPIandFormatNotesJSON(
+        UID,
+        imageList[0],
+        collectionName,
+        settersForAPI
+      );
 
       // Optional: Add a delay between API calls if needed
       // await new Promise(resolve => setTimeout(resolve, 1000));
@@ -103,6 +107,7 @@ const SheetScanPrompt = ({
   return (
     <SheetScanPromptContent
       image={image}
+      setImage={setImage}
       pickImage={pickImage}
       imageList={imageList}
       setScannerPhase={setScannerPhase}

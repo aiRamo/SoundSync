@@ -1,57 +1,69 @@
-import React, { useState, useRef } from "react";
-import {
-  Image,
-  View,
-  ScrollView,
-  Modal,
-  TouchableOpacity,
-  Text,
-  Platform,
-} from "react-native";
+import React, { useState } from "react";
+import { Image, View, TouchableOpacity, Text } from "react-native";
 import CaretLeft from "../../assets/caret-left.png";
 import CaretRight from "../../assets/caret-right.png";
 import styles from "../styleSheetScan";
-import { BlurView } from "expo-blur";
-
-// scannerModalContent.js is responsible for displaying all data to the user.
-// This includes noteCoordinateData (JSON) and pngURL (firebase address of output image).
-// This is where all post-API functionality occurs, such as the creation and upload of the noteHighlighter data.
-import ScannerModalContent from "./scannerModalContent";
 
 const SheetScanPromptContent = ({
   image,
+  setImage,
   pickImage,
   imageList,
   setScannerPhase,
   callAPIandWaitForResponse,
 }) => {
-  const [contentHeight, setContentHeight] = useState(0);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // Used for keeping track of '# of #' counter
+  let currentImageIndex = 0; // Updated to a regular variable
 
-  const handleScroll = (event) => {
-    const scrollPosition = event.nativeEvent.contentOffset.x;
-    const screenWidth = event.nativeEvent.layoutMeasurement.width;
+  const updateImage = (index) => {
+    if (imageList[index] != null) {
+      setImage(imageList[index]);
+    } else {
+      setImage(require("../../assets/addScan.png"));
+    }
+  };
 
-    // Calculate current index based on scroll position and screen width
-    const currentIndex = Math.round(scrollPosition / screenWidth);
+  const scrollLeft = () => {
+    if (currentImageIndex > 0) {
+      currentImageIndex -= 1; // Updated to decrement the index
+      updateImage(currentImageIndex);
+    }
+  };
 
-    setCurrentImageIndex(currentIndex);
+  const scrollRight = () => {
+    console.log("BEFORE: " + imageList.length + "," + currentImageIndex);
+    if (currentImageIndex < imageList.length) {
+      currentImageIndex += 1; // Updated to increment the index
+      updateImage(currentImageIndex);
+    } else if (currentImageIndex >= imageList.length) {
+      currentImageIndex += 1; // Increment to match the length for the condition below
+      setImage(require("../../assets/addScan.png")); // Set the addScan image
+    }
   };
 
   return (
     <View style={styles.content}>
       <Text style={styles.introTitle}> Next, Choose Your Images</Text>
       <View style={styles.imageCounterBar}>
+        {currentImageIndex > 0 && (
+          <TouchableOpacity
+            style={[styles.caretTouchable, { left: "30vw" }]}
+            onPress={scrollLeft}
+          >
+            <Image source={CaretLeft} style={styles.caretIconLeft} />
+          </TouchableOpacity>
+        )}
         {currentImageIndex != imageList.length && (
           <>
-            {currentImageIndex > 0 && (
-              <Image source={CaretLeft} style={styles.caretIconLeft} />
-            )}
             <Text style={styles.imageCounterText}>
               {currentImageIndex + 1} of {imageList.length}
             </Text>
             {currentImageIndex < imageList.length && (
-              <Image source={CaretRight} style={styles.caretIconRight} />
+              <TouchableOpacity
+                style={[styles.caretTouchable, { right: "30vw" }]}
+                onPress={scrollRight}
+              >
+                <Image source={CaretRight} style={styles.caretIconRight} />
+              </TouchableOpacity>
             )}
           </>
         )}
@@ -60,46 +72,21 @@ const SheetScanPromptContent = ({
           <Text style={styles.imageCounterText}>Select New Image</Text>
         )}
       </View>
-      <ScrollView
-        style={[styles.imageList, { height: contentHeight }]}
-        contentContainerStyle={{ alignItems: "center" }}
-        horizontal={true}
-        pagingEnabled={true}
-        showsHorizontalScrollIndicator={false}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
+      <TouchableOpacity
+        onPress={pickImage}
+        style={styles.pickImageButtonContainer}
       >
-        <View
-          onLayout={(event) => {
-            const { height } = event.nativeEvent.layout;
-            setContentHeight(height);
-          }}
-          style={{ flexDirection: "row" }}
-        >
-          {imageList.map((url, index) => (
-            <View key={index} style={styles.pickImageButtonContainer}>
-              <Image source={{ uri: url }} style={styles.imagePreview} />
-            </View>
-          ))}
-          <TouchableOpacity
-            onPress={pickImage}
-            style={styles.pickImageButtonContainer}
-          >
-            <Image
-              source={require("../../assets/addScan.png")}
-              style={styles.imagePreview}
-            />
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        <Image source={image} style={styles.imagePreview} />
+      </TouchableOpacity>
 
-      {image != require("../../assets/addScan.png") && (
+      {true && (
         <>
           <TouchableOpacity
             onPress={() => {
               setScannerPhase(3);
 
               callAPIandWaitForResponse();
+              console.log("Boop");
             }}
             style={styles.testButtonContainer}
           >
