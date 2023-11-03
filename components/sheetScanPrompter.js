@@ -4,8 +4,6 @@ import { useImage } from "@shopify/react-native-skia";
 
 import * as ImagePicker from "expo-image-picker";
 
-import useWebSocket from "./useWebSocket";
-
 import SheetScanPromptContent from "./UI/sheetScanPrompterContent";
 
 // fetchImagesFromCollection.js returns a list of the given images in a certain collection's directory.

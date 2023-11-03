@@ -1,9 +1,10 @@
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons, FontAwesome, AntDesign } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-import Home from "./screens/Home";
+import { AUTH } from "./firebaseConfig";
 import Scan from "./screens/Scan";
 import AudioRecorder from "./screens/Audio";
 import Login from "./screens/Login";
@@ -14,6 +15,7 @@ import Library from "./screens/Library";
 import Folder from "./screens/Folder";
 import Tracker from "./screens/Tracker";
 import Test from "./screens/Test";
+import { firebase } from "@react-native-firebase/functions";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -89,6 +91,23 @@ function HomeScreen() {
 }
 
 export default function App() {
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = AUTH.onAuthStateChanged((user) => {
+      setIsAuthChecked(true);
+      setIsUserLoggedIn(!!user); // true if user is non-null, false otherwise
+    });
+
+    // Cleanup the listener when the component is destroyed
+    return unsubscribe;
+  }, []);
+
+  if (!isAuthChecked) {
+    return null; // Optionally return a loading spinner or some other placeholder
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -98,37 +117,43 @@ export default function App() {
           headerTintColor: "white",
         }}
       >
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ headerStyle }}
-        />
-        <Stack.Screen
-          name="Create"
-          component={Create}
-          options={{ headerStyle }}
-        />
-        <Stack.Screen
-          name="Forgot"
-          component={Forgot}
-          options={{ headerStyle }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ title: "SoundSync", headerShown: false }}
-        />
-        <Stack.Screen
-          name="Library"
-          component={Library}
-          options={{ headerStyle }}
-        ></Stack.Screen>
-
-        <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{ headerStyle }}
-        />
+        {isUserLoggedIn ? (
+          <>
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ title: "SoundSync", headerShown: false }}
+            />
+            <Stack.Screen
+              name="Library"
+              component={Library}
+              options={{ headerStyle }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={Profile}
+              options={{ headerStyle }}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerStyle }}
+            />
+            <Stack.Screen
+              name="Create"
+              component={Create}
+              options={{ headerStyle }}
+            />
+            <Stack.Screen
+              name="Forgot"
+              component={Forgot}
+              options={{ headerStyle }}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
