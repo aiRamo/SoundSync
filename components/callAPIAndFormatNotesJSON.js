@@ -13,7 +13,6 @@ export const callAPIandFormatNotesJSON = async (
   setters
 ) => {
   try {
-    //setters.setPreviewVisible(true);
     await uploadImage(image, UID);
     //setters.setLoading(true);
 
@@ -54,7 +53,6 @@ export const callAPIandFormatNotesJSON = async (
       // console.log(
       //   "here coordinate data: " + JSON.stringify(notesJson.coordinateData)
       // );
-
       setters.setpngURL(downloadURL);
     } else {
       console.log("API call failed:", response.statusText);

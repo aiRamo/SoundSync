@@ -19,8 +19,13 @@ import CollectionNamePrompt from "../components/UI/collectionNamePrompter";
 // this hosts all functionality for the scanner system besides the collectionName prompter.
 import SheetScanPrompt from "../components/sheetScanPrompter";
 
+import ScannerModalContent from "../components/UI/scannerModalContent";
+
+import useWebSocket from "../components/useWebSocket";
+
 import Header from "../components/UI/header";
 import FadeTransition from "../components/UI/fadeTransition";
+import { not } from "react-native-reanimated";
 
 export default function Scan({ navigation }) {
   /*
@@ -31,6 +36,10 @@ export default function Scan({ navigation }) {
   const [scannerPhase, setScannerPhase] = useState(0);
   const [collectionName, onChangeCollectionName] = useState("");
   const [confirmNameButton, setConfirmNameButton] = useState(false);
+  const [serverMessage, setServerMessage] = useState("Scanning Image");
+  const [doneLoading, setDoneLoading] = useState(false);
+  const [pngURL, setpngURL] = useState(null);
+  const [noteCoordinateData, setNoteCoordinateData] = useState(false);
 
   useEffect(() => {
     if (collectionName === "") {
@@ -39,6 +48,12 @@ export default function Scan({ navigation }) {
       setConfirmNameButton(true);
     }
   }, [collectionName]);
+
+  useEffect(() => {
+    console.log(pngURL);
+  }, [pngURL]);
+
+  useWebSocket((event) => setServerMessage(event.data));
 
   return (
     <View style={{ flex: 1 }}>
@@ -60,7 +75,23 @@ export default function Scan({ navigation }) {
               />
             )}
             {(scannerPhase === 2 || scannerPhase === 3) && (
-              <SheetScanPrompt collectionName={collectionName} />
+              <SheetScanPrompt
+                collectionName={collectionName}
+                setScannerPhase={setScannerPhase}
+                setDoneLoading={setDoneLoading}
+                setpngURL={setpngURL}
+                setNoteCoordinateData={setNoteCoordinateData}
+              />
+            )}
+
+            {(scannerPhase === 4 || scannerPhase === 5) && (
+              <ScannerModalContent
+                serverMessage={serverMessage}
+                doneLoading={doneLoading}
+                pngURL={pngURL}
+                collectionName={collectionName}
+                noteCoordinateData={noteCoordinateData}
+              />
             )}
           </FadeTransition>
         </View>

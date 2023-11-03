@@ -137,13 +137,16 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 35,
     fontWeight: "600",
-    color: "#F4F5FF",
+    color: "#000000",
     textAlign: "center",
     marginBottom: 20,
   },
   modalImageView: {
     backgroundColor: "rgba(0,0,0,0)",
+    alignSelf: "center",
     justifyContent: "center",
+    height: ViewHeight,
+    width: ViewWidth,
   },
   previewImage: {
     height: ViewHeight,

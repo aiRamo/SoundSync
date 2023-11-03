@@ -20,58 +20,31 @@ import { callAPIandFormatNotesJSON } from "./callAPIAndFormatNotesJSON";
 // checkCurrentUser validates that user is logged in and returns the user's UID.
 import { checkCurrentUser } from "./firebaseUtils";
 
-const SheetScanPrompt = ({ collectionName, imgUrl }) => {
+const SheetScanPrompt = ({
+  collectionName,
+  imgUrl,
+  setScannerPhase,
+  setDoneLoading,
+  setpngURL,
+  setNoteCoordinateData,
+}) => {
   //Boolean states - These 4 are used to control conditional rendering in the ScannerModal
   const [loading, setLoading] = useState(false);
-  const [doneLoading, setDoneLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [trackerBoxesVisible, setTrackerBoxesVisible] = useState(false);
 
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [imageList, setImageList] = useState([]);
-  const [pngURL, setpngURL] = useState(null);
-  const [noteCoordinateData, setNoteCoordinateData] = useState(false);
-  const [serverMessage, setServerMessage] = useState("Scanning Image");
   const [loadingPhase, setLoadingPhase] = useState("");
   const [UID, setUID] = useState(null);
 
   const loadingImage = useImage(require("../assets/SoundSyncIcon.png"));
 
   const settersForAPI = {
-    setPreviewVisible,
     setLoading,
     setNoteCoordinateData,
     setpngURL,
-    setDoneLoading,
   };
-
-  const loadingDataForScannerModal = {
-    loading,
-    serverMessage,
-    loadingPhase,
-    loadingImage,
-  };
-
-  const doneLoadingDataForScannerModal = {
-    doneLoading,
-    pngURL,
-    trackerBoxesVisible,
-    noteCoordinateData,
-    collectionName,
-  };
-
-  const actionsForScannerModal = {
-    toggleTrackerBoxesVisible: () =>
-      setTrackerBoxesVisible(!trackerBoxesVisible),
-    togglePreviewVisibleAndDoneLoading: () => {
-      //setPreviewVisible(!previewVisible);
-      setDoneLoading(!doneLoading);
-
-      setServerMessage("Scanning image");
-    },
-  };
-
-  useWebSocket((event) => setServerMessage(event.data));
 
   checkCurrentUser()
     .then((userId) => {
@@ -95,20 +68,6 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
     }
   };
 
-  // setLoadingPhase() is used to control the loading UI element's max height. Meant to simulate a progress bar.
-
-  useEffect(() => {
-    if (serverMessage == "Scanning image") {
-      setLoadingPhase("bottom");
-    } else if (serverMessage == "Gathering note data") {
-      setLoadingPhase("middle");
-    } else if (serverMessage == "Loading response data") {
-      setLoadingPhase("top");
-    } else {
-      setLoadingPhase("bottom");
-    }
-  }, [serverMessage]);
-
   useEffect(() => {
     if (imgUrl != null) {
       console.log(imgUrl);
@@ -126,21 +85,21 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
     }
   }, [image]);
 
-  //TODO: convert callAPIandWaitForResponse to run callAPIandFormatNotesJSON for each IMAGE in imageList INSTEAD of just the IMAGE in image.
-  // We will need to wait for each response, either succesful or failed, before moving onto the NEXT image.
-
   const callAPIandWaitForResponse = async () => {
+    let count = 0;
+    let imageListSize = imageList.length;
+
     for (let img of imageList) {
       // Call the API for each image and await the response
       console.log(imageList[0]);
+      count += 1;
       await callAPIandFormatNotesJSON(UID, img, collectionName, settersForAPI);
 
       // Optional: Add a delay between API calls if needed
       // await new Promise(resolve => setTimeout(resolve, 1000));
     }
-
     //setLoading(false); // Hide loading circle
-    //setDoneLoading(true);
+    setDoneLoading(true);
   };
 
   return (
@@ -148,11 +107,8 @@ const SheetScanPrompt = ({ collectionName, imgUrl }) => {
       image={image}
       pickImage={pickImage}
       imageList={imageList}
+      setScannerPhase={setScannerPhase}
       callAPIandWaitForResponse={callAPIandWaitForResponse}
-      previewVisible={previewVisible}
-      loadingDataForScannerModal={loadingDataForScannerModal}
-      doneLoadingDataForScannerModal={doneLoadingDataForScannerModal}
-      actionsForScannerModal={actionsForScannerModal}
     />
   );
 };

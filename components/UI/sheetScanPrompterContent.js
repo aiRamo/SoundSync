@@ -22,11 +22,8 @@ const SheetScanPromptContent = ({
   image,
   pickImage,
   imageList,
+  setScannerPhase,
   callAPIandWaitForResponse,
-  previewVisible,
-  loadingDataForScannerModal,
-  doneLoadingDataForScannerModal,
-  actionsForScannerModal,
 }) => {
   const [contentHeight, setContentHeight] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // Used for keeping track of '# of #' counter
@@ -99,15 +96,17 @@ const SheetScanPromptContent = ({
       {image != require("../../assets/addScan.png") && (
         <>
           <TouchableOpacity
-            onPress={callAPIandWaitForResponse}
+            onPress={() => {
+              setScannerPhase(3);
+
+              callAPIandWaitForResponse();
+            }}
             style={styles.testButtonContainer}
           >
             <Text style={styles.openButtonText}>Confirm</Text>
           </TouchableOpacity>
         </>
       )}
-
-      {previewVisible && <Text>Working...</Text>}
     </View>
   );
 };

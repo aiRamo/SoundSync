@@ -5,50 +5,57 @@ import styles from "../styleSheetScan"; // Replace with the actual path to your 
 // calculateNoteCoordinates.js parses the noteCoordinateData JSON and returns a list of components representing the note's page location.
 // These components are where the noteHighlighter comes from.
 import calculateNoteCoordinates from "../calculateNoteCoordinates";
-import WaveMeter from "./scannerLoader";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
-const ViewWidth = width * 0.7; // 90% of device width
+const ViewWidth = width * 0.26; // 90% of device width
 const ViewHeight = ViewWidth * A4_RATIO;
 
-const ScannerModalContent = ({ loadingData, doneLoadingData, actions }) => {
+const ScannerModalContent = ({
+  serverMessage,
+  doneLoading,
+  pngURL,
+  collectionName,
+  noteCoordinateData,
+}) => {
+  React.useEffect(() => {
+    console.log(pngURL);
+  }, [pngURL]);
+
   return (
-    <>
-      {loadingData.loading && (
-        <>
-          {loadingData.serverMessage && (
-            <Text style={styles.serverMessage}>
-              {loadingData.serverMessage}
-            </Text>
-          )}
-        </>
-      )}
-      {doneLoadingData.doneLoading && (
+    <View style={{ height: "100vh" }}>
+      {!doneLoading && <Text style={styles.modalTitle}>{serverMessage}</Text>}
+      {doneLoading && (
         <>
           <Text style={styles.modalTitle}>Here is your generated image</Text>
           <View style={styles.modalImageView}>
-            <Image
-              source={{ uri: doneLoadingData.pngURL }}
-              style={styles.previewImage}
-            />
-            {doneLoadingData.trackerBoxesVisible &&
-              calculateNoteCoordinates(
-                doneLoadingData.noteCoordinateData,
-                doneLoadingData.collectionName,
-                ViewWidth,
-                ViewHeight
-              )}
+            <Image source={{ uri: pngURL }} style={styles.previewImage} />
+            {calculateNoteCoordinates(
+              noteCoordinateData,
+              collectionName,
+              ViewWidth,
+              ViewHeight
+            )}
           </View>
-          <View style={{ display: "flex", flexDirection: "row" }}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignSelf: "center",
+            }}
+          >
             <TouchableOpacity
-              onPress={actions.toggleTrackerBoxesVisible}
+              onPress={() => {
+                console.log("Toggle Tracker Boxes Visible...");
+              }}
               style={styles.showNotesButton}
             >
-              <Text style={styles.blueButtonText}>Show Note Locations</Text>
+              <Text style={styles.blueButtonText}> Show Note Locations </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={actions.togglePreviewVisibleAndDoneLoading}
+              onPress={() => {
+                console.log("Close...");
+              }}
               style={styles.closeButton}
             >
               <Text style={styles.redButtonText}>Close</Text>
@@ -56,7 +63,7 @@ const ScannerModalContent = ({ loadingData, doneLoadingData, actions }) => {
           </View>
         </>
       )}
-    </>
+    </View>
   );
 };
 
