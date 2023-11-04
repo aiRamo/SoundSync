@@ -24,7 +24,6 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [isDefaultImage, setIsDefaultImage] = useState(true);
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [collectionName1, setCollectionName] = useState("");
-  const [collectionName2, setCollectionName2] = useState("");
   const [user, setUser] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
   const [coordinateData, setCoordinateData] = useState(null);
@@ -37,6 +36,8 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [isMatch, setIsMatch] = useState(false);
   const currentNoteRef = useRef(null);
   const audioNoteRef = useRef(null);
+  const [count2, setCount] = useState(0);
+  const scrollViewRef = useRef(null);
 
   /*const arrayData = [
     "A4",
@@ -242,35 +243,6 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [isMatch]);
 
-  //get folder name
-  /*
-  useEffect(() => {
-    if (collectionName2 !== "") {
-      console.log(`fetching data... collectionName = ${collectionName2}`);
-
-      const fetchData = async () => {
-        const result = await downloadAllItemsInCollection(collectionName2);
-        console.log(result);
-        if (result) {
-          // Check if result is not null
-          const { jsonData } = result;
-
-          if (jsonData && jsonData.length >= 2) {
-            // Null and length check
-            setCoordinateData(jsonData[0]); // Assuming the first JSON object is coordinateData
-            setNoteData(jsonData[1]); // Assuming the second JSON object is noteData
-            console.log("Coordinate Data:", jsonData[0]);
-            console.log("Note Data:", JSON.stringify(jsonData[1]));
-            const retrievedNoteArray = await retrieve(jsonData[1]); // Get the noteArray
-            setNoteArray(retrievedNoteArray); // Set the noteArray in state
-          }
-        }
-      };
-      fetchData();
-    }
-  }, [collectionName2]);
-  */
-
   useEffect(() => {
     async function listFilesInFolder(folderPath) {
       try {
@@ -289,7 +261,7 @@ export default function Tracker({ navigation, collectionName, route }) {
           listResult.items.map(async (itemRef) => {
             try {
               const fileName = itemRef.name.toLowerCase();
-
+              setCount((prevCount) => prevCount + 1);
               const url = await getDownloadURL(itemRef);
 
               return url;
@@ -301,27 +273,51 @@ export default function Tracker({ navigation, collectionName, route }) {
         );
         setImageUrls(urls.filter((url) => url !== null));
         //json note data
-        const urls2 = await Promise.all(
+        const jsonNoteData = await Promise.all(
           listResult2.items.map(async (itemRef) => {
             try {
               const url = await getDownloadURL(itemRef);
-              console.log("URL for", itemRef.name, ":", url);
+              const response = await fetch(url);
+              const jsonData = await response.json();
+
+              return jsonData;
             } catch (error) {
-              console.error("Error getting URL:", error);
+              console.error(
+                "Error getting JSON data for",
+                itemRef.name,
+                ":",
+                error
+              );
+              return null;
             }
           })
         );
         //json coordinate data
-        const urls3 = await Promise.all(
+        const jsonCoordData = await Promise.all(
           listResult3.items.map(async (itemRef) => {
             try {
               const url = await getDownloadURL(itemRef);
-              console.log("URL for", itemRef.name, ":", url);
+              const response = await fetch(url);
+              const jsonData = await response.json();
+
+              return jsonData;
             } catch (error) {
-              console.error("Error getting URL:", error);
+              console.error(
+                "Error getting JSON data for",
+                itemRef.name,
+                ":",
+                error
+              );
+              return null;
             }
           })
         );
+        setCoordinateData(jsonCoordData[0]); // Assuming the first JSON object is coordinateData
+        setNoteData(jsonNoteData[0]); // Assuming the second JSON object is noteData
+        console.log("Coordinate Data:", jsonCoordData[0]);
+        console.log("Note Data:", JSON.stringify(jsonNoteData[0]));
+        const retrievedNoteArray = await retrieve(jsonNoteData[0]); // Get the noteArray
+        setNoteArray(retrievedNoteArray); // Set the noteArray in state
       } catch (error) {
         console.error("Error listing files in folder:", error);
       }
@@ -357,6 +353,27 @@ export default function Tracker({ navigation, collectionName, route }) {
 
     return noteArray; // Return the noteArray
   }
+  const startAutoScroll = () => {
+    const scrollDuration = 1500;
+    const scrollDistance = 500;
+    let index = 0;
+
+    console.log(count2);
+    let scrollPosition = 0;
+    const scrollView = scrollViewRef.current;
+
+    const contentHeight = imageUrls.length * 500;
+
+    const scrollInterval = setInterval(() => {
+      if (index < count2) {
+        scrollView.scrollTo({ y: scrollPosition, animated: true });
+        scrollPosition += scrollDistance;
+        index++;
+      } else {
+        clearInterval(scrollInterval);
+      }
+    }, scrollDuration);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
@@ -366,9 +383,9 @@ export default function Tracker({ navigation, collectionName, route }) {
           borderRadius: 5,
           backgroundColor: "darkslateblue",
           padding: 10,
-          marginLeft: 212,
-          marginRight: 232,
-          marginTop: 10,
+          marginLeft: 500,
+          marginRight: 520,
+          marginTop: 30,
           marginBottom: 10,
           alignItems: "center",
         }}
@@ -376,7 +393,22 @@ export default function Tracker({ navigation, collectionName, route }) {
       >
         <Text style={{ color: "white" }}> Highlight Notes </Text>
       </TouchableOpacity>
-      <ScrollView>
+      <TouchableOpacity
+        style={{
+          borderRadius: 5,
+          backgroundColor: "darkslateblue",
+          padding: 10,
+          marginLeft: 500,
+          marginRight: 520,
+          marginTop: 10,
+          marginBottom: 10,
+          alignItems: "center",
+        }}
+        onPress={startAutoScroll}
+      >
+        <Text style={{ color: "white" }}> Start Scrolling </Text>
+      </TouchableOpacity>
+      <ScrollView ref={scrollViewRef}>
         <View
           style={{
             alignItems: "center",
@@ -404,7 +436,11 @@ export default function Tracker({ navigation, collectionName, route }) {
                   // You can add an error message to the component state
                   // to display a message to the user.
                 }}
-                style={{ width: 500, height: 500, resizeMode: "contain" }}
+                style={{
+                  width: ViewWidth,
+                  height: ViewHeight,
+                  resizeMode: "contain",
+                }}
               />
             ))}
           </View>

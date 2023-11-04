@@ -85,13 +85,14 @@ function HomeScreen() {
         name="Test"
         component={Test}
         options={{
-          title: "Test",
+          title: "Test Page",
           tabBarIcon: ({}) => (
             <MaterialIcons name="multitrack-audio" size={24} color="white" />
           ),
           tabBarActiveTintColor: "white",
         }}
       ></Tab.Screen>
+
       <Tab.Screen
         name="Header"
         component={() => null} // Empty component, as it won't be used

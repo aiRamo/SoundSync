@@ -97,7 +97,7 @@ export default function Test({ route }) {
           marginBottom: 10,
           marginLeft: 50,
           marginRight: 50,
-          marginTop: 10,
+          marginTop: 30,
           alignItems: "center",
         }}
         onPress={startAutoScroll}
