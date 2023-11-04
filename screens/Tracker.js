@@ -24,7 +24,6 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [isDefaultImage, setIsDefaultImage] = useState(true);
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [collectionName1, setCollectionName] = useState("");
-  const [collectionName2, setCollectionName2] = useState("");
   const [user, setUser] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
   const [coordinateData, setCoordinateData] = useState(null);
@@ -242,35 +241,6 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [isMatch]);
 
-  //get folder name
-  /*
-  useEffect(() => {
-    if (collectionName2 !== "") {
-      console.log(`fetching data... collectionName = ${collectionName2}`);
-
-      const fetchData = async () => {
-        const result = await downloadAllItemsInCollection(collectionName2);
-        console.log(result);
-        if (result) {
-          // Check if result is not null
-          const { jsonData } = result;
-
-          if (jsonData && jsonData.length >= 2) {
-            // Null and length check
-            setCoordinateData(jsonData[0]); // Assuming the first JSON object is coordinateData
-            setNoteData(jsonData[1]); // Assuming the second JSON object is noteData
-            console.log("Coordinate Data:", jsonData[0]);
-            console.log("Note Data:", JSON.stringify(jsonData[1]));
-            const retrievedNoteArray = await retrieve(jsonData[1]); // Get the noteArray
-            setNoteArray(retrievedNoteArray); // Set the noteArray in state
-          }
-        }
-      };
-      fetchData();
-    }
-  }, [collectionName2]);
-  */
-
   useEffect(() => {
     async function listFilesInFolder(folderPath) {
       try {
@@ -301,27 +271,51 @@ export default function Tracker({ navigation, collectionName, route }) {
         );
         setImageUrls(urls.filter((url) => url !== null));
         //json note data
-        const urls2 = await Promise.all(
+        const jsonNoteData = await Promise.all(
           listResult2.items.map(async (itemRef) => {
             try {
               const url = await getDownloadURL(itemRef);
-              console.log("URL for", itemRef.name, ":", url);
+              const response = await fetch(url);
+              const jsonData = await response.json();
+
+              return jsonData;
             } catch (error) {
-              console.error("Error getting URL:", error);
+              console.error(
+                "Error getting JSON data for",
+                itemRef.name,
+                ":",
+                error
+              );
+              return null;
             }
           })
         );
         //json coordinate data
-        const urls3 = await Promise.all(
+        const jsonCoordData = await Promise.all(
           listResult3.items.map(async (itemRef) => {
             try {
               const url = await getDownloadURL(itemRef);
-              console.log("URL for", itemRef.name, ":", url);
+              const response = await fetch(url);
+              const jsonData = await response.json();
+
+              return jsonData;
             } catch (error) {
-              console.error("Error getting URL:", error);
+              console.error(
+                "Error getting JSON data for",
+                itemRef.name,
+                ":",
+                error
+              );
+              return null;
             }
           })
         );
+        setCoordinateData(jsonCoordData[0]); // Assuming the first JSON object is coordinateData
+        setNoteData(jsonNoteData[0]); // Assuming the second JSON object is noteData
+        console.log("Coordinate Data:", jsonCoordData[0]);
+        console.log("Note Data:", JSON.stringify(jsonNoteData[0]));
+        const retrievedNoteArray = await retrieve(jsonNoteData[0]); // Get the noteArray
+        setNoteArray(retrievedNoteArray); // Set the noteArray in state
       } catch (error) {
         console.error("Error listing files in folder:", error);
       }
@@ -404,7 +398,11 @@ export default function Tracker({ navigation, collectionName, route }) {
                   // You can add an error message to the component state
                   // to display a message to the user.
                 }}
-                style={{ width: 500, height: 500, resizeMode: "contain" }}
+                style={{
+                  width: ViewWidth,
+                  height: ViewHeight,
+                  resizeMode: "contain",
+                }}
               />
             ))}
           </View>
