@@ -36,6 +36,8 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [isMatch, setIsMatch] = useState(false);
   const currentNoteRef = useRef(null);
   const audioNoteRef = useRef(null);
+  const [count2, setCount] = useState(0);
+  const scrollViewRef = useRef(null);
 
   /*const arrayData = [
     "A4",
@@ -259,7 +261,7 @@ export default function Tracker({ navigation, collectionName, route }) {
           listResult.items.map(async (itemRef) => {
             try {
               const fileName = itemRef.name.toLowerCase();
-
+              setCount((prevCount) => prevCount + 1);
               const url = await getDownloadURL(itemRef);
 
               return url;
@@ -351,6 +353,27 @@ export default function Tracker({ navigation, collectionName, route }) {
 
     return noteArray; // Return the noteArray
   }
+  const startAutoScroll = () => {
+    const scrollDuration = 1500;
+    const scrollDistance = 500;
+    let index = 0;
+
+    console.log(count2);
+    let scrollPosition = 0;
+    const scrollView = scrollViewRef.current;
+
+    const contentHeight = imageUrls.length * 500;
+
+    const scrollInterval = setInterval(() => {
+      if (index < count2) {
+        scrollView.scrollTo({ y: scrollPosition, animated: true });
+        scrollPosition += scrollDistance;
+        index++;
+      } else {
+        clearInterval(scrollInterval);
+      }
+    }, scrollDuration);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
@@ -370,7 +393,22 @@ export default function Tracker({ navigation, collectionName, route }) {
       >
         <Text style={{ color: "white" }}> Highlight Notes </Text>
       </TouchableOpacity>
-      <ScrollView>
+      <TouchableOpacity
+        style={{
+          borderRadius: 5,
+          backgroundColor: "darkslateblue",
+          padding: 10,
+          marginLeft: 500,
+          marginRight: 520,
+          marginTop: 10,
+          marginBottom: 10,
+          alignItems: "center",
+        }}
+        onPress={startAutoScroll}
+      >
+        <Text style={{ color: "white" }}> Start Scrolling </Text>
+      </TouchableOpacity>
+      <ScrollView ref={scrollViewRef}>
         <View
           style={{
             alignItems: "center",
