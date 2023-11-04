@@ -14,7 +14,7 @@ import Profile from "./screens/Profile";
 import Library from "./screens/Library";
 import Folder from "./screens/Folder";
 import Tracker from "./screens/Tracker";
-
+import Test from "./screens/Test";
 import Header from "./components/UI/header";
 import { View, TouchableOpacity } from "react-native";
 
@@ -75,6 +75,17 @@ function HomeScreen() {
         component={Tracker}
         options={{
           title: "Tracker",
+          tabBarIcon: ({}) => (
+            <MaterialIcons name="multitrack-audio" size={24} color="white" />
+          ),
+          tabBarActiveTintColor: "white",
+        }}
+      ></Tab.Screen>
+      <Tab.Screen
+        name="Test"
+        component={Test}
+        options={{
+          title: "Test Page",
           tabBarIcon: ({}) => (
             <MaterialIcons name="multitrack-audio" size={24} color="white" />
           ),
