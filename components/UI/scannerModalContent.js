@@ -8,6 +8,7 @@ import CaretRight from "../../assets/caret-right.png";
 import NoteHighlighter from "./noteHighligher";
 
 const ScannerModalContent = ({
+  navigation,
   serverMessage,
   doneLoading,
   setDoneLoading,
@@ -146,6 +147,14 @@ const ScannerModalContent = ({
               <Text style={styles.redButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("Tracker", { subfolderName: collectionName })
+            }
+            style={styles.showNotesButton}
+          >
+            <Text style={styles.blueButtonText}> Confirm </Text>
+          </TouchableOpacity>
         </>
       )}
     </View>

@@ -76,10 +76,10 @@ export default function Scan({ navigation }) {
 
           {(scannerPhase === 4 || scannerPhase === 5) && (
             <ScannerModalContent
+              navigation={navigation}
               serverMessage={serverMessage}
               doneLoading={doneLoading}
               setDoneLoading={setDoneLoading}
-              pngURL={pngURL}
               collectionName={collectionName}
               onChangeCollectionName={onChangeCollectionName}
               setScannerPhase={setScannerPhase}
