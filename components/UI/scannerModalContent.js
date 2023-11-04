@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import styles from "../styleSheetScan"; // Replace with the actual path to your styles
-import { getCoordinateData } from "../firebaseUtils";
+import { downloadAllItemsInCollection } from "../firebaseUtils";
 
 import NoteHighlighter from "./noteHighligher";
 
@@ -9,16 +9,16 @@ const ScannerModalContent = ({
   serverMessage,
   doneLoading,
   setDoneLoading,
-  setDoneLoading,
-  pngURL,
   onChangeCollectionName,
+  collectionName,
   setScannerPhase,
 }) => {
   const [listFilled, setListFilled] = useState(false);
+  const [showNoteLocations, setShowNoteLocations] = useState(false);
 
   const [data, setData] = useState({
     imageUrls: [],
-    coordinateDataList: [],
+    parsedCoordinateDataList: [],
     noteDataList: [],
   });
 
@@ -31,7 +31,7 @@ const ScannerModalContent = ({
       } catch (e) {
         console.log(e);
       } finally {
-        setListFilled(true);
+        console.log(data);
       }
     };
 
@@ -39,6 +39,15 @@ const ScannerModalContent = ({
       fetchData();
     }
   }, [doneLoading]);
+
+  useEffect(() => {
+    if (data.imageUrls.length > 0) {
+      console.log(data);
+      setListFilled(true);
+    } else {
+      console.log(data);
+    }
+  }, [data]);
 
   return (
     <View style={{ height: "100vh" }}>
@@ -53,10 +62,12 @@ const ScannerModalContent = ({
                   source={{ uri: data.imageUrls[0] }}
                   style={styles.previewImage}
                 />
-                <NoteHighlighter
-                  notePositions={data.coordinateDataList[0]}
-                  currIndex={1}
-                />
+                {showNoteLocations && (
+                  <NoteHighlighter
+                    notePositions={data.parsedCoordinateDataList[0]}
+                    currIndex={-1}
+                  />
+                )}
               </>
             )}
           </View>
@@ -70,7 +81,7 @@ const ScannerModalContent = ({
           >
             <TouchableOpacity
               onPress={() => {
-                return;
+                setShowNoteLocations((prev) => !prev);
               }}
               style={styles.showNotesButton}
             >

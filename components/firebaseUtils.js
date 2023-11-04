@@ -148,10 +148,14 @@ export const downloadAllItemsInCollection = async (collectionName) => {
     const coordinateDataList = await getCoordinateData(collectionName); // Make sure this function uses UID correctly
     const noteDataList = await getNoteData(collectionName); // Make sure this function uses UID correctly
 
+    const parsedCoordinateDataList = coordinateDataList.map((dataString) =>
+      JSON.parse(dataString)
+    );
+
     // Return the combined and sorted data
     return {
       imageUrls, // Sorted array of image URLs
-      coordinateDataList, // Sorted list of coordinate data JSON objects
+      parsedCoordinateDataList, // Sorted list of coordinate data JSON objects
       noteDataList, // Sorted list of note data JSON objects
     };
   } catch (error) {

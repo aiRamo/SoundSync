@@ -2,21 +2,23 @@ import React from "react";
 import { View, Text } from "react-native";
 
 const NoteHighlighter = ({ notePositions, currIndex }) => {
+  const isHighlightAll = currIndex === -1;
+
   return (
-    <React.Fragment>
+    <>
       {Object.keys(notePositions).map((key, index) => {
         const { leftPosition, topPosition } = notePositions[key];
 
-        const isHighlighted = index === currIndex; // Check if this is the currently highlighted box
+        const isHighlighted = isHighlightAll || index === currIndex; // Check if this is the currently highlighted box
         return (
-          <>
+          <React.Fragment key={`note_${index}`}>
             <View
               key={`view_${index}`}
               style={{
                 position: "absolute",
                 width: 8,
                 height: "5.5%",
-                borderColor: isHighlighted ? "red" : "red", // Highlighted box has red border, others are transparent
+                borderColor: isHighlighted ? "red" : "transparent", // Highlighted box has red border, others are transparent
                 borderWidth: 1,
                 top: topPosition,
                 left: leftPosition,
@@ -36,10 +38,10 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
             >
               {index + 1}
             </Text>
-          </>
+          </React.Fragment>
         );
       })}
-    </React.Fragment>
+    </>
   );
 };
 
