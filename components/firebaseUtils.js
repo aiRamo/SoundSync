@@ -85,94 +85,84 @@ export async function getFirebaseDownloadURL(firebasePath) {
   return downloadURL;
 }
 
-// Invoked by Tracker
-// Retrieves the image and JSON files form Firebase Storage and returns them in 2 separate arrays
+function extractLeadingNumber(url) {
+  const match = url.match(/^(\d+)/); // Regex to find leading numbers in a string
+  return match ? parseInt(match[1], 10) : null;
+}
+
+async function fetchSortedJsonData(directoryPath, fileIdentifier) {
+  const UID = await checkCurrentUser();
+  const dirRef = ref(STORAGE, `${directoryPath}`);
+  const res = await listAll(dirRef);
+
+  // Map each itemRef to its download URL, then filter and sort them
+  const jsonUrls = (
+    await Promise.all(res.items.map((itemRef) => getDownloadURL(itemRef)))
+  )
+    .filter((url) => url.includes(fileIdentifier)) // Filter by file identifier
+    .sort((a, b) => extractLeadingNumber(a) - extractLeadingNumber(b)); // Sort by leading numbers
+
+  // Fetch JSON from URLs
+  const jsonPromises = jsonUrls.map(async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP status ${response.status}`);
+    }
+    return response.json();
+  });
+
+  // Return a sorted array of JSON data
+  return Promise.all(jsonPromises);
+}
+
+export const getCoordinateData = async (collectionName) => {
+  const UID = await checkCurrentUser(); // Correctly scope UID within the function
+  const coordinatePath = `images/${UID}/sheetCollections/${collectionName}/sheetCoordinateData`;
+  return fetchSortedJsonData(coordinatePath, "coordinateData.json");
+};
+
+export const getNoteData = async (collectionName) => {
+  const UID = await checkCurrentUser(); // Correctly scope UID within the function
+  const notePath = `images/${UID}/sheetCollections/${collectionName}/sheetNoteData`;
+  return fetchSortedJsonData(notePath, "noteData.json");
+};
 
 export const downloadAllItemsInCollection = async (collectionName) => {
   try {
-    console.log("Starting downloadAllItemsInCollection function...");
     const UID = await checkCurrentUser();
-    console.log("UID:", UID);
 
-    const storageRef = ref(
-      STORAGE,
-      `images/${UID}/sheetCollections/${collectionName}`
-    );
-    //console.log("Storage Reference:", storageRef);
+    // Define paths for images, coordinate data, and note data
+    const imagePath = `images/${UID}/sheetCollections/${collectionName}`;
+    const coordinatePath = `${imagePath}/sheetCoordinateData`;
+    const notePath = `${imagePath}/sheetNoteData`;
 
-    // Fetch all the items (files) in the folder
-    const res = await listAll(storageRef);
-    //console.log("List All Response:", res);
+    // Fetch all images and sort them
+    const imageRefs = await listAll(ref(STORAGE, `${imagePath}`));
+    let imageUrls = (
+      await Promise.all(
+        imageRefs.items.map((itemRef) => getDownloadURL(itemRef))
+      )
+    ).sort((a, b) => extractLeadingNumber(a) - extractLeadingNumber(b)); // Sort by leading numbers
 
-    const downloadPromises = res.items.map(async (itemRef) => {
-      const downloadURL = await getDownloadURL(itemRef);
-      return downloadURL;
-    });
+    // Fetch and sort JSON data for coordinates and notes
+    const coordinateDataList = await getCoordinateData(collectionName); // Make sure this function uses UID correctly
+    const noteDataList = await getNoteData(collectionName); // Make sure this function uses UID correctly
 
-    const downloadURLs = await Promise.all(downloadPromises);
-    console.log("All Download URLs:", downloadURLs);
-
-    //console.log("Download URLs:", downloadURLs);
-
-    // Separate image URLs and JSON URLs
-    const imageUrls = downloadURLs.filter((url) => !url.includes(".json"));
-    const jsonUrls = downloadURLs.filter((url) => url.includes(".json"));
-    //console.log("Image URLs:", imageUrls);
-    //console.log("JSON URLs:", jsonUrls);
-
-    // Sort JSON URLs based on file names
-    const sortedJsonUrls = jsonUrls.sort((a, b) => {
-      if (
-        a.includes("notePositions.json") &&
-        !b.includes("notePositions.json")
-      ) {
-        return -1;
-      }
-      if (
-        !a.includes("notePositions.json") &&
-        b.includes("notePositions.json")
-      ) {
-        return 1;
-      }
-      return 0;
-    });
-    //
-    // Fetch JSON data from URLs
-    const fetchJSONPromises = sortedJsonUrls.map(async (url) => {
-      try {
-        console.log("here the url " + url);
-        const response = await fetch(url, {
-          // headers: {
-          // "Access-Control-Allow-Origin": "*",
-          //},
-          // mode: "cors",
-          mode: "cors",
-        });
-        if (!response.ok) {
-          throw new Error(`Fetch failed with status: ${response.status}`);
-        }
-        const data = await response.json();
-
-        return data;
-      } catch (error) {
-        console.error("An error occurred while fetching JSON data:", error);
-        return null; // or handle the error in an appropriate way
-      }
-    });
-
-    const jsonData = await Promise.all(fetchJSONPromises);
-    //console.log("JSON Data:", jsonData);
-
-    // Return only the first image URL for testing
-    const firstImageUrl = imageUrls.length > 0 ? imageUrls[0] : null;
-    console.log("Image URL:", firstImageUrl);
-
+    // Return the combined and sorted data
     return {
-      firstImageUrl,
-      jsonData,
+      imageUrls, // Sorted array of image URLs
+      coordinateDataList, // Sorted list of coordinate data JSON objects
+      noteDataList, // Sorted list of note data JSON objects
     };
   } catch (error) {
-    console.error("An error occurred:", error);
-    return null;
+    console.error(
+      "An error occurred while downloading items in the collection:",
+      error
+    );
+    return {
+      imageUrls: [],
+      coordinateDataList: [],
+      noteDataList: [],
+    };
   }
 };

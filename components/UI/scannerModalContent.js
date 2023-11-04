@@ -1,28 +1,44 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import styles from "../styleSheetScan"; // Replace with the actual path to your styles
+import { getCoordinateData } from "../firebaseUtils";
 
-// calculateNoteCoordinates.js parses the noteCoordinateData JSON and returns a list of components representing the note's page location.
-// These components are where the noteHighlighter comes from.
-import calculateNoteCoordinates from "../calculateNoteCoordinates";
-
-const { width, height } = Dimensions.get("window");
-const A4_RATIO = 1.4;
-const ViewWidth = width * 0.26; // 90% of device width
-const ViewHeight = ViewWidth * A4_RATIO;
+import NoteHighlighter from "./noteHighligher";
 
 const ScannerModalContent = ({
   serverMessage,
   doneLoading,
+  setDoneLoading,
   pngURL,
   collectionName,
   onChangeCollectionName,
-  noteCoordinateData,
   setScannerPhase,
 }) => {
-  React.useEffect(() => {
-    console.log(pngURL);
-  }, [pngURL]);
+  const [listFilled, setListFilled] = useState(false);
+
+  const [data, setData] = useState({
+    imageUrls: [],
+    coordinateDataList: [],
+    noteDataList: [],
+  });
+
+  useEffect(() => {
+    // A function to fetch and set the data
+    const fetchData = async () => {
+      try {
+        const allData = await downloadAllItemsInCollection(collectionName);
+        setData(allData);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setListFilled(true);
+      }
+    };
+
+    if (doneLoading) {
+      fetchData();
+    }
+  }, [doneLoading]);
 
   return (
     <View style={{ height: "100vh" }}>
@@ -31,14 +47,20 @@ const ScannerModalContent = ({
         <>
           <Text style={styles.modalTitle}>Here is your generated image</Text>
           <View style={styles.modalImageView}>
-            <Image source={{ uri: pngURL }} style={styles.previewImage} />
-            {calculateNoteCoordinates(
-              noteCoordinateData,
-              collectionName,
-              ViewWidth,
-              ViewHeight
+            {listFilled && (
+              <>
+                <Image
+                  source={{ uri: data.imageUrls[0] }}
+                  style={styles.previewImage}
+                />
+                <NoteHighlighter
+                  notePositions={data.coordinateDataList[0]}
+                  currIndex={1}
+                />
+              </>
             )}
           </View>
+
           <View
             style={{
               display: "flex",
@@ -48,7 +70,7 @@ const ScannerModalContent = ({
           >
             <TouchableOpacity
               onPress={() => {
-                console.log("Toggle Tracker Boxes Visible...");
+                return;
               }}
               style={styles.showNotesButton}
             >
@@ -57,6 +79,7 @@ const ScannerModalContent = ({
             <TouchableOpacity
               onPress={() => {
                 onChangeCollectionName("");
+                setDoneLoading(false);
                 setScannerPhase(5);
               }}
               style={styles.closeButton}

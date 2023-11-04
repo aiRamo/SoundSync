@@ -16,7 +16,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
                 position: "absolute",
                 width: 8,
                 height: "5.5%",
-                borderColor: isHighlighted ? "red" : "transparent", // Highlighted box has red border, others are transparent
+                borderColor: isHighlighted ? "red" : "red", // Highlighted box has red border, others are transparent
                 borderWidth: 1,
                 top: topPosition,
                 left: leftPosition,

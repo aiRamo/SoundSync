@@ -5,38 +5,23 @@ import CaretRight from "../../assets/caret-right.png";
 import styles from "../styleSheetScan";
 
 const SheetScanPromptContent = ({
-  image,
-  setImage,
   pickImage,
   imageList,
   setScannerPhase,
   callAPIandWaitForResponse,
 }) => {
-  let currentImageIndex = 0; // Updated to a regular variable
-
-  const updateImage = (index) => {
-    if (imageList[index] != null) {
-      setImage(imageList[index]);
-    } else {
-      setImage(require("../../assets/addScan.png"));
-    }
-  };
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const scrollLeft = () => {
     if (currentImageIndex > 0) {
-      currentImageIndex -= 1; // Updated to decrement the index
-      updateImage(currentImageIndex);
+      setCurrentImageIndex(currentImageIndex - 1);
     }
   };
 
   const scrollRight = () => {
-    console.log("BEFORE: " + imageList.length + "," + currentImageIndex);
     if (currentImageIndex < imageList.length) {
-      currentImageIndex += 1; // Updated to increment the index
-      updateImage(currentImageIndex);
-    } else if (currentImageIndex >= imageList.length) {
-      currentImageIndex += 1; // Increment to match the length for the condition below
-      setImage(require("../../assets/addScan.png")); // Set the addScan image
+      setCurrentImageIndex(currentImageIndex + 1);
     }
   };
 
@@ -74,12 +59,27 @@ const SheetScanPromptContent = ({
       </View>
       <TouchableOpacity
         onPress={pickImage}
-        style={styles.pickImageButtonContainer}
+        style={[
+          styles.pickImageButtonContainer,
+          isHovered && { opacity: 0.75 },
+        ]}
+        disabled={
+          currentImageIndex < imageList.length && imageList.length !== 0
+        }
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <Image source={image} style={styles.imagePreview} />
+        <Image
+          source={
+            imageList.length === 0 || currentImageIndex >= imageList.length
+              ? require("../../assets/addScan.png")
+              : { uri: imageList[currentImageIndex] }
+          }
+          style={styles.imagePreview}
+        />
       </TouchableOpacity>
 
-      {true && (
+      {imageList.length > 0 && (
         <>
           <TouchableOpacity
             onPress={() => {

@@ -18,13 +18,13 @@ const FadeTransition = ({ children, phase, setPhase }) => {
         toValue: 1,
         duration: 5000,
         easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
       Animated.timing(translateYAnim, {
         toValue: 0,
         duration: 2500,
         easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
     ]).start();
   };
@@ -35,13 +35,13 @@ const FadeTransition = ({ children, phase, setPhase }) => {
         toValue: 0,
         duration: 1000,
         easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
       Animated.timing(translateYAnim, {
         toValue: 50,
         duration: 1000,
         easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
     ]).start(() => {
       if (phase == 5) {

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: width * 0.37,
     padding: 0,
-    borderRadius: 24,
+    borderRadius: 15,
     top: "4vh",
   },
   testButtonContainer: {
@@ -71,8 +71,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "rgba(0,0,0,1)",
     textAlign: "center",
-    marginTop: " 2vh",
-    marginBottom: height * 0,
+    marginTop: "1%",
     width: width * 0.8,
   },
   imageCounterBar: {
@@ -90,8 +89,8 @@ const styles = StyleSheet.create({
     top: height * 0.35,
     justifyContent: "center",
     alignItems: "center",
-    width: 45, // or some appropriate size
-    height: 45, // or some appropriate size
+    width: 45,
+    height: 45,
     zIndex: 10,
     backgroundColor: "white",
     borderRadius: 50,
@@ -130,7 +129,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   confirmNameButton: {
-    position: "absolute",
     backgroundColor: "rgba(114, 110, 184, 1)",
     width: width * 0.1,
     height: height * 0.075,
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
   },
   namePropmtContent: {
     backgroundColor: "#d6d6e6",
-    height: height,
+    flex: 1,
     top: 0,
     alignSelf: "center",
   },

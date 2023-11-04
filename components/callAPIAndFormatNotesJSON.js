@@ -4,21 +4,24 @@ import {
   getFirebaseDownloadURL,
   sendJSONToSheetCollection,
 } from "./firebaseUtils";
+// calculateNoteCoordinates.js parses the noteCoordinateData JSON and returns a list of components representing the note's page location.
+// These components are where the noteHighlighter comes from.
 import API_URL from "../API_URL.json";
 
+import calculateNoteCoordinates from "./calculateNoteCoordinates";
+
 export const callAPIandFormatNotesJSON = async (
-  UID,
   image,
-  collectionName,
-  setters
+  imageNumber,
+  APIPayload
 ) => {
   try {
-    await uploadImage(image, UID);
-    //setters.setLoading(true);
+    await uploadImage(image, APIPayload.UID);
 
     const data = {
-      uid: UID, // This is the Firebase UID
-      collectionName: collectionName, // This is the name of the collection
+      uid: APIPayload.UID, // This is the Firebase UID
+      collectionName: APIPayload.collectionName, // This is the name of the collection
+      imageNumber: imageNumber, // This is the index number for the imageList
     };
 
     // Fetch API to send the UID
@@ -34,14 +37,20 @@ export const callAPIandFormatNotesJSON = async (
       const notesJson = await response.json();
       console.log("Notes JSON:", notesJson);
 
-      setters.setNoteCoordinateData(notesJson.coordinateData);
+      calculateNoteCoordinates(
+        notesJson.coordinateData,
+        APIPayload.collectionName,
+        imageNumber,
+        APIPayload.ViewWidth,
+        APIPayload.ViewHeight
+      );
 
       //const tableData = compileNoteData(notesJson);
 
       sendJSONToSheetCollection(
         notesJson.notes,
-        collectionName,
-        "noteData.json"
+        APIPayload.collectionName,
+        `sheetNoteData/${imageNumber}noteData.json`
       );
 
       // Assume the firebasePath is returned in the JSON response from your API
@@ -53,7 +62,7 @@ export const callAPIandFormatNotesJSON = async (
       // console.log(
       //   "here coordinate data: " + JSON.stringify(notesJson.coordinateData)
       // );
-      setters.setpngURL(downloadURL);
+      APIPayload.setpngURL(downloadURL);
     } else {
       console.log("API call failed:", response.statusText);
     }
