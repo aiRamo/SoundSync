@@ -9,10 +9,11 @@ import {
 } from "react-native";
 import Header from "../components/UI/header";
 import React, { useState, useEffect, useRef } from "react";
-
 import NoteHighlighter from "../components/UI/noteHighligher";
-
+import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { downloadAllItemsInCollection } from "../components/firebaseUtils";
+import { STORAGE } from "../firebaseConfig";
+import { AUTH } from "../firebaseConfig";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
@@ -23,6 +24,9 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [isDefaultImage, setIsDefaultImage] = useState(true);
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [collectionName1, setCollectionName] = useState("");
+  const [collectionName2, setCollectionName2] = useState("");
+  const [user, setUser] = useState(null);
+  const [imageUrls, setImageUrls] = useState([]);
   const [coordinateData, setCoordinateData] = useState(null);
   const [noteData, setNoteData] = useState(null);
   const [highlightNotes, setHighlightNotes] = useState(false);
@@ -132,7 +136,7 @@ export default function Tracker({ navigation, collectionName, route }) {
   let count = 0;
 
   let currIndexRef = 0; // Create a ref for currIndex
-
+  //check the two notes
   const evaluateNote = () => {
     if (count < arrayData.length) {
       console.log(
@@ -172,7 +176,7 @@ export default function Tracker({ navigation, collectionName, route }) {
       count++;
 
       //
-
+      //timer for something
       if (count < arrayData.length) {
         timer = setTimeout(evaluateNote, 1000);
       } else {
@@ -181,13 +185,29 @@ export default function Tracker({ navigation, collectionName, route }) {
       }
     }
   };
-
+  //notehighlighter
   const handlePress = () => {
     setHighlightNotes(true);
     count = 0; // Reset count to 0
     evaluateNote(); // Start the evaluation
   };
 
+  useEffect(() => {
+    const unsubscribe = AUTH.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        // User is signed in
+        setUser(authUser);
+      } else {
+        // User is signed out
+        setUser(null);
+      }
+    });
+
+    // Clean up the subscription when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  //note highlighter
   useEffect(() => {
     if (highlightNotes === false) {
       setCurrIndex(0); // Reset currIndex to 0 when highlightNotes becomes false
@@ -196,6 +216,7 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [highlightNotes]);
 
+  //matching stuff
   useEffect(() => {
     if (isMatch) {
       if (currentNoteRef.current) {
@@ -221,21 +242,19 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [isMatch]);
 
+  //get folder name
+  /*
   useEffect(() => {
-    if (collectionName1 !== "") {
-      console.log(`fetching data... collectionName = ${collectionName1}`);
+    if (collectionName2 !== "") {
+      console.log(`fetching data... collectionName = ${collectionName2}`);
 
       const fetchData = async () => {
-        const result = await downloadAllItemsInCollection(collectionName1);
-
+        const result = await downloadAllItemsInCollection(collectionName2);
+        console.log(result);
         if (result) {
           // Check if result is not null
-          const { firstImageUrl, jsonData } = result;
-          if (firstImageUrl && firstImageUrl.length > 0) {
-            // Null and length check
-            setImage(firstImageUrl); // Assuming there's only one image
-            setIsDefaultImage(false); // Set to false when you have a new image
-          }
+          const { jsonData } = result;
+
           if (jsonData && jsonData.length >= 2) {
             // Null and length check
             setCoordinateData(jsonData[0]); // Assuming the first JSON object is coordinateData
@@ -249,14 +268,76 @@ export default function Tracker({ navigation, collectionName, route }) {
       };
       fetchData();
     }
-  }, [collectionName1]);
+  }, [collectionName2]);
+  */
+
+  useEffect(() => {
+    async function listFilesInFolder(folderPath) {
+      try {
+        const JsonPath = folderPath + "/sheetNoteData";
+        const JsonCoord = folderPath + "/sheetCoordinateData";
+
+        const folderRef = ref(STORAGE, folderPath);
+        const folderRef2 = ref(STORAGE, JsonPath);
+        const folderRef3 = ref(STORAGE, JsonCoord);
+
+        const listResult = await listAll(folderRef);
+        const listResult2 = await listAll(folderRef2);
+        const listResult3 = await listAll(folderRef3);
+
+        const urls = await Promise.all(
+          listResult.items.map(async (itemRef) => {
+            try {
+              const fileName = itemRef.name.toLowerCase();
+
+              const url = await getDownloadURL(itemRef);
+
+              return url;
+            } catch (error) {
+              console.error("Error downloading image:", error);
+              return null;
+            }
+          })
+        );
+        setImageUrls(urls.filter((url) => url !== null));
+        //json note data
+        const urls2 = await Promise.all(
+          listResult2.items.map(async (itemRef) => {
+            try {
+              const url = await getDownloadURL(itemRef);
+              console.log("URL for", itemRef.name, ":", url);
+            } catch (error) {
+              console.error("Error getting URL:", error);
+            }
+          })
+        );
+        //json coordinate data
+        const urls3 = await Promise.all(
+          listResult3.items.map(async (itemRef) => {
+            try {
+              const url = await getDownloadURL(itemRef);
+              console.log("URL for", itemRef.name, ":", url);
+            } catch (error) {
+              console.error("Error getting URL:", error);
+            }
+          })
+        );
+      } catch (error) {
+        console.error("Error listing files in folder:", error);
+      }
+    }
+
+    if (user && collectionName1) {
+      listFilesInFolder(
+        `images/${user.uid}/sheetCollections/${collectionName1}`
+      );
+    }
+  }, [user, collectionName1]);
 
   useEffect(() => {
     if (route.params != null) {
-      const { folder } = route.params;
-      console.log(folder);
-      setCollectionName(folder);
-
+      const { subfolderName } = route.params;
+      setCollectionName(subfolderName);
       console.log("here collection name " + collectionName1);
     }
   }, [route.params]);
@@ -307,21 +388,26 @@ export default function Tracker({ navigation, collectionName, route }) {
             width: ViewWidth,
           }}
         >
-          {isDefaultImage ? (
-            <Image
-              source={require("../assets/addScan.png")}
-              style={{ resizeMode: "contain" }}
-            />
-          ) : (
-            <Image
-              source={{ uri: image }}
-              style={{
-                resizeMode: "contain",
-                height: ViewHeight,
-                width: ViewWidth,
-              }}
-            />
-          )}
+          <View
+            style={{
+              flexDirection: "column",
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
+            {imageUrls.map((url, index) => (
+              <Image
+                key={index}
+                source={{ uri: url }}
+                onError={(error) => {
+                  console.log("Image failed to load:", error);
+                  // You can add an error message to the component state
+                  // to display a message to the user.
+                }}
+                style={{ width: 500, height: 500, resizeMode: "contain" }}
+              />
+            ))}
+          </View>
 
           {highlightNotes && coordinateData && (
             <NoteHighlighter

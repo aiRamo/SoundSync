@@ -59,7 +59,7 @@ export default function Library() {
   const handleSubfolderSelection = (subfolderName) => {
     // Navigate to the SubfolderScreen with the selected subfolder name
     //navigation.navigate("Test", { subfolderName });
-    navigation.navigate("Library", { subfolderName });
+    navigation.navigate("Tracker", { subfolderName });
   };
 
   return (
