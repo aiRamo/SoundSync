@@ -1,23 +1,15 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import styles from "../styleSheetScan"; // Replace with the actual path to your styles
 
-// calculateNoteCoordinates.js parses the noteCoordinateData JSON and returns a list of components representing the note's page location.
-// These components are where the noteHighlighter comes from.
-import calculateNoteCoordinates from "../calculateNoteCoordinates";
-
-const { width, height } = Dimensions.get("window");
-const A4_RATIO = 1.4;
-const ViewWidth = width * 0.26; // 90% of device width
-const ViewHeight = ViewWidth * A4_RATIO;
+import NoteHighlighter from "./noteHighligher";
 
 const ScannerModalContent = ({
   serverMessage,
   doneLoading,
+  setDoneLoading,
   pngURL,
-  collectionName,
   onChangeCollectionName,
-  noteCoordinateData,
   setScannerPhase,
 }) => {
   React.useEffect(() => {
@@ -32,12 +24,7 @@ const ScannerModalContent = ({
           <Text style={styles.modalTitle}>Here is your generated image</Text>
           <View style={styles.modalImageView}>
             <Image source={{ uri: pngURL }} style={styles.previewImage} />
-            {calculateNoteCoordinates(
-              noteCoordinateData,
-              collectionName,
-              ViewWidth,
-              ViewHeight
-            )}
+            {/*<NoteHighlighter />*/}
           </View>
           <View
             style={{
@@ -57,6 +44,7 @@ const ScannerModalContent = ({
             <TouchableOpacity
               onPress={() => {
                 onChangeCollectionName("");
+                setDoneLoading(false);
                 setScannerPhase(5);
               }}
               style={styles.closeButton}

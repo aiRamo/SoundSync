@@ -11,7 +11,6 @@ import styles from "../styleSheetScan";
 const CollectionNamePrompt = ({
   collectionName,
   onChangeCollectionName,
-  confirmNameButton,
   setScannerPhase,
   scannerPhase,
 }) => {
@@ -21,7 +20,9 @@ const CollectionNamePrompt = ({
 
   return (
     <View style={styles.namePropmtContent}>
-      <Text style={styles.introTitle}> First, Lets Give It a Name</Text>
+      <Text style={[styles.introTitle, { marginTop: "8%" }]}>
+        First, Lets Give It a Name
+      </Text>
       <View style={styles.namePromptCard}>
         <TextInput
           style={styles.nameInput}

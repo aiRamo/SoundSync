@@ -6,7 +6,7 @@
 // - Make it so, after ALL OF THIS, the scanner will have an option to take the user to the Tracker page with the completed scan.
 
 import React, { useState, useEffect } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, Dimensions } from "react-native";
 import { View } from "react-native";
 import styles from "../components/styleSheetScan";
 
@@ -26,9 +26,8 @@ import ScannerModalContent from "../components/UI/scannerModalContent";
 
 import useWebSocket from "../components/useWebSocket";
 
-import Header from "../components/UI/header";
 import FadeTransition from "../components/UI/fadeTransition";
-import { not } from "react-native-reanimated";
+const { width, height } = Dimensions.get("window");
 
 export default function Scan({ navigation }) {
   /*
@@ -38,19 +37,10 @@ export default function Scan({ navigation }) {
   */
   const [scannerPhase, setScannerPhase] = useState(0);
   const [collectionName, onChangeCollectionName] = useState("");
-  const [confirmNameButton, setConfirmNameButton] = useState(false);
   const [serverMessage, setServerMessage] = useState("Scanning Image");
   const [doneLoading, setDoneLoading] = useState(false);
   const [pngURL, setpngURL] = useState(null);
-  const [noteCoordinateData, setNoteCoordinateData] = useState(false);
-
-  useEffect(() => {
-    if (collectionName === "") {
-      setConfirmNameButton(false);
-    } else {
-      setConfirmNameButton(true);
-    }
-  }, [collectionName]);
+  const [noteCoordinateData, setNoteCoordinateData] = useState(null);
 
   useEffect(() => {
     console.log(pngURL);
@@ -59,48 +49,44 @@ export default function Scan({ navigation }) {
   useWebSocket((event) => setServerMessage(event.data));
 
   return (
-    <View style={{ flex: 1 }}>
-      <Header navigation={navigation} />
-      <ScrollView>
-        <View style={styles.container}>
-          <FadeTransition
-            phase={scannerPhase}
-            key={scannerPhase}
-            setPhase={setScannerPhase}
-          >
-            {(scannerPhase === 0 || scannerPhase === 1) && (
-              <CollectionNamePrompt
-                collectionName={collectionName}
-                onChangeCollectionName={onChangeCollectionName}
-                confirmNameButton={confirmNameButton}
-                setScannerPhase={setScannerPhase}
-                scannerPhase={scannerPhase}
-              />
-            )}
-            {(scannerPhase === 2 || scannerPhase === 3) && (
-              <SheetScanPrompt
-                collectionName={collectionName}
-                setScannerPhase={setScannerPhase}
-                setDoneLoading={setDoneLoading}
-                setpngURL={setpngURL}
-                setNoteCoordinateData={setNoteCoordinateData}
-              />
-            )}
+    <View style={{ height: height, marginTop: 45 }}>
+      <View style={styles.container}>
+        <FadeTransition
+          phase={scannerPhase}
+          key={scannerPhase}
+          setPhase={setScannerPhase}
+        >
+          {(scannerPhase === 0 || scannerPhase === 1) && (
+            <CollectionNamePrompt
+              collectionName={collectionName}
+              onChangeCollectionName={onChangeCollectionName}
+              setScannerPhase={setScannerPhase}
+              scannerPhase={scannerPhase}
+            />
+          )}
+          {(scannerPhase === 2 || scannerPhase === 3) && (
+            <SheetScanPrompt
+              collectionName={collectionName}
+              setScannerPhase={setScannerPhase}
+              setDoneLoading={setDoneLoading}
+              setpngURL={setpngURL}
+              setNoteCoordinateData={setNoteCoordinateData}
+              noteCoordinateData={noteCoordinateData}
+            />
+          )}
 
-            {(scannerPhase === 4 || scannerPhase === 5) && (
-              <ScannerModalContent
-                serverMessage={serverMessage}
-                doneLoading={doneLoading}
-                pngURL={pngURL}
-                collectionName={collectionName}
-                onChangeCollectionName={onChangeCollectionName}
-                noteCoordinateData={noteCoordinateData}
-                setScannerPhase={setScannerPhase}
-              />
-            )}
-          </FadeTransition>
-        </View>
-      </ScrollView>
+          {(scannerPhase === 4 || scannerPhase === 5) && (
+            <ScannerModalContent
+              serverMessage={serverMessage}
+              doneLoading={doneLoading}
+              setDoneLoading={setDoneLoading}
+              pngURL={pngURL}
+              onChangeCollectionName={onChangeCollectionName}
+              setScannerPhase={setScannerPhase}
+            />
+          )}
+        </FadeTransition>
+      </View>
     </View>
   );
 }

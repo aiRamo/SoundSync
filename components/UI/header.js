@@ -32,28 +32,20 @@ const Header = ({ navigation }) => {
   return (
     <View
       style={{
-        backgroundColor: "darkslateblue",
+        flexDirection: "row",
+        alignItems: "center",
+        marginRight: 25,
       }}
     >
-      <View
-        style={{
-          marginTop: StatusBar.currentHeight,
-          justifyContent: "flex-end",
-          alignItems: "flex-end",
-          marginTop: 5,
-          marginBottom: 5,
-        }}
-      >
-        <TouchableOpacity onPress={toggleDropdown}>
-          <Entypo name="dots-three-vertical" size={24} color="white" />
-        </TouchableOpacity>
-        <Drop
-          isVisible={isDropdownVisible}
-          options={["Settings", "Sign Out", "Close"]}
-          onSelect={handleDropdownSelect}
-          onClose={() => setDropdownVisible(false)}
-        />
-      </View>
+      <TouchableOpacity onPress={toggleDropdown}>
+        <Entypo name="dots-three-vertical" size={24} color="white" />
+      </TouchableOpacity>
+      <Drop
+        isVisible={isDropdownVisible}
+        options={["Settings", "Sign Out", "Close"]}
+        onSelect={handleDropdownSelect}
+        onClose={() => setDropdownVisible(false)}
+      />
     </View>
   );
 };

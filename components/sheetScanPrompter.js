@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import { useImage } from "@shopify/react-native-skia";
+import { Dimensions } from "react-native";
 
 import * as ImagePicker from "expo-image-picker";
 
 import SheetScanPromptContent from "./UI/sheetScanPrompterContent";
-
-// fetchImagesFromCollection.js returns a list of the given images in a certain collection's directory.
-// This is done by passing in the UID and collectionName from Scan.js
-import fetchImagesFromCollection from "./fetchImagesFromCollection";
 
 // callAPIAndFormatNotesJSON.js handles the client-server communication between the app and the API.
 // The API response data is returned back to this page and bundled together to be sent to scannerModalContent.js
@@ -18,26 +14,30 @@ import { callAPIandFormatNotesJSON } from "./callAPIAndFormatNotesJSON";
 // checkCurrentUser validates that user is logged in and returns the user's UID.
 import { checkCurrentUser } from "./firebaseUtils";
 
+const { width, height } = Dimensions.get("window");
+const A4_RATIO = 1.4;
+const ViewWidth = width * 0.26; // 90% of device width
+const ViewHeight = ViewWidth * A4_RATIO;
+
 const SheetScanPrompt = ({
   collectionName,
   imgUrl,
   setScannerPhase,
   setDoneLoading,
   setpngURL,
-  setNoteCoordinateData,
 }) => {
   //Boolean states - These 4 are used to control conditional rendering in the ScannerModal
-  const [loading, setLoading] = useState(false);
-
+  let count = 0;
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [imageList, setImageList] = useState([]);
-  const [loadingPhase, setLoadingPhase] = useState("");
   const [UID, setUID] = useState(null);
 
-  const settersForAPI = {
-    setLoading,
-    setNoteCoordinateData,
+  const APIPayload = {
+    collectionName,
     setpngURL,
+    ViewHeight,
+    ViewWidth,
+    UID,
   };
 
   checkCurrentUser()
@@ -80,28 +80,23 @@ const SheetScanPrompt = ({
   }, [image]);
 
   const callAPIandWaitForResponse = async () => {
-    let count = 0;
-    let imageListSize = imageList.length;
+    for (let i = 0; i < imageList.length; i++) {
+      count = i;
+      let img = imageList[i];
+      console.log(img); // Current image
+      console.log(UID); // Assuming UID is defined elsewhere
+      console.log(collectionName); // Assuming collectionName is defined elsewhere
 
-    for (let img of imageList) {
-      // Call the API for each image and await the response
-      console.log(imageList[0]);
-      console.log(UID);
-      console.log(collectionName);
-      console.log(settersForAPI);
-      count += 1;
       await callAPIandFormatNotesJSON(
-        UID,
-        imageList[0],
-        collectionName,
-        settersForAPI
+        img,
+        i, // This is the index number for the current image
+        APIPayload
       );
 
       // Optional: Add a delay between API calls if needed
-      // await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
-    //setLoading(false); // Hide loading circle
-    setDoneLoading(true);
+    setDoneLoading(true); // Assuming setDoneLoading is a state setter function defined elsewhere
   };
 
   return (

@@ -5,9 +5,10 @@ import NoteHighlighter from "./UI/noteHighligher";
 import { sendJSONToSheetCollection } from "./firebaseUtils";
 
 // Calculates each note's position on the page using a percentage-based approach (EX. 40% from the left of the page, 20% from the top.)
-const calculateNoteCoordinates = (
+const calculateNoteCoordinates = async (
   noteCoordinates,
   collectionName,
+  imageNumber,
   ViewWidth,
   ViewHeight
 ) => {
@@ -87,12 +88,12 @@ const calculateNoteCoordinates = (
   sendJSONToSheetCollection(
     notePositionsJSON,
     collectionName,
-    "notePositions.json"
+    `sheetCoordinateData/${imageNumber}coordinateData.json`
   );
 
-  const parsedNotePositions = JSON.parse(notePositionsJSON);
+  //setParsedNotePositions(JSON.parse(notePositionsJSON));
 
-  return <NoteHighlighter notePositions={parsedNotePositions} currIndex={6} />;
+  //return <NoteHighlighter notePositions={parsedNotePositions} currIndex={6} />;
 };
 
 export default calculateNoteCoordinates;

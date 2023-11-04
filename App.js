@@ -15,7 +15,8 @@ import Library from "./screens/Library";
 import Folder from "./screens/Folder";
 import Tracker from "./screens/Tracker";
 import Test from "./screens/Test";
-import { firebase } from "@react-native-firebase/functions";
+import Header from "./components/UI/header";
+import { View, TouchableOpacity } from "react-native";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -29,7 +30,12 @@ function HomeScreen() {
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { position: "absolute", backgroundColor: "darkslateblue" },
+        tabBarStyle: {
+          position: "absolute",
+          backgroundColor: "darkslateblue",
+          top: -1,
+          height: 45,
+        },
       }}
     >
       <Tab.Screen
@@ -86,6 +92,14 @@ function HomeScreen() {
           tabBarActiveTintColor: "white",
         }}
       ></Tab.Screen>
+      <Tab.Screen
+        name="Header"
+        component={() => null} // Empty component, as it won't be used
+        options={{
+          tabBarButton: ({ navigation }) => <Header navigation={navigation} />,
+          tabBarIcon: () => null, // No icon for this tab
+        }}
+      />
     </Tab.Navigator>
   );
 }
