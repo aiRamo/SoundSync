@@ -151,9 +151,11 @@ const ScannerModalContent = ({
             onPress={() =>
               navigation.navigate("Tracker", { subfolderName: collectionName })
             }
-            style={styles.showNotesButton}
+            style={[styles.showNotesButton, { alignSelf: "center" }]}
           >
-            <Text style={styles.blueButtonText}> Confirm </Text>
+            <Text style={[styles.blueButtonText, { color: "green" }]}>
+              Confirm
+            </Text>
           </TouchableOpacity>
         </>
       )}
