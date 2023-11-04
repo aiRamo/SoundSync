@@ -360,9 +360,9 @@ export default function Tracker({ navigation, collectionName, route }) {
           borderRadius: 5,
           backgroundColor: "darkslateblue",
           padding: 10,
-          marginLeft: 212,
-          marginRight: 232,
-          marginTop: 10,
+          marginLeft: 500,
+          marginRight: 520,
+          marginTop: 30,
           marginBottom: 10,
           alignItems: "center",
         }}
