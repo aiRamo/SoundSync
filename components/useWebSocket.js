@@ -4,7 +4,9 @@ import API_URL from "../API_URL.json";
 const useWebSocket = (onMessage) => {
   let ws = useRef(null);
   const url = API_URL.API_URL_WS; // Get the URL from the JSON file
-
+  const url2 = API_URL.API_URL_UPLOAD;
+  console.log(url2);
+  console.log(url);
   useEffect(() => {
     ws.current = new WebSocket(url);
 

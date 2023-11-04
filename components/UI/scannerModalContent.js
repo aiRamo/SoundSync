@@ -9,8 +9,8 @@ const ScannerModalContent = ({
   serverMessage,
   doneLoading,
   setDoneLoading,
+  setDoneLoading,
   pngURL,
-  collectionName,
   onChangeCollectionName,
   setScannerPhase,
 }) => {
@@ -79,6 +79,7 @@ const ScannerModalContent = ({
             <TouchableOpacity
               onPress={() => {
                 onChangeCollectionName("");
+                setDoneLoading(false);
                 setDoneLoading(false);
                 setScannerPhase(5);
               }}

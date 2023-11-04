@@ -6,8 +6,7 @@
 // - Make it so, after ALL OF THIS, the scanner will have an option to take the user to the Tracker page with the completed scan.
 
 import React, { useState, useEffect } from "react";
-import { ScrollView, Dimensions } from "react-native";
-import { View } from "react-native";
+import { View, Dimensions } from "react-native";
 import styles from "../components/styleSheetScan";
 
 // collectionNamePrompter.js prompts the user to provide a collectionName via a modal.
