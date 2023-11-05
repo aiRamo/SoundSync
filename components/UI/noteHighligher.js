@@ -22,6 +22,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
                 borderWidth: 1,
                 top: topPosition,
                 left: leftPosition,
+                zIndex: 10,
               }}
             />
             <Text
@@ -34,6 +35,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
                 fontSize: 12,
                 alignSelf: "center",
                 opacity: isHighlighted ? 1 : 0, // Highlighted box has opacity 1, others are hidden
+                zIndex: 10,
               }}
             >
               {index + 1}

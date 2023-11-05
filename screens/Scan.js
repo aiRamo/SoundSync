@@ -53,7 +53,7 @@ export default function Scan({ navigation }) {
   return (
     <View style={{ height: height }}>
       <View style={styles.container}>
-        <View style={styles.gradientContainer}>
+        <View style={styles.gradientContainerScanner}>
           <RadialGradient style={{ ...styles.gradient, zIndex: 1 }} />
         </View>
         <FadeTransition

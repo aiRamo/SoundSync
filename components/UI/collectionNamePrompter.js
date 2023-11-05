@@ -21,7 +21,7 @@ const CollectionNamePrompt = ({
   return (
     <View style={styles.namePropmtContent}>
       <Text style={[styles.introTitle, { marginTop: "8%" }]}>
-        First, Lets Give It a Name
+        First, Lets Give Your Sheet Music a Name
       </Text>
       <View style={styles.namePromptCard}>
         <TextInput

@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#483d8b",
     zIndex: 0,
   },
-  gradientContainer: {
+  gradientContainerScanner: {
     position: "absolute",
     bottom: height * -0.85,
     left: width * -0.7,
@@ -21,6 +21,15 @@ const styles = StyleSheet.create({
     width: height * 3.5,
     backgroundColor: "#483d8b",
     zIndex: 5,
+  },
+  gradientContainerTracker: {
+    position: "absolute",
+    bottom: height * -2.5,
+    left: width * -0.4,
+    height: height * 3.5,
+    width: height * 3.5,
+    backgroundColor: "#483d8b",
+    zIndex: 0,
   },
   gradient: {
     height: "100%",

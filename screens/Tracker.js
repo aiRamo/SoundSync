@@ -7,13 +7,14 @@ import {
   Dimensions,
   Alert,
 } from "react-native";
-import Header from "../components/UI/header";
 import React, { useState, useEffect, useRef } from "react";
 import NoteHighlighter from "../components/UI/noteHighligher";
 import { ref, getDownloadURL, listAll } from "firebase/storage";
 import { downloadAllItemsInCollection } from "../components/firebaseUtils";
 import { STORAGE } from "../firebaseConfig";
 import { AUTH } from "../firebaseConfig";
+import styles from "../components/styleSheetScan";
+import RadialGradient from "../components/UI/RadialGradient";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
@@ -38,55 +39,6 @@ export default function Tracker({ navigation, collectionName, route }) {
   const audioNoteRef = useRef(null);
   const [count2, setCount] = useState(0);
   const scrollViewRef = useRef(null);
-
-  /*const arrayData = [
-    "A4",
-    "A#4",
-    "A4",
-    "B4",
-    "B#4",
-    "C4",
-    "C4",
-    "C#4",
-    "E4",
-    "C4",
-    "D4",
-    "D4",
-    "B4",
-    "B#4",
-    "B4",
-    "C4",
-    "C4",
-    "C#4",
-    "E4",
-    "C4",
-    "G4",
-    "C4",
-    "C#4",
-    "E4",
-    "C4",
-    "G4",
-    "G#4",
-    "A#4",
-    "A4",
-    "B4",
-    "A4",
-    "A#4",
-    "A#4",
-    "A4",
-    "B4",
-    "A4",
-    "C4",
-    "C4",
-    "C#4",
-    "E4",
-    "G4",
-    "A#4",
-    "A#4",
-    "A#4",
-    "A#4",
-  ];
-*/
   const arrayData = [
     "E4",
     "A4",
@@ -376,37 +328,45 @@ export default function Tracker({ navigation, collectionName, route }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#d6d6e6" }}>
-      <Header navigation={navigation} />
+    <View style={{ flex: 1, backgroundColor: "#483d8b" }}>
+      <View style={styles.gradientContainerTracker}>
+        <RadialGradient style={{ ...styles.gradient, zIndex: 0 }} />
+      </View>
       <TouchableOpacity
         style={{
           borderRadius: 5,
-          backgroundColor: "darkslateblue",
+          backgroundColor: "#d4a32b",
           padding: 10,
-          marginLeft: 500,
-          marginRight: 520,
-          marginTop: 30,
+          width: "10vw",
+          alignSelf: "center",
+          marginTop: 80,
           marginBottom: 10,
           alignItems: "center",
+          zIndex: 6,
         }}
         onPress={handlePress}
       >
-        <Text style={{ color: "white" }}> Highlight Notes </Text>
+        <Text style={{ color: "white", fontWeight: 600, fontSize: 18 }}>
+          Highlight Notes
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={{
-          borderRadius: 5,
-          backgroundColor: "darkslateblue",
+          borderRadius: 6,
+          backgroundColor: "#d4a32b",
           padding: 10,
-          marginLeft: 500,
-          marginRight: 520,
+          width: "10vw",
+          alignSelf: "center",
           marginTop: 10,
           marginBottom: 10,
           alignItems: "center",
+          zIndex: 6,
         }}
         onPress={startAutoScroll}
       >
-        <Text style={{ color: "white" }}> Start Scrolling </Text>
+        <Text style={{ color: "white", fontWeight: 600, fontSize: 18 }}>
+          Start Scrolling
+        </Text>
       </TouchableOpacity>
       <ScrollView ref={scrollViewRef}>
         <View
@@ -418,6 +378,7 @@ export default function Tracker({ navigation, collectionName, route }) {
             borderRadius: 0,
             height: ViewHeight,
             width: ViewWidth,
+            zIndex: 8,
           }}
         >
           <View
@@ -425,6 +386,7 @@ export default function Tracker({ navigation, collectionName, route }) {
               flexDirection: "column",
               flexWrap: "wrap",
               alignItems: "center",
+              zIndex: 8,
             }}
           >
             {imageUrls.map((url, index) => (
@@ -440,6 +402,7 @@ export default function Tracker({ navigation, collectionName, route }) {
                   width: ViewWidth,
                   height: ViewHeight,
                   resizeMode: "contain",
+                  zIndex: 8,
                 }}
               />
             ))}
@@ -458,6 +421,7 @@ export default function Tracker({ navigation, collectionName, route }) {
               top: "45%",
               left: "30%",
               fontSize: 56,
+              zIndex: 6,
             }}
           >
             {currentNoteEvaluated}
@@ -469,6 +433,7 @@ export default function Tracker({ navigation, collectionName, route }) {
               top: "45%",
               left: "55%",
               fontSize: 55,
+              zIndex: 6,
             }}
           >
             {audioNote}
