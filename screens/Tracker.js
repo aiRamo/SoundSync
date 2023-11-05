@@ -329,7 +329,7 @@ export default function Tracker({ navigation, collectionName, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#483d8b" }}>
-      <View style={styles.gradientContainerTracker}>
+      <View style={[styles.gradientContainerScanner, { zIndex: 0 }]}>
         <RadialGradient style={{ ...styles.gradient, zIndex: 0 }} />
       </View>
       <TouchableOpacity
