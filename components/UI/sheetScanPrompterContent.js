@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Image, View, TouchableOpacity, Text } from "react-native";
-import CaretLeft from "../../assets/caret-left.png";
-import CaretRight from "../../assets/caret-right.png";
+import Pagination from "./Pagination";
 import styles from "../styleSheetScan";
 
 const SheetScanPromptContent = ({
@@ -28,35 +27,15 @@ const SheetScanPromptContent = ({
   return (
     <View style={styles.content}>
       <Text style={styles.introTitle}> Next, Choose Your Images</Text>
-      <View style={styles.imageCounterBar}>
-        {currentImageIndex > 0 && (
-          <TouchableOpacity
-            style={[styles.caretTouchable, { left: "30vw" }]}
-            onPress={scrollLeft}
-          >
-            <Image source={CaretLeft} style={styles.caretIconLeft} />
-          </TouchableOpacity>
-        )}
-        {currentImageIndex != imageList.length && (
-          <>
-            <Text style={styles.imageCounterText}>
-              {currentImageIndex + 1} of {imageList.length}
-            </Text>
-            {currentImageIndex < imageList.length && (
-              <TouchableOpacity
-                style={[styles.caretTouchable, { right: "30vw" }]}
-                onPress={scrollRight}
-              >
-                <Image source={CaretRight} style={styles.caretIconRight} />
-              </TouchableOpacity>
-            )}
-          </>
-        )}
 
-        {currentImageIndex == imageList.length && (
-          <Text style={styles.imageCounterText}>Select New Image</Text>
-        )}
-      </View>
+      {imageList.length > 0 && (
+        <Pagination
+          count={imageList.length + 1}
+          setImageIndex={setCurrentImageIndex}
+          showLastSpecial={true}
+        />
+      )}
+
       <TouchableOpacity
         onPress={pickImage}
         style={[

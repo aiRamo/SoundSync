@@ -40,7 +40,7 @@ const CollectionNamePrompt = ({
         <View
           style={[styles.confirmNameButton, collectionName && { opacity: 1 }]}
         >
-          <Text style={styles.openButtonText}>Confirm</Text>
+          <Text style={styles.openButtonText}>Get Started</Text>
         </View>
       </TouchableOpacity>
     </View>

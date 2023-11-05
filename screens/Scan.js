@@ -6,7 +6,7 @@
 // - Make it so, after ALL OF THIS, the scanner will have an option to take the user to the Tracker page with the completed scan.
 
 import React, { useState, useEffect } from "react";
-import { View, Dimensions } from "react-native";
+import { View, Dimensions, Image } from "react-native";
 import styles from "../components/styleSheetScan";
 
 // collectionNamePrompter.js prompts the user to provide a collectionName via a modal.
@@ -23,9 +23,12 @@ import SheetScanPrompt from "../components/sheetScanPrompter";
 // This is where all post-API functionality occurs, such as the creation and upload of the noteHighlighter data.
 import ScannerModalContent from "../components/UI/scannerModalContent";
 
+import RadialGradient from "../components/UI/RadialGradient";
+
 import useWebSocket from "../components/useWebSocket";
 
 import FadeTransition from "../components/UI/fadeTransition";
+
 const { width, height } = Dimensions.get("window");
 
 export default function Scan({ navigation }) {
@@ -48,8 +51,11 @@ export default function Scan({ navigation }) {
   useWebSocket((event) => setServerMessage(event.data));
 
   return (
-    <View style={{ height: height, marginTop: 45 }}>
+    <View style={{ height: height }}>
       <View style={styles.container}>
+        <View style={styles.gradientContainer}>
+          <RadialGradient style={{ ...styles.gradient, zIndex: 1 }} />
+        </View>
         <FadeTransition
           phase={scannerPhase}
           key={scannerPhase}

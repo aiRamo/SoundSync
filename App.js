@@ -32,9 +32,11 @@ function HomeScreen() {
         headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: "darkslateblue",
-          top: -1,
-          height: 45,
+          backgroundColor: "rgba(0,0,0,0.15)",
+          borderBottomWidth: 1,
+          borderColor: "rgba(255,255,255,0.5)",
+          top: "-0.75vh",
+          height: "6vh",
         },
       }}
     >

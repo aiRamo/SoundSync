@@ -8,14 +8,31 @@ const ViewHeight = ViewWidth * A4_RATIO;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: width,
     alignItems: "center",
-    backgroundColor: "#d6d6e6",
+    backgroundColor: "#483d8b",
+    zIndex: 0,
+  },
+  gradientContainer: {
+    position: "absolute",
+    bottom: height * -0.85,
+    left: width * -0.7,
+    height: height * 2.5,
+    width: height * 3.5,
+    backgroundColor: "#483d8b",
+    zIndex: 5,
+  },
+  gradient: {
+    height: "100%",
+    width: "100%",
   },
   scrollView: {},
   content: {
     width: width,
     height: height,
     alignItems: "center",
+    alignSelf: "center",
+    marginTop: height * 0.05,
   },
   imageList: {
     flexGrow: 1,
@@ -32,17 +49,16 @@ const styles = StyleSheet.create({
     marginHorizontal: width * 0.37,
     padding: 0,
     borderRadius: 15,
-    top: "4vh",
+    marginTop: height * 0.02,
   },
   testButtonContainer: {
-    position: "absolute",
-    width: "12vw",
-    backgroundColor: "rgba(114, 110, 184, 1)",
-    height: "4vh",
-    top: "87vh",
+    width: width * 0.07,
+    backgroundColor: "#d4a32b",
+    height: height * 0.04,
     alignSelf: "center",
     justifyContent: "center",
-    borderRadius: 12,
+    borderRadius: 6,
+    marginTop: height * 0.025,
   },
   imagePreview: {
     resizeMode: "contain",
@@ -69,7 +85,7 @@ const styles = StyleSheet.create({
   introTitle: {
     fontSize: 35,
     fontWeight: "600",
-    color: "rgba(0,0,0,1)",
+    color: "rgba(255,255,255,1)",
     textAlign: "center",
     marginTop: "1%",
     width: width * 0.8,
@@ -82,7 +98,7 @@ const styles = StyleSheet.create({
     top: height * 0.075,
     left: 0,
     right: 0,
-    zIndex: 10,
+    zIndex: 8,
   },
   caretTouchable: {
     position: "absolute",
@@ -116,7 +132,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     fontSize: 22,
     fontWeight: "400",
-    color: "rgba(0,0,0,1)",
+    color: "rgba(255,255,255,1)",
     textAlign: "center",
     top: 0,
   },
@@ -129,10 +145,10 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   confirmNameButton: {
-    backgroundColor: "rgba(114, 110, 184, 1)",
-    width: width * 0.1,
-    height: height * 0.075,
-    borderRadius: 12,
+    backgroundColor: "#d4a32b",
+    width: width * 0.07,
+    height: height * 0.05,
+    borderRadius: 6,
     justifyContent: "center",
     alignSelf: "center",
     top: "42vh",
@@ -141,9 +157,9 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 35,
     fontWeight: "600",
-    color: "#000000",
+    color: "#ffffff",
     textAlign: "center",
-    marginBottom: 20,
+    marginTop: height * 0.05,
   },
   modalImageView: {
     backgroundColor: "rgba(0,0,0,0)",
@@ -151,6 +167,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: ViewHeight,
     width: ViewWidth,
+    marginTop: 5,
   },
   previewImage: {
     height: ViewHeight,
@@ -163,7 +180,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginTop: 15,
     justifyContent: "center",
-    borderRadius: 7,
+    borderRadius: 6,
     marginHorizontal: 15,
   },
   closeButton: {
@@ -172,13 +189,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginTop: 15,
     justifyContent: "center",
-    borderRadius: 7,
+    borderRadius: 6,
     marginHorizontal: 15,
   },
   openButtonText: {
     color: "white",
     fontWeight: 600,
     alignSelf: "center",
+    fontSize: 18,
   },
   blueButtonText: {
     alignSelf: "center",
@@ -193,10 +211,11 @@ const styles = StyleSheet.create({
     color: "red", // Replace with your color
   },
   namePropmtContent: {
-    backgroundColor: "#d6d6e6",
+    backgroundColor: "rgba(0,0,0,1)",
     flex: 1,
     top: 0,
     alignSelf: "center",
+    zIndex: 4,
   },
   namePromptCard: {
     alignSelf: "center",

@@ -35,6 +35,7 @@ const Header = ({ navigation }) => {
         flexDirection: "row",
         alignItems: "center",
         marginRight: 25,
+        marginTop: 5,
       }}
     >
       <TouchableOpacity onPress={toggleDropdown}>

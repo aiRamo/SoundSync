@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import styles from "../styleSheetScan"; // Replace with the actual path to your styles
 import { downloadAllItemsInCollection } from "../firebaseUtils";
-import CaretLeft from "../../assets/caret-left.png";
-import CaretRight from "../../assets/caret-right.png";
+import Pagination from "./Pagination";
 
 import NoteHighlighter from "./noteHighligher";
-
+const { width, height } = Dimensions.get("window");
 const ScannerModalContent = ({
   navigation,
   serverMessage,
@@ -25,49 +24,6 @@ const ScannerModalContent = ({
     parsedCoordinateDataList: [],
     noteDataList: [],
   });
-
-  const previousItem = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
-  };
-
-  const nextItem = () => {
-    if (currentIndex < data.imageUrls.length) {
-      setCurrentIndex(currentIndex + 1);
-    }
-  };
-
-  const navigationControls = listFilled && (
-    <View style={styles.imageCounterBar}>
-      <TouchableOpacity
-        onPress={previousItem}
-        disabled={currentIndex === 0}
-        style={[
-          styles.caretTouchable,
-          {
-            right: "30vw",
-            opacity: currentIndex === 0 ? 0 : 1,
-          },
-        ]}
-      >
-        <Image source={CaretLeft} style={styles.caretIconLeft} />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={nextItem}
-        disabled={currentIndex === data.imageUrls.length - 1}
-        style={[
-          styles.caretTouchable,
-          {
-            left: "30vw",
-            opacity: currentIndex === data.imageUrls.length - 1 ? 0 : 1,
-          },
-        ]}
-      >
-        <Image source={CaretRight} style={styles.caretIconRight} />
-      </TouchableOpacity>
-    </View>
-  );
 
   useEffect(() => {
     // A function to fetch and set the data
@@ -97,12 +53,20 @@ const ScannerModalContent = ({
   }, [data]);
 
   return (
-    <View style={{ height: "100vh" }}>
-      {!doneLoading && <Text style={styles.modalTitle}>{serverMessage}</Text>}
-      {doneLoading && navigationControls}
+    <View style={{ height: "100vh", alignSelf: "center" }}>
+      {!doneLoading && (
+        <Text style={[styles.introTitle, { marginTop: "8%" }]}>
+          {serverMessage}
+        </Text>
+      )}
       {doneLoading && (
         <>
           <Text style={styles.modalTitle}>Here is your generated image</Text>
+          <Pagination
+            count={data.imageUrls.length}
+            setImageIndex={setCurrentIndex}
+            showLastSpecial={false}
+          />
           <View style={styles.modalImageView}>
             {listFilled && (
               <>
@@ -151,11 +115,16 @@ const ScannerModalContent = ({
             onPress={() =>
               navigation.navigate("Tracker", { subfolderName: collectionName })
             }
-            style={[styles.showNotesButton, { alignSelf: "center" }]}
+            style={[
+              styles.showNotesButton,
+              {
+                alignSelf: "center",
+                width: width * 0.07,
+                backgroundColor: "#d4a32b",
+              },
+            ]}
           >
-            <Text style={[styles.blueButtonText, { color: "green" }]}>
-              Confirm
-            </Text>
+            <Text style={styles.openButtonText}>Confirm</Text>
           </TouchableOpacity>
         </>
       )}
