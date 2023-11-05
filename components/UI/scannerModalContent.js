@@ -5,7 +5,10 @@ import { downloadAllItemsInCollection } from "../firebaseUtils";
 import Pagination from "./Pagination";
 
 import NoteHighlighter from "./noteHighligher";
+import SvgWithScript from "./scannerLoader";
+
 const { width, height } = Dimensions.get("window");
+
 const ScannerModalContent = ({
   navigation,
   serverMessage,
@@ -55,9 +58,12 @@ const ScannerModalContent = ({
   return (
     <View style={{ height: "100vh", alignSelf: "center" }}>
       {!doneLoading && (
-        <Text style={[styles.introTitle, { marginTop: "8%" }]}>
-          {serverMessage}
-        </Text>
+        <>
+          <Text style={[styles.introTitle, { marginTop: "8%" }]}>
+            {serverMessage}
+          </Text>
+          <SvgWithScript />
+        </>
       )}
       {doneLoading && (
         <>

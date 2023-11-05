@@ -1,131 +1,138 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ScrollView, View, Image, TouchableOpacity, Text } from "react-native";
-import { ref, getDownloadURL, listAll } from "firebase/storage";
-import { STORAGE } from "../firebaseConfig";
-import { AUTH } from "../firebaseConfig";
+import { ScrollView, View, Dimensions, Text } from "react-native";
+import styles from "../components/styleSheetScan";
+import RadialGradient from "../components/UI/RadialGradient";
+import API_URL from "../API_URL.json";
+
+const { width, height } = Dimensions.get("window");
 
 export default function Test({ route }) {
-  const [user, setUser] = useState(null);
-  const [collection, setCollection] = useState(null);
-  const [imageUrls, setImageUrls] = useState([]);
-  const [count, setCount] = useState(0);
-  const scrollViewRef = useRef(null);
+  const [data, setData] = useState({
+    frequency: "",
+    noteString: "",
+  });
 
   useEffect(() => {
-    if (route.params != null) {
-      const { subfolderName } = route.params;
-      setCollection(subfolderName);
-    }
-  }, [route.params]);
+    // Connect to WebSocket server
+    console.log("attempting to connect...");
+    const webSocket = new WebSocket(API_URL.API_URL_WS_AUDIO);
 
-  useEffect(() => {
-    const unsubscribe = AUTH.onAuthStateChanged((authUser) => {
-      if (authUser) {
-        // User is signed in
-        setUser(authUser);
-      } else {
-        // User is signed out
-        setUser(null);
+    webSocket.onopen = () => {
+      // Connection established
+      console.log("WebSocket connection established");
+    };
+
+    webSocket.onmessage = (e) => {
+      // A message was received, parse frequency and noteString
+      const message = e.data; // Assuming message is in "frequency,noteString" format
+      const delimiterIndex = message.indexOf(","); // Find the comma delimiter index
+      if (delimiterIndex !== -1) {
+        // Make sure the comma exists
+        const frequency = message.substring(0, delimiterIndex).trim(); // Extract frequency
+        const noteString = message.substring(delimiterIndex + 1).trim(); // Extract noteString
+        setData({ frequency, noteString }); // Update state with new data
       }
-    });
+    };
 
-    // Clean up the subscription when the component unmounts
-    return () => unsubscribe();
+    webSocket.onerror = (e) => {
+      // An error occurred
+      console.log(e.message);
+    };
+
+    webSocket.onclose = (e) => {
+      // Connection closed
+      console.log("WebSocket connection closed");
+    };
+
+    // Cleanup on unmount
+    return () => {
+      webSocket.close();
+    };
   }, []);
 
-  useEffect(() => {
-    async function listFilesInFolder(folderPath) {
-      try {
-        const folderRef = ref(STORAGE, folderPath);
-        const listResult = await listAll(folderRef);
-        const urls = await Promise.all(
-          listResult.items.map(async (itemRef) => {
-            try {
-              const fileName = itemRef.name.toLowerCase();
-
-              if (!fileName.endsWith(".json")) {
-                setCount((prevCount) => prevCount + 1);
-                const url = await getDownloadURL(itemRef);
-                return url;
-              }
-            } catch (error) {
-              console.error("Error downloading image:", error);
-              return null;
-            }
-          })
-        );
-        setImageUrls(urls.filter((url) => url !== null));
-      } catch (error) {
-        console.error("Error listing files in folder:", error);
-      }
-    }
-
-    if (user && collection) {
-      listFilesInFolder(`images/${user.uid}/sheetCollections/${collection}`);
-    }
-  }, [user, collection]);
-
-  const startAutoScroll = () => {
-    const scrollDuration = 2000;
-    const scrollDistance = 500;
-    let index = 0;
-
-    console.log(count);
-    let scrollPosition = 0;
-    const scrollView = scrollViewRef.current;
-
-    const contentHeight = imageUrls.length * 500;
-
-    const scrollInterval = setInterval(() => {
-      if (index < count) {
-        scrollView.scrollTo({ y: scrollPosition, animated: true });
-        scrollPosition += scrollDistance;
-        index++;
-      } else {
-        clearInterval(scrollInterval);
-      }
-    }, scrollDuration);
-  };
-
   return (
-    <View style={{ flex: 1 }}>
-      <TouchableOpacity
+    <View style={{ flex: 1, zIndex: 0 }}>
+      <View style={[styles.gradientContainerScanner, { zIndex: 1 }]}>
+        <RadialGradient style={{ ...styles.gradient, zIndex: 2 }} />
+      </View>
+      <View
         style={{
-          borderRadius: 5,
-          backgroundColor: "darkslateblue",
-          padding: 10,
-          marginBottom: 10,
-          marginLeft: 50,
-          marginRight: 50,
-          marginTop: 30,
-          alignItems: "center",
+          position: "absolute",
+          top: 0,
+          height: height,
+          width: width,
+          zIndex: 3,
         }}
-        onPress={startAutoScroll}
       >
-        <Text style={{ color: "white" }}> Start Scrolling </Text>
-      </TouchableOpacity>
-      <ScrollView ref={scrollViewRef}>
-        <View
+        <Text
           style={{
-            flexDirection: "column",
-            flexWrap: "wrap",
-            alignItems: "center",
+            position: "relative",
+            top: "13%",
+            fontSize: 35,
+            fontWeight: "600",
+            color: "rgba(255,255,255,1)",
+            textAlign: "center",
           }}
         >
-          {imageUrls.map((url, index) => (
-            <Image
-              key={index}
-              source={{ uri: url }}
-              onError={(error) => {
-                console.log("Image failed to load:", error);
-                // You can add an error message to the component state
-                // to display a message to the user.
-              }}
-              style={{ width: 500, height: 500, resizeMode: "contain" }}
-            />
-          ))}
+          Test
+        </Text>
+        <View
+          style={{
+            top: height * 0.33,
+            left: width * 0.38,
+            width: width * 0.1,
+            height: height * 0.1,
+            justifyContent: "center",
+            alignItems: "flex-end",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 35,
+              fontWeight: "600",
+              color: "rgba(255,255,255,1)",
+              textAlign: "right",
+            }}
+          >
+            {data.frequency}
+          </Text>
         </View>
-      </ScrollView>
+
+        <Text
+          style={{
+            position: "absolute",
+            top: height * 0.4,
+            left: width * 0.5,
+            fontSize: 35,
+            fontWeight: "600",
+            color: "rgba(255,255,255,1)",
+            textAlign: "center",
+          }}
+        >
+          |
+        </Text>
+        <View
+          style={{
+            top: height * 0.23,
+            left: width * 0.53,
+            width: width * 0.1,
+            height: height * 0.1,
+            justifyContent: "center",
+            alignItems: "flex-start",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 35,
+              fontWeight: "600",
+              color: "rgba(255,255,255,1)",
+              textAlign: "left",
+            }}
+          >
+            {data.noteString}
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }
