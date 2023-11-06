@@ -74,7 +74,7 @@ export default function Test({ route }) {
             textAlign: "center",
           }}
         >
-          Test
+          Detected Audio
         </Text>
         <View
           style={{
