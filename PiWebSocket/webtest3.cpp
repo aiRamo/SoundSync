@@ -17,8 +17,9 @@ char str[55];
 std::vector<double> recordingBuffer(CHUNK_SIZE, 0.0);
 int bufferIndex = 0;
 
-int noteFreq[45] = 
+int noteFreq[46] = 
 {
+    0,
     82,
     87,
     92,
@@ -66,8 +67,9 @@ int noteFreq[45] =
     1047
 };
 
-char* noteName[45] = 
+char* noteName[46] = 
 {
+    NULL,
     "E1",
     "F1",
     "F1#",
@@ -297,44 +299,78 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
             //Setting all magnitudes other than the local maximums to 0
             for(int i = 0; i < CHUNK_SIZE / 2; i++)
             {
-                if (magnitudes[i] < (avg * 30)) 
+                if (magnitudes[i] < (avg * 40)) 
                 {
                     magnitudes[i] = 0;
                 }
             }
 
-            int localMaximums[3];
+            int localMaximums[3] = {0,0,0};
 
             //Putting local maximums in array
-            for(int i = 1; i < (CHUNK_SIZE / 2)-1; i++)
+            int count = 0;
+            for(int i = 1; i < 215; i++)
             {
                 if(magnitudes[i-1] < magnitudes[i] && magnitudes[i] > magnitudes[i+1])
                 {
                     //setting index of magnitude to localMaximums
-                    localMaximums[0] = i;
-                    break;
+                    // localMaximums[count] = i;
+                    // count++;
+                    // if(count == 3)
+                    // {
+                    //     break;
+                    // }
                     //localMaximums[1] = magnitudes[i];
 
                     //localMaximums[2] = magnitudes[i+1]; 
-                }
+            switch (count) {
+                case 0:
+                    localMaximums[0] = i;
+                    count++;
+                    break;
+                case 1:
+                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.2) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.8)) {
+                        //printf("%d, %d, %f\n", i, localMaximums[0], (float)(i % localMaximums[0]) / i);
+                        localMaximums[1] = i;
+                        count++;
+                    }
+                    break;
+                case 2:
+                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.2) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.8) &&
+                        ((float)(i % localMaximums[1]) / localMaximums[1] > 0.2) && ((float)(i % localMaximums[1]) / localMaximums[1] < 0.8)) {
+                        localMaximums[2] = i;
+                        break;
+                    }
+                    break;
             }
+                }
+
+            }
+        
                 
 
-            double dominant_frequency = static_cast<double>(localMaximums[0]) * (SAMPLE_RATE / static_cast<double>(CHUNK_SIZE));
-
-            int dif = 1000;
-            int detNoteFreq;
-            char* detNote;
-            for(int i = 0; i < 45; i++)
+            double dominant_frequency[3];
+            for(int i=0;i<3;i++)
             {
-                if(abs(dominant_frequency - noteFreq[i]) < dif)
-                {
-                    detNoteFreq = noteFreq[i];
-                    dif = abs(dominant_frequency - noteFreq[i]);
-                    detNote = noteName[i];
-                }
+                dominant_frequency[i] = static_cast<double>(localMaximums[i]) * (SAMPLE_RATE / static_cast<double>(CHUNK_SIZE));
+                //printf("%d: %d\n", i+1,dominant_frequency[i]);
             }
 
+            int dif = 1000;
+            int detNoteFreq[3];
+            char* detNote[3];
+            for(int j=0;j<3;j++)   
+            {
+                for(int i = 0; i < 45; i++)
+                {
+                    if(abs(dominant_frequency[j] - noteFreq[i]) < dif)
+                    {
+                        detNoteFreq[j] = noteFreq[i];
+                        dif = abs(dominant_frequency[j] - noteFreq[i]);
+                        detNote[j] = noteName[i];
+                    }
+                }
+            }
             
 
             //std::string note = findNote(dominant_frequency);
@@ -342,19 +378,25 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
 
             if (wsi_global)
             {
-                printf("%d\n",localMaximums[0]);
-
                 int length;
-                if (true)
+                if(dominant_frequency[0] < 1100 && dominant_frequency[0] > 65)
                 {
-                    if(dominant_frequency < 1100)
+                    if(dominant_frequency[2] != 0)
                     {
-                        length = snprintf(str, sizeof(str), "%.1lfHz, %s\n", dominant_frequency, detNote);  
+                        length = snprintf(str, sizeof(str), "%.0lfHz, %.0lfHz, %.0lfHz, %s, %s, %s\n", dominant_frequency[0], dominant_frequency[1], dominant_frequency[2], detNote[0], detNote[1], detNote[2]); 
+                    } 
+                    else if(dominant_frequency[2] != 0)
+                    {
+                        length = snprintf(str, sizeof(str), "%.0lfHz, %.0lfHz, %s, %s\n", dominant_frequency[0], dominant_frequency[1], detNote[0], detNote[1]);
                     }
-                    // Make sure length does not exceed buffer size
-                    length = (length < sizeof(str)) ? length : sizeof(str) - 1;
-                    lws_write(wsi_global, (unsigned char *)str, length, LWS_WRITE_TEXT);
+                    else
+                    {
+                        length = snprintf(str, sizeof(str), "%.0lfHz, %s\n", dominant_frequency[0], detNote[0]);
+                    }
                 }
+                // Make sure length does not exceed buffer size
+                length = (length < sizeof(str)) ? length : sizeof(str) - 1;
+                lws_write(wsi_global, (unsigned char *)str, length, LWS_WRITE_TEXT);
             }
 
             fftw_destroy_plan(p);
@@ -406,7 +448,7 @@ int main()
 {
     struct lws_context *context;
     struct lws_context_creation_info info;
-    const char *address = "192.168.15.205";
+    const char *address = "0.0.0.0";
     int port = 9000;
 
     memset(&info, 0, sizeof(info));
