@@ -268,8 +268,6 @@ export default function Tracker({ navigation, collectionName, route }) {
         );
         setAllCoord(jsonCoordData);
         setAllNote(jsonNoteData);
-        const retrievedNoteArray = await retrieve(jsonNoteData[0]); // Get the noteArray
-        setNoteArray(retrievedNoteArray); // Set the noteArray in state
       } catch (error) {
         console.error("Error listing files in folder:", error);
       }
@@ -291,11 +289,17 @@ export default function Tracker({ navigation, collectionName, route }) {
   }, [route.params]);
 
   useEffect(() => {
-    if (allCoord != null && allNote != null) {
+    async function launch() {
       setCoordinateData(allCoord[0]);
       setNoteData(allNote[0]);
+      const retrievedNoteArray = await retrieve(allNote[0]); // Get the noteArray
+      setNoteArray(retrievedNoteArray);
+      console.log("launching");
     }
-  });
+    if (allCoord != null && allNote != null) {
+      launch();
+    }
+  }, [allNote, allCoord]);
 
   async function retrieve(array) {
     let noteArray = [];
