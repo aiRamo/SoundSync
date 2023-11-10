@@ -27,11 +27,8 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [collectionName1, setCollectionName] = useState("");
   const [user, setUser] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
-  const [coordinateData, setCoordinateData] = useState(null);
-  const [noteData, setNoteData] = useState(null);
   const [highlightNotes, setHighlightNotes] = useState(false);
   const [currIndex, setCurrIndex] = useState(0);
-  const [noteArray, setNoteArray] = useState([]);
   const [currentNoteEvaluated, setCurrentNoteEvaluated] = useState("");
   const [audioNote, setAudioNote] = useState("");
   const [isMatch, setIsMatch] = useState(false);
@@ -99,13 +96,14 @@ export default function Tracker({ navigation, collectionName, route }) {
         "Audio Note: " +
           arrayData[count] +
           " | Current Note Evaluated: " +
-          noteArray[currIndexRef] + // Access the ref
+          // noteArray[currIndexRef] +
+          allArray[0][currIndexRef] + // Access the ref
           " | Count: " +
           count
       );
 
-      if (currentNoteEvaluated !== noteArray[currIndexRef]) {
-        setCurrentNoteEvaluated(noteArray[currIndexRef]);
+      if (currentNoteEvaluated !== allArray[0][currIndexRef]) {
+        setCurrentNoteEvaluated(allArray[0][currIndexRef]);
       }
 
       if (audioNote !== arrayData[count]) {
@@ -113,9 +111,9 @@ export default function Tracker({ navigation, collectionName, route }) {
       }
 
       // Check if both noteArray and coordinateData are not empty
-      if (noteArray.length > 0 && coordinateData) {
+      if (allArray[0].length && allCoord) {
         const currentNote = arrayData[count];
-        const nextNoteInData = noteArray[currIndexRef]; // Access the ref
+        const nextNoteInData = allArray[0][currIndexRef]; // Access the ref
 
         //TODO: Make a state that controls a conditional compile that toggles the Font for both of the texts to be green.
         //TODO: Pause the program for 2 seconds, then turn OFF the conditional compile state so the texts go back to black.
@@ -295,18 +293,6 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [route.params]);
 
-  useEffect(() => {
-    async function launch() {
-      setCoordinateData(allCoord[0]);
-      setNoteData(allNote[0]);
-      setNoteArray(allArray[0]);
-      console.log("launching");
-    }
-    if (allCoord != null && allNote != null) {
-      launch();
-    }
-  }, [allNote, allCoord]);
-
   async function retrieve(array) {
     let noteArray = [];
     for (const part of array) {
@@ -425,9 +411,9 @@ export default function Tracker({ navigation, collectionName, route }) {
             ))}
           </View>
 
-          {highlightNotes && coordinateData && (
+          {highlightNotes && allCoord[0] && (
             <NoteHighlighter
-              notePositions={JSON.parse(coordinateData)}
+              notePositions={JSON.parse(allCoord[0])}
               currIndex={currIndex}
             />
           )}
