@@ -38,6 +38,8 @@ export default function Tracker({ navigation, collectionName, route }) {
   const currentNoteRef = useRef(null);
   const audioNoteRef = useRef(null);
   const [count2, setCount] = useState(0);
+  const [allCoord, setAllCoord] = useState(null);
+  const [allNote, setAllNote] = useState(null);
   const scrollViewRef = useRef(null);
   const arrayData = [
     "E4",
@@ -264,10 +266,8 @@ export default function Tracker({ navigation, collectionName, route }) {
             }
           })
         );
-        setCoordinateData(jsonCoordData[0]); // Assuming the first JSON object is coordinateData
-        setNoteData(jsonNoteData[0]); // Assuming the second JSON object is noteData
-        console.log("Coordinate Data:", jsonCoordData[0]);
-        console.log("Note Data:", JSON.stringify(jsonNoteData[0]));
+        setAllCoord(jsonCoordData);
+        setAllNote(jsonNoteData);
         const retrievedNoteArray = await retrieve(jsonNoteData[0]); // Get the noteArray
         setNoteArray(retrievedNoteArray); // Set the noteArray in state
       } catch (error) {
@@ -289,6 +289,13 @@ export default function Tracker({ navigation, collectionName, route }) {
       console.log("here collection name " + collectionName1);
     }
   }, [route.params]);
+
+  useEffect(() => {
+    if (allCoord != null && allNote != null) {
+      setCoordinateData(allCoord[0]);
+      setNoteData(allNote[0]);
+    }
+  });
 
   async function retrieve(array) {
     let noteArray = [];
