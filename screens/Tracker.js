@@ -40,6 +40,7 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [count2, setCount] = useState(0);
   const [allCoord, setAllCoord] = useState(null);
   const [allNote, setAllNote] = useState(null);
+  const [allArray, setAllArray] = useState(null);
   const scrollViewRef = useRef(null);
   const arrayData = [
     "E4",
@@ -268,6 +269,12 @@ export default function Tracker({ navigation, collectionName, route }) {
         );
         setAllCoord(jsonCoordData);
         setAllNote(jsonNoteData);
+        let arrays = [];
+        for (let i = 0; i < jsonNoteData.length - 1; i++) {
+          const retrievedNoteArray = await retrieve(jsonNoteData[i]); // Get the noteArray
+          arrays.push(retrievedNoteArray);
+        }
+        setAllArray(arrays);
       } catch (error) {
         console.error("Error listing files in folder:", error);
       }
@@ -292,8 +299,7 @@ export default function Tracker({ navigation, collectionName, route }) {
     async function launch() {
       setCoordinateData(allCoord[0]);
       setNoteData(allNote[0]);
-      const retrievedNoteArray = await retrieve(allNote[0]); // Get the noteArray
-      setNoteArray(retrievedNoteArray);
+      setNoteArray(allArray[0]);
       console.log("launching");
     }
     if (allCoord != null && allNote != null) {
