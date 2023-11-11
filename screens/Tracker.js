@@ -89,6 +89,7 @@ export default function Tracker({ navigation, collectionName, route }) {
 
   let timer;
   let count = 0;
+  let ownIndex = 0;
 
   let currIndexRef = 0; // Create a ref for currIndex
   //check the two notes
@@ -135,8 +136,9 @@ export default function Tracker({ navigation, collectionName, route }) {
       //timer for something
       if (count < arrayData.length) {
         timer = setTimeout(evaluateNote, 1000);
-      } else if (mainIndex < allArray.length - 1) {
-        console.log("Next page and index " + mainIndex);
+      } else if (ownIndex < allArray.length) {
+        ownIndex++;
+        console.log("Next page and index " + ownIndex);
         setMainIndex((prevCount) => prevCount + 1);
         count = 0;
         setCurrIndex(0);
