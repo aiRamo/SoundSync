@@ -38,6 +38,8 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [allCoord, setAllCoord] = useState(null);
   const [allNote, setAllNote] = useState(null);
   const [allArray, setAllArray] = useState(null);
+  const [mainIndex, setMainIndex] = useState(0);
+  const [scroller, setScroller] = useState(0);
   const scrollViewRef = useRef(null);
   const arrayData = [
     "E4",
@@ -97,13 +99,13 @@ export default function Tracker({ navigation, collectionName, route }) {
           arrayData[count] +
           " | Current Note Evaluated: " +
           // noteArray[currIndexRef] +
-          allArray[0][currIndexRef] + // Access the ref
+          allArray[mainIndex][currIndexRef] + // Access the ref
           " | Count: " +
           count
       );
 
-      if (currentNoteEvaluated !== allArray[0][currIndexRef]) {
-        setCurrentNoteEvaluated(allArray[0][currIndexRef]);
+      if (currentNoteEvaluated !== allArray[mainIndex][currIndexRef]) {
+        setCurrentNoteEvaluated(allArray[mainIndex][currIndexRef]);
       }
 
       if (audioNote !== arrayData[count]) {
@@ -111,9 +113,9 @@ export default function Tracker({ navigation, collectionName, route }) {
       }
 
       // Check if both noteArray and coordinateData are not empty
-      if (allArray[0].length && allCoord) {
+      if (allArray[mainIndex].length && allCoord) {
         const currentNote = arrayData[count];
-        const nextNoteInData = allArray[0][currIndexRef]; // Access the ref
+        const nextNoteInData = allArray[mainIndex][currIndexRef]; // Access the ref
 
         //TODO: Make a state that controls a conditional compile that toggles the Font for both of the texts to be green.
         //TODO: Pause the program for 2 seconds, then turn OFF the conditional compile state so the texts go back to black.
@@ -133,9 +135,19 @@ export default function Tracker({ navigation, collectionName, route }) {
       //timer for something
       if (count < arrayData.length) {
         timer = setTimeout(evaluateNote, 1000);
+      } else if (mainIndex < allArray.length - 1) {
+        console.log("Next page and index " + mainIndex);
+        setMainIndex((prevCount) => prevCount + 1);
+        count = 0;
+        setCurrIndex(0);
+        setHighlightNotes(true);
+        clearTimeout(timer);
+        scroll();
+        evaluateNote();
       } else {
         // All notes have been evaluated
         setHighlightNotes(false);
+        return;
       }
     }
   };
@@ -308,26 +320,15 @@ export default function Tracker({ navigation, collectionName, route }) {
 
     return noteArray; // Return the noteArray
   }
-  const startAutoScroll = () => {
-    const scrollDuration = 1500;
-    const scrollDistance = 500;
-    let index = 0;
+  const scroll = () => {
+    setScroller((prev) => prev + ViewHeight);
 
-    console.log(count2);
-    let scrollPosition = 0;
-    const scrollView = scrollViewRef.current;
-
-    const contentHeight = imageUrls.length * 500;
-
-    const scrollInterval = setInterval(() => {
-      if (index < count2) {
-        scrollView.scrollTo({ y: scrollPosition, animated: true });
-        scrollPosition += scrollDistance;
-        index++;
-      } else {
-        clearInterval(scrollInterval);
-      }
-    }, scrollDuration);
+    // Use the callback function to ensure that scrollTo is called with the updated state
+    setScroller((updatedScroller) => {
+      const scrollView = scrollViewRef.current;
+      scrollView.scrollTo({ y: updatedScroller, animated: true });
+      return updatedScroller;
+    });
   };
 
   return (
@@ -353,24 +354,7 @@ export default function Tracker({ navigation, collectionName, route }) {
           Highlight Notes
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={{
-          borderRadius: 6,
-          backgroundColor: "#d4a32b",
-          padding: 10,
-          width: "10vw",
-          alignSelf: "center",
-          marginTop: 10,
-          marginBottom: 10,
-          alignItems: "center",
-          zIndex: 6,
-        }}
-        onPress={startAutoScroll}
-      >
-        <Text style={{ color: "white", fontWeight: 600, fontSize: 18 }}>
-          Start Scrolling
-        </Text>
-      </TouchableOpacity>
+
       <ScrollView ref={scrollViewRef}>
         <View
           style={{
@@ -411,9 +395,9 @@ export default function Tracker({ navigation, collectionName, route }) {
             ))}
           </View>
 
-          {highlightNotes && allCoord[0] && (
+          {highlightNotes && allCoord[mainIndex] && (
             <NoteHighlighter
-              notePositions={JSON.parse(allCoord[0])}
+              notePositions={JSON.parse(allCoord[mainIndex])}
               currIndex={currIndex}
             />
           )}
