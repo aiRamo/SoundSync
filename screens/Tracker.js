@@ -15,6 +15,8 @@ import { STORAGE } from "../firebaseConfig";
 import { AUTH } from "../firebaseConfig";
 import styles from "../components/styleSheetScan";
 import RadialGradient from "../components/UI/RadialGradient";
+import { retrieve } from "../components/TrackerHelp";
+import { all } from "axios";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
@@ -184,32 +186,6 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [highlightNotes]);
 
-  //matching stuff
-  useEffect(() => {
-    if (isMatch) {
-      if (currentNoteRef.current) {
-        currentNoteRef.current.setNativeProps({ style: { color: "red" } });
-      }
-      if (audioNoteRef.current) {
-        audioNoteRef.current.setNativeProps({ style: { color: "red" } });
-      }
-
-      setTimeout(() => {
-        if (currentNoteRef.current) {
-          currentNoteRef.current.setNativeProps({
-            style: { color: "black" },
-          });
-        }
-        if (audioNoteRef.current) {
-          audioNoteRef.current.setNativeProps({
-            style: { color: "black" },
-          });
-        }
-        setIsMatch(false);
-      }, 1000);
-    }
-  }, [isMatch]);
-
   useEffect(() => {
     async function listFilesInFolder(folderPath) {
       try {
@@ -307,21 +283,6 @@ export default function Tracker({ navigation, collectionName, route }) {
     }
   }, [route.params]);
 
-  async function retrieve(array) {
-    let noteArray = [];
-    for (const part of array) {
-      for (const note of part.notes) {
-        for (const pitch of note.pitch) {
-          const step = pitch.step[0];
-          const octave = pitch.octave[0];
-          const temp = step + octave;
-          noteArray.push(temp);
-        }
-      }
-    }
-
-    return noteArray; // Return the noteArray
-  }
   const scroll = () => {
     setScroller((prev) => prev + ViewHeight);
 
