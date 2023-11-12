@@ -51,7 +51,7 @@ export default function Test({ route }) {
   }, []);
 
   return (
-    <View style={{ flex: 1, zIndex: 0 }}>
+    <View style={{ flex: 1, zIndex: 0, width: width, color: "#483d8b" }}>
       <View style={[styles.gradientContainerScanner, { zIndex: 1 }]}>
         <RadialGradient style={{ ...styles.gradient, zIndex: 2 }} />
       </View>
