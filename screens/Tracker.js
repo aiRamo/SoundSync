@@ -9,13 +9,10 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import NoteHighlighter from "../components/UI/noteHighligher";
-import { ref, getDownloadURL, listAll } from "firebase/storage";
-import { downloadAllItemsInCollection } from "../components/firebaseUtils";
-import { STORAGE } from "../firebaseConfig";
 import { AUTH } from "../firebaseConfig";
 import styles from "../components/styleSheetScan";
 import RadialGradient from "../components/UI/RadialGradient";
-import FileList, { retrieve } from "../components/TrackerHelp";
+import FileList from "../components/TrackerHelp";
 import { all } from "axios";
 
 const { width, height } = Dimensions.get("window");
@@ -23,9 +20,7 @@ const A4_RATIO = 1.4;
 const ViewWidth = width * 0.26; // 90% of device width
 const ViewHeight = ViewWidth * A4_RATIO;
 
-export default function Tracker({ navigation, collectionName, route }) {
-  const [isDefaultImage, setIsDefaultImage] = useState(true);
-  const [image, setImage] = useState(require("../assets/addScan.png"));
+export default function Tracker({ navigation, route }) {
   const [collectionName1, setCollectionName] = useState("");
   const [user, setUser] = useState(null);
   const [highlightNotes, setHighlightNotes] = useState(false);
@@ -33,8 +28,6 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [currentNoteEvaluated, setCurrentNoteEvaluated] = useState("");
   const [audioNote, setAudioNote] = useState("");
   const [isMatch, setIsMatch] = useState(false);
-  const currentNoteRef = useRef(null);
-  const audioNoteRef = useRef(null);
   const [mainIndex, setMainIndex] = useState(0);
   const [scroller, setScroller] = useState(0);
   const scrollViewRef = useRef(null);
@@ -150,7 +143,6 @@ export default function Tracker({ navigation, collectionName, route }) {
       } else {
         // All notes have been evaluated
         setHighlightNotes(false);
-        return;
       }
     }
   };
@@ -274,30 +266,6 @@ export default function Tracker({ navigation, collectionName, route }) {
               currIndex={currIndex}
             />
           )}
-          <Text
-            ref={currentNoteRef}
-            style={{
-              position: "absolute",
-              top: "45%",
-              left: "30%",
-              fontSize: 56,
-              zIndex: 6,
-            }}
-          >
-            {currentNoteEvaluated}
-          </Text>
-          <Text
-            ref={audioNoteRef}
-            style={{
-              position: "absolute",
-              top: "45%",
-              left: "55%",
-              fontSize: 55,
-              zIndex: 6,
-            }}
-          >
-            {audioNote}
-          </Text>
         </View>
       </ScrollView>
     </View>
