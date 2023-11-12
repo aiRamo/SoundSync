@@ -15,7 +15,7 @@ import { STORAGE } from "../firebaseConfig";
 import { AUTH } from "../firebaseConfig";
 import styles from "../components/styleSheetScan";
 import RadialGradient from "../components/UI/RadialGradient";
-import { retrieve } from "../components/TrackerHelp";
+import FileList, { retrieve } from "../components/TrackerHelp";
 import { all } from "axios";
 
 const { width, height } = Dimensions.get("window");
@@ -28,7 +28,6 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [image, setImage] = useState(require("../assets/addScan.png"));
   const [collectionName1, setCollectionName] = useState("");
   const [user, setUser] = useState(null);
-  const [imageUrls, setImageUrls] = useState([]);
   const [highlightNotes, setHighlightNotes] = useState(false);
   const [currIndex, setCurrIndex] = useState(0);
   const [currentNoteEvaluated, setCurrentNoteEvaluated] = useState("");
@@ -36,10 +35,6 @@ export default function Tracker({ navigation, collectionName, route }) {
   const [isMatch, setIsMatch] = useState(false);
   const currentNoteRef = useRef(null);
   const audioNoteRef = useRef(null);
-  const [count2, setCount] = useState(0);
-  const [allCoord, setAllCoord] = useState(null);
-  const [allNote, setAllNote] = useState(null);
-  const [allArray, setAllArray] = useState(null);
   const [mainIndex, setMainIndex] = useState(0);
   const [scroller, setScroller] = useState(0);
   const scrollViewRef = useRef(null);
@@ -90,10 +85,14 @@ export default function Tracker({ navigation, collectionName, route }) {
   ];
 
   let timer;
-  let count = 0;
   let ownIndex = 0;
+  let count = 0;
 
   let currIndexRef = 0; // Create a ref for currIndex
+  const { imageUrls, allCoord, allNote, allArray, count2 } = FileList(
+    user,
+    collectionName1
+  );
   //check the two notes
   const evaluateNote = () => {
     if (count < arrayData.length) {
@@ -185,95 +184,6 @@ export default function Tracker({ navigation, collectionName, route }) {
       setCurrentNoteEvaluated("");
     }
   }, [highlightNotes]);
-
-  useEffect(() => {
-    async function listFilesInFolder(folderPath) {
-      try {
-        const JsonPath = folderPath + "/sheetNoteData";
-        const JsonCoord = folderPath + "/sheetCoordinateData";
-
-        const folderRef = ref(STORAGE, folderPath);
-        const folderRef2 = ref(STORAGE, JsonPath);
-        const folderRef3 = ref(STORAGE, JsonCoord);
-
-        const listResult = await listAll(folderRef);
-        const listResult2 = await listAll(folderRef2);
-        const listResult3 = await listAll(folderRef3);
-
-        const urls = await Promise.all(
-          listResult.items.map(async (itemRef) => {
-            try {
-              const fileName = itemRef.name.toLowerCase();
-              setCount((prevCount) => prevCount + 1);
-              const url = await getDownloadURL(itemRef);
-
-              return url;
-            } catch (error) {
-              console.error("Error downloading image:", error);
-              return null;
-            }
-          })
-        );
-        setImageUrls(urls.filter((url) => url !== null));
-        //json note data
-        const jsonNoteData = await Promise.all(
-          listResult2.items.map(async (itemRef) => {
-            try {
-              const url = await getDownloadURL(itemRef);
-              const response = await fetch(url);
-              const jsonData = await response.json();
-
-              return jsonData;
-            } catch (error) {
-              console.error(
-                "Error getting JSON data for",
-                itemRef.name,
-                ":",
-                error
-              );
-              return null;
-            }
-          })
-        );
-        //json coordinate data
-        const jsonCoordData = await Promise.all(
-          listResult3.items.map(async (itemRef) => {
-            try {
-              const url = await getDownloadURL(itemRef);
-              const response = await fetch(url);
-              const jsonData = await response.json();
-
-              return jsonData;
-            } catch (error) {
-              console.error(
-                "Error getting JSON data for",
-                itemRef.name,
-                ":",
-                error
-              );
-              return null;
-            }
-          })
-        );
-        setAllCoord(jsonCoordData);
-        setAllNote(jsonNoteData);
-        let arrays = [];
-        for (let i = 0; i < jsonNoteData.length - 1; i++) {
-          const retrievedNoteArray = await retrieve(jsonNoteData[i]); // Get the noteArray
-          arrays.push(retrievedNoteArray);
-        }
-        setAllArray(arrays);
-      } catch (error) {
-        console.error("Error listing files in folder:", error);
-      }
-    }
-
-    if (user && collectionName1) {
-      listFilesInFolder(
-        `images/${user.uid}/sheetCollections/${collectionName1}`
-      );
-    }
-  }, [user, collectionName1]);
 
   useEffect(() => {
     if (route.params != null) {
