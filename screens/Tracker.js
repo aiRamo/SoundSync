@@ -31,6 +31,7 @@ export default function Tracker({ navigation, route }) {
   const [mainIndex, setMainIndex] = useState(0);
   const [scroller, setScroller] = useState(0);
   const scrollViewRef = useRef(null);
+  /*
   const arrayData = [
     "E4",
     "A4",
@@ -76,6 +77,8 @@ export default function Tracker({ navigation, route }) {
     "B2",
     "B3",
   ];
+  */
+  const arrayData = ["E4", "A4", "C4", "E4", "B4", "D4"];
 
   let timer;
   let ownIndex = 0;
@@ -86,6 +89,7 @@ export default function Tracker({ navigation, route }) {
     user,
     collectionName1
   );
+
   //check the two notes
   const evaluateNote = () => {
     if (count < arrayData.length) {
@@ -184,6 +188,15 @@ export default function Tracker({ navigation, route }) {
       console.log("here collection name " + collectionName1);
     }
   }, [route.params]);
+  useEffect(() => {
+    if (allArray != null) {
+      console.log("mainIndex:", mainIndex);
+      console.log("highlight notes", highlightNotes);
+      console.log(allArray[mainIndex]);
+    }
+
+    // ... rest of the useEffect code
+  }, [mainIndex, allArray]);
 
   const scroll = () => {
     setScroller((prev) => prev + ViewHeight);
@@ -233,17 +246,9 @@ export default function Tracker({ navigation, route }) {
             zIndex: 8,
           }}
         >
-          <View
-            style={{
-              flexDirection: "column",
-              flexWrap: "wrap",
-              alignItems: "center",
-              zIndex: 8,
-            }}
-          >
-            {imageUrls.map((url, index) => (
+          {imageUrls.map((url, index) => (
+            <View key={index}>
               <Image
-                key={index}
                 source={{ uri: url }}
                 onError={(error) => {
                   console.log("Image failed to load:", error);
@@ -257,15 +262,16 @@ export default function Tracker({ navigation, route }) {
                   zIndex: 8,
                 }}
               />
-            ))}
-          </View>
 
-          {highlightNotes && allCoord[mainIndex] && (
-            <NoteHighlighter
-              notePositions={JSON.parse(allCoord[mainIndex])}
-              currIndex={currIndex}
-            />
-          )}
+              {highlightNotes && allCoord[index] && (
+                <NoteHighlighter
+                  key={`noteHighlighter_${index}`}
+                  notePositions={JSON.parse(allCoord[index])}
+                  currIndex={currIndex}
+                />
+              )}
+            </View>
+          ))}
         </View>
       </ScrollView>
     </View>
