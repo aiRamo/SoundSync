@@ -6,6 +6,10 @@ import {
   Image,
   Dimensions,
   Alert,
+  StyleSheet,
+  TextInput,
+  StatusBar,
+  Button,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import NoteHighlighter from "../components/UI/noteHighligher";
@@ -26,11 +30,17 @@ export default function Tracker({ navigation, route }) {
   const [highlightNotes, setHighlightNotes] = useState(false);
   const [currIndex, setCurrIndex] = useState(0);
   const [currentNoteEvaluated, setCurrentNoteEvaluated] = useState("");
-  const [audioNote, setAudioNote] = useState("");
   const [isMatch, setIsMatch] = useState(false);
   const [mainIndex, setMainIndex] = useState(0);
+  const [count3, setCount3] = useState(0);
   const [scroller, setScroller] = useState(0);
   const scrollViewRef = useRef(null);
+  const [isToggled, setToggled] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [confirmedText, setConfirmedText] = useState("");
+  const [audioNote, setAudioNote] = useState("");
+  //audio crew use this
+
   /*
   const arrayData = [
     "E4",
@@ -78,7 +88,23 @@ export default function Tracker({ navigation, route }) {
     "B3",
   ];
   */
-  const arrayData = ["E4", "A4", "C4", "E4", "B4", "D4"];
+  const arrayData = [
+    "E4",
+    "A4",
+    "C4",
+    "E4",
+    "B4",
+    "D4",
+    "E4",
+    "C5",
+    "C4",
+    "A2",
+    "A3",
+    "B2",
+    "B3",
+    "C3",
+    "C4",
+  ];
 
   let timer;
   let ownIndex = 0;
@@ -91,6 +117,7 @@ export default function Tracker({ navigation, route }) {
   );
 
   //check the two notes
+  /*
   const evaluateNote = () => {
     if (count < arrayData.length) {
       console.log(
@@ -98,13 +125,13 @@ export default function Tracker({ navigation, route }) {
           arrayData[count] +
           " | Current Note Evaluated: " +
           // noteArray[currIndexRef] +
-          allArray[mainIndex][currIndexRef] + // Access the ref
+          allArray[ownIndex][currIndexRef] + // Access the ref
           " | Count: " +
           count
       );
 
-      if (currentNoteEvaluated !== allArray[mainIndex][currIndexRef]) {
-        setCurrentNoteEvaluated(allArray[mainIndex][currIndexRef]);
+      if (currentNoteEvaluated !== allArray[ownIndex][currIndexRef]) {
+        setCurrentNoteEvaluated(allArray[ownIndex][currIndexRef]);
       }
 
       if (audioNote !== arrayData[count]) {
@@ -112,9 +139,9 @@ export default function Tracker({ navigation, route }) {
       }
 
       // Check if both noteArray and coordinateData are not empty
-      if (allArray[mainIndex].length && allCoord) {
+      if (allArray[ownIndex].length && allCoord) {
         const currentNote = arrayData[count];
-        const nextNoteInData = allArray[mainIndex][currIndexRef]; // Access the ref
+        const nextNoteInData = allArray[ownIndex][currIndexRef]; // Access the ref
 
         //TODO: Make a state that controls a conditional compile that toggles the Font for both of the texts to be green.
         //TODO: Pause the program for 2 seconds, then turn OFF the conditional compile state so the texts go back to black.
@@ -146,15 +173,65 @@ export default function Tracker({ navigation, route }) {
         evaluateNote();
       } else {
         // All notes have been evaluated
+        ownIndex = 0;
         setHighlightNotes(false);
       }
     }
   };
+*/
+
+  const evaluateNote2 = (note) => {
+    if (mainIndex < allArray.length) {
+      console.log(
+        "Audio Note: " +
+          note +
+          " | Current Note Evaluated: " +
+          // noteArray[currIndexRef] +
+          allArray[mainIndex][count3] + // Access the ref
+          " | Count: " +
+          count3
+      );
+
+      if (allArray[mainIndex].length && allCoord) {
+        const nextNoteInData = allArray[mainIndex][count3];
+
+        if (note === nextNoteInData) {
+          console.log("MATCH FOUND");
+          setIsMatch(true);
+          // Increment currIndex using the ref
+
+          setCount3((prevCount) => prevCount + 1);
+        }
+      }
+      if (count3 == allArray[mainIndex].length - 1) {
+        console.log("We reached the end");
+        setConfirmedText("");
+        setMainIndex((prevCount) => prevCount + 1);
+        setCount3(0);
+        scroll();
+      }
+    } else {
+      console.log("Reached the end");
+    }
+  };
   //notehighlighter
+  /*
   const handlePress = () => {
     setHighlightNotes(true);
     count = 0; // Reset count to 0
     evaluateNote(); // Start the evaluation
+  };
+  */
+
+  const handlePress2 = () => {
+    setToggled(!isToggled);
+  };
+  const handleConfirm = () => {
+    if (isToggled) {
+      setConfirmedText(inputText);
+    }
+
+    // You can perform additional actions or validations here
   };
 
   useEffect(() => {
@@ -173,6 +250,7 @@ export default function Tracker({ navigation, route }) {
   }, []);
 
   //note highlighter
+  /*
   useEffect(() => {
     if (highlightNotes === false) {
       setCurrIndex(0); // Reset currIndex to 0 when highlightNotes becomes false
@@ -180,6 +258,7 @@ export default function Tracker({ navigation, route }) {
       setCurrentNoteEvaluated("");
     }
   }, [highlightNotes]);
+  */
 
   useEffect(() => {
     if (route.params != null) {
@@ -190,13 +269,31 @@ export default function Tracker({ navigation, route }) {
   }, [route.params]);
   useEffect(() => {
     if (allArray != null) {
-      console.log("mainIndex:", mainIndex);
-      console.log("highlight notes", highlightNotes);
-      console.log(allArray[mainIndex]);
+      console.log("mainIndex:", allArray[mainIndex]);
     }
-
-    // ... rest of the useEffect code
   }, [mainIndex, allArray]);
+
+  useEffect(() => {
+    if (isToggled) {
+      setHighlightNotes("true");
+    }
+  }, [isToggled]);
+  useEffect(() => {
+    //if(audioNote != "" && isToggled)
+    if (confirmedText != "" && isToggled) {
+      evaluateNote2(confirmedText);
+    }
+    //[isToggled,audioNote]
+  }, [isToggled, confirmedText]);
+  useEffect(() => {
+    if (!isToggled && allArray) {
+      setMainIndex(0);
+      setCount3(0);
+      setConfirmedText("");
+      setHighlightNotes(null);
+      console.log("Ending play mode");
+    }
+  }, [allArray, isToggled]);
 
   const scroll = () => {
     setScroller((prev) => prev + ViewHeight);
@@ -214,24 +311,25 @@ export default function Tracker({ navigation, route }) {
       <View style={[styles.gradientContainerScanner, { zIndex: 0 }]}>
         <RadialGradient style={{ ...styles.gradient, zIndex: 0 }} />
       </View>
-      <TouchableOpacity
-        style={{
-          borderRadius: 5,
-          backgroundColor: "#d4a32b",
-          padding: 10,
-          width: "10vw",
-          alignSelf: "center",
-          marginTop: 80,
-          marginBottom: 10,
-          alignItems: "center",
-          zIndex: 6,
-        }}
-        onPress={handlePress}
-      >
-        <Text style={{ color: "white", fontWeight: 600, fontSize: 18 }}>
-          Highlight Notes
-        </Text>
-      </TouchableOpacity>
+
+      <View style={{ marginTop: 50 }}>
+        <TouchableOpacity
+          style={[styles2.button, isToggled && styles2.toggledButton]}
+          onPress={handlePress2}
+        >
+          <Text style={styles2.buttonText}>Play Mode</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ marginLeft: 400, marginRight: 400, marginTop: 10 }}>
+        <TextInput
+          style={{ backgroundColor: "white" }}
+          placeholder="Type here..."
+          onChangeText={(text) => setInputText(text)}
+          value={inputText}
+        />
+        <Button title="Confirm" onPress={handleConfirm} />
+      </View>
 
       <ScrollView ref={scrollViewRef}>
         <View
@@ -267,7 +365,7 @@ export default function Tracker({ navigation, route }) {
                 <NoteHighlighter
                   key={`noteHighlighter_${index}`}
                   notePositions={JSON.parse(allCoord[index])}
-                  currIndex={currIndex}
+                  currIndex={count3}
                 />
               )}
             </View>
@@ -277,3 +375,19 @@ export default function Tracker({ navigation, route }) {
     </View>
   );
 }
+const styles2 = StyleSheet.create({
+  button: {
+    padding: 10,
+    backgroundColor: "#3498db",
+    borderRadius: 5,
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  toggledButton: {
+    backgroundColor: "#2c3e50", // Darkened color for toggled state
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+  },
+});
