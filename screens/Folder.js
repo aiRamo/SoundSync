@@ -22,6 +22,7 @@ export default function Library() {
 
   const [user, setUser] = useState(null);
   const [subfolders, setSubfolders] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     // Check for user authentication status on component mount
@@ -64,8 +65,22 @@ export default function Library() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Header navigation={navigation} />
       <View style={{ backgroundColor: "#d6d6e6", flex: 1 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 50,
+          }}
+        >
+          <TextInput
+            placeholder="Search"
+            placeholderTextColor="darkslateblue"
+            clearButtonMode="always"
+            style={styles.search}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+        </View>
         <View style={styles.container}>
           <ScrollView>
             <Text
@@ -107,9 +122,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
-    borderColor: "white",
-    color: "white",
+    borderColor: "darkslateblue",
+    color: "darkslateblue",
     marginBottom: 5,
     marginLeft: 10,
+    marginRight: 10,
   },
 });
