@@ -1,23 +1,11 @@
-import {
-  View,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  Alert,
-  StyleSheet,
-  TextInput,
-  StatusBar,
-  Button,
-} from "react-native";
+import { Dimensions } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import NoteHighlighter from "../components/UI/noteHighligher";
 import { AUTH } from "../firebaseConfig";
 import styles from "../components/styleSheetScan";
 import RadialGradient from "../components/UI/RadialGradient";
 import FileList from "../components/TrackerHelp";
-import { all } from "axios";
+import TrackerContent from "../components/UI/TrackerContent";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
@@ -28,8 +16,6 @@ export default function Tracker({ navigation, route }) {
   const [collectionName1, setCollectionName] = useState("");
   const [user, setUser] = useState(null);
   const [highlightNotes, setHighlightNotes] = useState(false);
-  const [currIndex, setCurrIndex] = useState(0);
-  const [currentNoteEvaluated, setCurrentNoteEvaluated] = useState("");
   const [isMatch, setIsMatch] = useState(false);
   const [mainIndex, setMainIndex] = useState(0);
   const [count3, setCount3] = useState(0);
@@ -40,54 +26,6 @@ export default function Tracker({ navigation, route }) {
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState("");
   //audio crew use this
-
-  /*
-  const arrayData = [
-    "E4",
-    "A4",
-    "C4",
-    "E4",
-    "B4",
-    "D4",
-    "E4",
-    "C5",
-    "C4",
-    "A2",
-    "A3",
-    "B2",
-    "B3",
-    "C3",
-    "C4",
-    "E4",
-    "B4",
-    "D4",
-    "E4",
-    "A4",
-    "C4",
-    "E4",
-    "B4",
-    "D4",
-    "B2",
-    "B3",
-    "A2",
-    "A3",
-    "B2",
-    "B3",
-    "C5",
-    "E4",
-    "C3",
-    "C4",
-    "B4",
-    "E4",
-    "D4",
-    "E4",
-    "D4",
-    "E4",
-    "D4",
-    "B2",
-    "B3",
-  ];
-  */
   const arrayData = [
     "E4",
     "A4",
@@ -307,87 +245,17 @@ export default function Tracker({ navigation, route }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#483d8b" }}>
-      <View style={[styles.gradientContainerScanner, { zIndex: 0 }]}>
-        <RadialGradient style={{ ...styles.gradient, zIndex: 0 }} />
-      </View>
-
-      <View style={{ marginTop: 50 }}>
-        <TouchableOpacity
-          style={[styles2.button, isToggled && styles2.toggledButton]}
-          onPress={handlePress2}
-        >
-          <Text style={styles2.buttonText}>Play Mode</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={{ marginLeft: 400, marginRight: 400, marginTop: 10 }}>
-        <TextInput
-          style={{ backgroundColor: "white" }}
-          placeholder="Type here..."
-          onChangeText={(text) => setInputText(text)}
-          value={inputText}
-        />
-        <Button title="Confirm" onPress={handleConfirm} />
-      </View>
-
-      <ScrollView ref={scrollViewRef}>
-        <View
-          style={{
-            alignItems: "center",
-            backgroundColor: "white",
-            alignSelf: "center",
-            marginTop: 25,
-            borderRadius: 0,
-            height: ViewHeight,
-            width: ViewWidth,
-            zIndex: 8,
-          }}
-        >
-          {imageUrls.map((url, index) => (
-            <View key={index}>
-              <Image
-                source={{ uri: url }}
-                onError={(error) => {
-                  console.log("Image failed to load:", error);
-                  // You can add an error message to the component state
-                  // to display a message to the user.
-                }}
-                style={{
-                  width: ViewWidth,
-                  height: ViewHeight,
-                  resizeMode: "contain",
-                  zIndex: 8,
-                }}
-              />
-
-              {highlightNotes && allCoord[index] && (
-                <NoteHighlighter
-                  key={`noteHighlighter_${index}`}
-                  notePositions={JSON.parse(allCoord[index])}
-                  currIndex={count3}
-                />
-              )}
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+    <TrackerContent
+      imageUrls={imageUrls}
+      allCoord={allCoord}
+      count3={count3}
+      highlightNotes={highlightNotes}
+      scrollViewRef={scrollViewRef}
+      inputText={inputText}
+      setInputText={setInputText}
+      handleConfirm={handleConfirm}
+      handlePress2={handlePress2}
+      isToggled={isToggled}
+    />
   );
 }
-const styles2 = StyleSheet.create({
-  button: {
-    padding: 10,
-    backgroundColor: "#3498db",
-    borderRadius: 5,
-    alignItems: "center",
-    alignSelf: "center",
-  },
-  toggledButton: {
-    backgroundColor: "#2c3e50", // Darkened color for toggled state
-  },
-  buttonText: {
-    color: "white",
-    fontSize: 16,
-  },
-});

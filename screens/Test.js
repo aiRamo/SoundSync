@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { ScrollView, View, Dimensions, Text } from "react-native";
 import styles from "../components/styleSheetScan";
 import RadialGradient from "../components/UI/RadialGradient";
-import API_URL from "../API_URL.json";
+import useAudioWebSocket from "../components/AudioWebSocket";
 
 const { width, height } = Dimensions.get("window");
 
@@ -12,43 +12,23 @@ export default function Test({ route }) {
     noteString: "",
   });
 
-  useEffect(() => {
-    // Connect to WebSocket server
-    console.log("attempting to connect...");
-    const webSocket = new WebSocket(API_URL.API_URL_WS_AUDIO);
+  // Custom callback similar to useEffect that is only triggered when the websocket sends data.
+  const getAudioModuleData = useCallback(
+    (newData) => {
+      setData((prevData) => {
+        if (
+          newData.frequency !== prevData.frequency ||
+          newData.noteString !== prevData.noteString
+        ) {
+          return newData;
+        }
+        return prevData;
+      });
+    },
+    [] // No dependencies needed, just need pass this into useAudioWebSocket
+  );
 
-    webSocket.onopen = () => {
-      // Connection established
-      console.log("WebSocket connection established");
-    };
-
-    webSocket.onmessage = (e) => {
-      // A message was received, parse frequency and noteString
-      const message = e.data; // Assuming message is in "frequency,noteString" format
-      const delimiterIndex = message.indexOf(","); // Find the comma delimiter index
-      if (delimiterIndex !== -1) {
-        // Make sure the comma exists
-        const frequency = message.substring(0, delimiterIndex).trim(); // Extract frequency
-        const noteString = message.substring(delimiterIndex + 1).trim(); // Extract noteString
-        setData({ frequency, noteString }); // Update state with new data
-      }
-    };
-
-    webSocket.onerror = (e) => {
-      // An error occurred
-      console.log(e.message);
-    };
-
-    webSocket.onclose = (e) => {
-      // Connection closed
-      console.log("WebSocket connection closed");
-    };
-
-    // Cleanup on unmount
-    return () => {
-      webSocket.close();
-    };
-  }, []);
+  useAudioWebSocket(getAudioModuleData); // Main method to toggle the Audio module's websocket. Pass the custom callback to set data in a live stream.
 
   return (
     <View style={{ flex: 1, zIndex: 0, width: width, color: "#483d8b" }}>
