@@ -85,7 +85,7 @@ const FileList = (user, collectionName) => {
         setAllNote(jsonNoteData);
 
         let arrays = [];
-        for (let i = 0; i < jsonNoteData.length - 1; i++) {
+        for (let i = 0; i < jsonNoteData.length; i++) {
           const retrievedNoteArray = await retrieve(jsonNoteData[i]);
           arrays.push(retrievedNoteArray);
         }
@@ -111,11 +111,20 @@ export async function retrieve(array) {
   let noteArray = [];
   for (const part of array) {
     for (const note of part.notes) {
-      for (const pitch of note.pitch) {
-        const step = pitch.step[0];
-        const octave = pitch.octave[0];
-        const temp = step + octave;
-        noteArray.push(temp);
+      if (note.rest) {
+        for (const rest of note.rest) {
+          const step = rest["display-step"];
+          const octave = rest["display-octave"];
+          const temp = step + octave;
+          noteArray.push(temp);
+        }
+      } else {
+        for (const pitch of note.pitch) {
+          const step = pitch.step[0];
+          const octave = pitch.octave[0];
+          const temp = step + octave;
+          noteArray.push(temp);
+        }
       }
     }
   }

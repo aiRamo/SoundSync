@@ -25,6 +25,7 @@ export default function Tracker({ navigation, route }) {
   const [inputText, setInputText] = useState("");
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState("");
+  const [signal, setSignal] = useState("");
   //audio crew use this
   const arrayData = [
     "E4",
@@ -53,70 +54,6 @@ export default function Tracker({ navigation, route }) {
     user,
     collectionName1
   );
-
-  //check the two notes
-  /*
-  const evaluateNote = () => {
-    if (count < arrayData.length) {
-      console.log(
-        "Audio Note: " +
-          arrayData[count] +
-          " | Current Note Evaluated: " +
-          // noteArray[currIndexRef] +
-          allArray[ownIndex][currIndexRef] + // Access the ref
-          " | Count: " +
-          count
-      );
-
-      if (currentNoteEvaluated !== allArray[ownIndex][currIndexRef]) {
-        setCurrentNoteEvaluated(allArray[ownIndex][currIndexRef]);
-      }
-
-      if (audioNote !== arrayData[count]) {
-        setAudioNote(arrayData[count]);
-      }
-
-      // Check if both noteArray and coordinateData are not empty
-      if (allArray[ownIndex].length && allCoord) {
-        const currentNote = arrayData[count];
-        const nextNoteInData = allArray[ownIndex][currIndexRef]; // Access the ref
-
-        //TODO: Make a state that controls a conditional compile that toggles the Font for both of the texts to be green.
-        //TODO: Pause the program for 2 seconds, then turn OFF the conditional compile state so the texts go back to black.
-        //TODO: You are conditionally compiling the two texts at 239
-        if (currentNote === nextNoteInData) {
-          console.log("MATCH FOUND");
-          setIsMatch(true);
-          // Increment currIndex using the ref
-          currIndexRef++;
-          setCurrIndex(currIndexRef);
-        }
-      }
-
-      count++;
-
-      //
-      //timer for something
-      if (count < arrayData.length) {
-        timer = setTimeout(evaluateNote, 1000);
-      } else if (ownIndex < allArray.length) {
-        ownIndex++;
-        console.log("Next page and index " + ownIndex);
-        setMainIndex((prevCount) => prevCount + 1);
-        count = 0;
-        setCurrIndex(0);
-        setHighlightNotes(true);
-        clearTimeout(timer);
-        scroll();
-        evaluateNote();
-      } else {
-        // All notes have been evaluated
-        ownIndex = 0;
-        setHighlightNotes(false);
-      }
-    }
-  };
-*/
 
   const evaluateNote2 = (note) => {
     if (mainIndex < allArray.length) {
@@ -152,20 +89,13 @@ export default function Tracker({ navigation, route }) {
       console.log("Reached the end");
     }
   };
-  //notehighlighter
-  /*
-  const handlePress = () => {
-    setHighlightNotes(true);
-    count = 0; // Reset count to 0
-    evaluateNote(); // Start the evaluation
-  };
-  */
 
   const handlePress2 = () => {
     setToggled(!isToggled);
   };
   const handleConfirm = () => {
     if (isToggled) {
+      setSignal((prevCount) => prevCount + 1);
       setConfirmedText(inputText);
     }
 
@@ -187,17 +117,6 @@ export default function Tracker({ navigation, route }) {
     return () => unsubscribe();
   }, []);
 
-  //note highlighter
-  /*
-  useEffect(() => {
-    if (highlightNotes === false) {
-      setCurrIndex(0); // Reset currIndex to 0 when highlightNotes becomes false
-      setAudioNote("");
-      setCurrentNoteEvaluated("");
-    }
-  }, [highlightNotes]);
-  */
-
   useEffect(() => {
     if (route.params != null) {
       const { subfolderName } = route.params;
@@ -218,11 +137,11 @@ export default function Tracker({ navigation, route }) {
   }, [isToggled]);
   useEffect(() => {
     //if(audioNote != "" && isToggled)
-    if (confirmedText != "" && isToggled) {
+    if (confirmedText != "" && isToggled && signal) {
       evaluateNote2(confirmedText);
     }
     //[isToggled,audioNote]
-  }, [isToggled, confirmedText]);
+  }, [isToggled, confirmedText, signal]);
   useEffect(() => {
     if (!isToggled && allArray) {
       setMainIndex(0);
