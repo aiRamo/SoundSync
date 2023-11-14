@@ -12,18 +12,6 @@ const SheetScanPromptContent = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  const scrollLeft = () => {
-    if (currentImageIndex > 0) {
-      setCurrentImageIndex(currentImageIndex - 1);
-    }
-  };
-
-  const scrollRight = () => {
-    if (currentImageIndex < imageList.length) {
-      setCurrentImageIndex(currentImageIndex + 1);
-    }
-  };
-
   return (
     <View style={styles.content}>
       <Text style={styles.introTitle}> Next, Choose Your Images</Text>
