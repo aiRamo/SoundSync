@@ -22,7 +22,6 @@ export default function Library({ navigation, route }) {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isDescendingOrder, setIsDescendingOrder] = useState(true);
   const [user, setUser] = useState(null);
-  const { subfolderName } = route.params;
 
   useEffect(() => {
     // Check for user authentication status on component mount
@@ -66,7 +65,7 @@ export default function Library({ navigation, route }) {
 
     if (user) {
       // Check if user is defined
-      listFilesInFolder(`images/${user.uid}/sheetCollections/${subfolderName}`);
+      listFilesInFolder(`images/${user.uid}/sheetCollections/hold3`);
     }
   }, [user]);
 
@@ -118,6 +117,7 @@ export default function Library({ navigation, route }) {
           style={{
             flexDirection: "row",
             alignItems: "center",
+            marginTop: 50,
           }}
         >
           <TextInput
@@ -160,7 +160,7 @@ export default function Library({ navigation, route }) {
                 title={`music page ${index}`}
                 date={imageDates[index]}
                 navigation={navigation}
-                folder={subfolderName}
+                folder={"blah"}
               ></Card>
             ))}
           </ScrollView>

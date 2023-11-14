@@ -63,6 +63,10 @@ export default function Library() {
     navigation.navigate("Tracker", { subfolderName });
   };
 
+  const filteredFolders = subfolders.filter((subFolder) =>
+    subFolder.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ backgroundColor: "#d6d6e6", flex: 1 }}>
@@ -92,7 +96,7 @@ export default function Library() {
             >
               Folders
             </Text>
-            {subfolders.map((subfolderName, index) => (
+            {filteredFolders.map((subfolderName, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => handleSubfolderSelection(subfolderName)}
