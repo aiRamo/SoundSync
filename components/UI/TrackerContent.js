@@ -104,7 +104,7 @@ const TrackerContent = ({
 const styles2 = StyleSheet.create({
   button: {
     padding: 10,
-    backgroundColor: "#3498db",
+    backgroundColor: "orange",
     borderRadius: 5,
     alignItems: "center",
     alignSelf: "center",
