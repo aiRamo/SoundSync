@@ -21,9 +21,7 @@ const Header = ({ navigation }) => {
   };
 
   const handleDropdownSelect = (option) => {
-    if (option === "Settings") {
-      navigation.navigate("Profile", {});
-    } else if (option === "Sign Out") {
+    if (option === "Sign Out") {
       handleSignOut();
     }
     setDropdownVisible(false);
@@ -43,7 +41,7 @@ const Header = ({ navigation }) => {
       </TouchableOpacity>
       <Drop
         isVisible={isDropdownVisible}
-        options={["Settings", "Sign Out", "Close"]}
+        options={["Sign Out", "Close"]}
         onSelect={handleDropdownSelect}
         onClose={() => setDropdownVisible(false)}
       />
