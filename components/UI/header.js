@@ -30,14 +30,16 @@ const Header = ({ navigation }) => {
   return (
     <View
       style={{
+        position: "absolute",
         flexDirection: "row",
         alignItems: "center",
+        right: -325,
         marginRight: 25,
-        marginTop: 5,
+        marginTop: 10,
       }}
     >
       <TouchableOpacity onPress={toggleDropdown}>
-        <Entypo name="dots-three-vertical" size={24} color="white" />
+        <Entypo name="dots-three-vertical" size={24} color="#5B5593" />
       </TouchableOpacity>
       <Drop
         isVisible={isDropdownVisible}

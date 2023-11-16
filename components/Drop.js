@@ -40,8 +40,8 @@ export default function Drop({ isVisible, options, onSelect, onClose }) {
 const styles = StyleSheet.create({
   dropdown: {
     position: "absolute",
-    right: 10,
-    top: StatusBar.currentHeight,
+    right: 40,
+    top: 10,
     backgroundColor: "white",
     borderRadius: 5,
     elevation: 3,

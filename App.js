@@ -32,11 +32,16 @@ function HomeScreen() {
         headerShown: false,
         tabBarStyle: {
           position: "absolute",
-          backgroundColor: "rgba(0,0,0,0.3)",
-          borderBottomWidth: 1,
+          backgroundColor: "rgba(72,61,139,0)",
+          borderBottomWidth: 0,
           borderColor: "rgba(0,0,0,0.5)",
           top: "-0.75vh",
+          left: "1vw",
           height: "6vh",
+          width: "98vw",
+          alignSelf: "center",
+          paddingTop: 10,
+          paddingHorizontal: 300,
         },
       }}
     >
@@ -44,32 +49,74 @@ function HomeScreen() {
         name="Scan"
         component={Scan}
         options={{
-          title: "Scan Page",
-          tabBarIcon: ({}) => <Ionicons name="scan" size={24} color="white" />,
-          tabBarActiveTintColor: "white",
-        }}
-      ></Tab.Screen>
-      <Tab.Screen
-        name="Audio"
-        component={AudioRecorder}
-        options={{
-          title: "Audio Page",
-          tabBarIcon: ({}) => (
-            <FontAwesome name="file-audio-o" size={24} color="white" />
+          title: "Scan",
+          tabBarIcon: ({ focused }) => (
+            <>
+              <Ionicons
+                name="scan"
+                size={24}
+                color={focused ? "white" : "grey"}
+                style={{ zIndex: 2 }}
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  width: 100,
+                  height: 50,
+                  borderWidth: focused ? 2 : 0,
+                  borderColor: "rgba(91, 85, 147, 1)", // Set the border color
+                  backgroundColor: focused
+                    ? "rgba(91, 85, 147, 1)"
+                    : "rgba(91, 85, 147, 0)",
+                  borderRadius: 20,
+                  left: "-1vw",
+                  zIndex: -1,
+                }}
+              />
+            </>
           ),
-          tabBarActiveTintColor: "white",
+          tabBarActiveTintColor: "#ffffff",
+          tabBarLabelStyle: {
+            fontWeight: "bold", // Set the font weight for tab titles
+            zIndex: 2,
+          },
         }}
       ></Tab.Screen>
-
       <Tab.Screen
         name="Folder"
         component={Folder}
         options={{
-          title: "Library Page",
-          tabBarIcon: ({}) => (
-            <AntDesign name="profile" size={24} color="white" />
+          title: "Library",
+          tabBarIcon: ({ focused }) => (
+            <>
+              <AntDesign
+                name="profile"
+                size={24}
+                color={focused ? "white" : "grey"}
+                style={{ zIndex: 2 }}
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  width: 100,
+                  height: 50,
+                  borderWidth: focused ? 2 : 0,
+                  borderColor: "rgba(91, 85, 147, 1)", // Set the border color
+                  backgroundColor: focused
+                    ? "rgba(91, 85, 147, 1)"
+                    : "rgba(91, 85, 147, 0)",
+                  borderRadius: 20,
+                  left: "-0.7vw",
+                  zIndex: -1,
+                }}
+              />
+            </>
           ),
-          tabBarActiveTintColor: "white",
+          tabBarActiveTintColor: "#ffffff",
+          tabBarLabelStyle: {
+            fontWeight: "bold", // Set the font weight for tab titles
+            zIndex: 2,
+          },
         }}
       ></Tab.Screen>
       <Tab.Screen
@@ -77,21 +124,73 @@ function HomeScreen() {
         component={Tracker}
         options={{
           title: "Tracker",
-          tabBarIcon: ({}) => (
-            <MaterialIcons name="multitrack-audio" size={24} color="white" />
+          tabBarIcon: ({ focused }) => (
+            <>
+              <MaterialIcons
+                name="multitrack-audio"
+                size={24}
+                color={focused ? "white" : "grey"}
+                style={{ zIndex: 2 }}
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  width: 100,
+                  height: 50,
+                  borderWidth: focused ? 2 : 0,
+                  borderColor: "rgba(91, 85, 147, 1)", // Set the border color
+                  backgroundColor: focused
+                    ? "rgba(91, 85, 147, 1)"
+                    : "rgba(91, 85, 147, 0)",
+                  borderRadius: 20,
+                  left: "-0.5vw",
+                  zIndex: -1,
+                }}
+              />
+            </>
           ),
-          tabBarActiveTintColor: "white",
+          tabBarActiveTintColor: "#ffffff",
+          tabBarLabelStyle: {
+            fontWeight: "bold", // Set the font weight for tab titles
+            zIndex: 2,
+          },
         }}
       ></Tab.Screen>
       <Tab.Screen
         name="Test"
         component={Test}
         options={{
-          title: "Test Page",
-          tabBarIcon: ({}) => (
-            <MaterialIcons name="multitrack-audio" size={24} color="white" />
+          title: "Test",
+          tabBarIcon: ({ focused }) => (
+            <>
+              <MaterialIcons
+                name="multitrack-audio"
+                size={24}
+                color={focused ? "white" : "grey"}
+                style={{ zIndex: 2 }}
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  width: 100,
+                  height: 50,
+                  borderWidth: focused ? 2 : 0,
+                  borderColor: "rgba(91, 85, 147, 1)", // Set the border color
+                  backgroundColor: focused
+                    ? "rgba(91, 85, 147, 1)"
+                    : "rgba(91, 85, 147, 0)",
+                  borderRadius: 20,
+                  left: "-1vw",
+                  zIndex: -1,
+                }}
+              />
+            </>
           ),
-          tabBarActiveTintColor: "white",
+          tabBarActiveTintColor: "#ffffff",
+          tabBarLabelStyle: {
+            fontWeight: "bold", // Set the font weight for tab titles
+            zIndex: 2,
+          },
         }}
       ></Tab.Screen>
 

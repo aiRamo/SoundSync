@@ -15,20 +15,20 @@ const styles = StyleSheet.create({
   },
   gradientContainerScanner: {
     position: "absolute",
-    bottom: height * -0.85,
-    left: width * -0.7,
+    alignSelf: "center",
+    bottom: height * -1,
     height: height * 2.5,
     width: height * 3.5,
-    backgroundColor: "#483d8b",
+    backgroundColor: "#ffffff",
     zIndex: 5,
   },
   gradientContainerTracker: {
     position: "absolute",
     bottom: height * -2.5,
-    left: width * -0.4,
+    left: width * -0.5,
     height: height * 3.5,
     width: height * 3.5,
-    backgroundColor: "#483d8b",
+    backgroundColor: "#251101",
     zIndex: 0,
   },
   gradient: {
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   introTitle: {
     fontSize: 35,
     fontWeight: "600",
-    color: "rgba(255,255,255,1)",
+    color: "#1B154C",
     textAlign: "center",
     marginTop: "1%",
     width: width * 0.8,
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   confirmNameButton: {
-    backgroundColor: "#d4a32b",
+    backgroundColor: "#5B5593",
     width: width * 0.07,
     height: height * 0.05,
     borderRadius: 6,

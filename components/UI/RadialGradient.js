@@ -7,7 +7,7 @@ const RadialGradient = ({ style, children }) => {
     ...style,
     // Define your radial gradient using standard CSS here
     backgroundImage:
-      "radial-gradient(circle, #3d35ca 0%, rgba(72, 61, 139, 0) 75%)",
+      "radial-gradient(circle, rgba(190, 186, 226, 1) 0%, rgba(137, 144, 160, 0) 75%)",
   };
 
   if (Platform.OS === "web") {

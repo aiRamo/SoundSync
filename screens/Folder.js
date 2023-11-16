@@ -13,9 +13,10 @@ import { STORAGE } from "../firebaseConfig";
 import Card2 from "../components/Card2";
 import { Entypo, AntDesign } from "@expo/vector-icons";
 import Drop from "../components/Drop";
-import Header from "../components/UI/header";
+import styles from "../components/styleSheetScan";
 import { AUTH } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import RadialGradient from "../components/UI/RadialGradient";
 
 export default function Library() {
   const navigation = useNavigation();
@@ -70,6 +71,9 @@ export default function Library() {
   return (
     <View style={{ flex: 1 }}>
       <View style={{ backgroundColor: "#d6d6e6", flex: 1 }}>
+        <View style={[styles.gradientContainerScanner, { zIndex: 0 }]}>
+          <RadialGradient style={{ ...styles.gradient, zIndex: 0 }} />
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -81,11 +85,11 @@ export default function Library() {
             placeholder="Search"
             placeholderTextColor="darkslateblue"
             clearButtonMode="always"
-            style={styles.search}
+            style={styles1.search}
             onChangeText={(text) => setSearchQuery(text)}
           />
         </View>
-        <View style={styles.container}>
+        <View style={styles1.container}>
           <ScrollView>
             <Text
               style={{
@@ -112,7 +116,7 @@ export default function Library() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles1 = StyleSheet.create({
   container: {
     flex: 1,
     alignContent: "center",
