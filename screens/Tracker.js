@@ -1,9 +1,8 @@
 import { Dimensions } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import NoteHighlighter from "../components/UI/noteHighligher";
 import { AUTH } from "../firebaseConfig";
-import styles from "../components/styleSheetScan";
-import RadialGradient from "../components/UI/RadialGradient";
+import useAudioWebSocket from "../components/AudioWebSocket";
 import FileList from "../components/TrackerHelp";
 import TrackerContent from "../components/UI/TrackerContent";
 
@@ -26,34 +25,22 @@ export default function Tracker({ navigation, route }) {
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState("");
   const [signal, setSignal] = useState("");
-  //audio crew use this
-  const arrayData = [
-    "E4",
-    "A4",
-    "C4",
-    "E4",
-    "B4",
-    "D4",
-    "E4",
-    "C5",
-    "C4",
-    "A2",
-    "A3",
-    "B2",
-    "B3",
-    "C3",
-    "C4",
-  ];
-
-  let timer;
-  let ownIndex = 0;
-  let count = 0;
-
-  let currIndexRef = 0; // Create a ref for currIndex
   const { imageUrls, allCoord, allNote, allArray, count2 } = FileList(
     user,
     collectionName1
   );
+
+  // Custom callback similar to useEffect that is only triggered when the websocket sends data.
+  const getAudioModuleData = useCallback((newData) => {
+    setAudioNote(newData.noteString);
+  }, []);
+
+  // Set up the WebSocket connection
+  useAudioWebSocket(getAudioModuleData);
+
+  useEffect(() => {
+    console.log(audioNote);
+  }, [audioNote]);
 
   const evaluateNote2 = (note) => {
     if (mainIndex < allArray.length) {
