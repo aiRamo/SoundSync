@@ -78,7 +78,7 @@ export default function Library() {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginTop: 50,
+            marginTop: 100,
           }}
         >
           <TextInput
