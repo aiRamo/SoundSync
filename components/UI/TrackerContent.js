@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import NoteHighlighter from "./noteHighligher";
 import RadialGradient from "./RadialGradient";
+import { AntDesign } from "@expo/vector-icons";
 import styles from "../styleSheetScan";
 
 const { width, height } = Dimensions.get("window");
@@ -29,6 +30,7 @@ const TrackerContent = ({
   setInputText,
   handleConfirm,
   handlePress2,
+  handlePress3,
   isToggled,
 }) => {
   return (
@@ -40,6 +42,19 @@ const TrackerContent = ({
         ]}
       >
         <RadialGradient style={{ ...styles.gradient, zIndex: 0 }} />
+      </View>
+      <View style={{ marginRight: 1480, marginLeft: 10 }}>
+        <TouchableOpacity
+          style={{
+            borderWidth: 1, // Adjust the border width as needed
+            borderColor: "black", // Adjust the border color as needed
+            borderRadius: 8, // Adjust the border radius as needed
+            padding: 10,
+          }}
+          onPress={handlePress3}
+        >
+          <AntDesign name="back" size={24} color="black" />
+        </TouchableOpacity>
       </View>
 
       <View style={{ marginTop: 50 }}>

@@ -80,6 +80,9 @@ export default function Tracker({ navigation, route }) {
   const handlePress2 = () => {
     setToggled(!isToggled);
   };
+  const handlePress3 = () => {
+    navigation.navigate("Home", {});
+  };
   const handleConfirm = () => {
     if (isToggled) {
       setSignal((prevCount) => prevCount + 1);
@@ -161,6 +164,7 @@ export default function Tracker({ navigation, route }) {
       setInputText={setInputText}
       handleConfirm={handleConfirm}
       handlePress2={handlePress2}
+      handlePress3={handlePress3}
       isToggled={isToggled}
     />
   );
