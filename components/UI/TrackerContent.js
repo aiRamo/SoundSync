@@ -33,7 +33,12 @@ const TrackerContent = ({
 }) => {
   return (
     <View style={{ flex: 1, backgroundColor: "#483d8b" }}>
-      <View style={[styles.gradientContainerScanner, { zIndex: 0 }]}>
+      <View
+        style={[
+          styles.gradientContainerScanner,
+          { zIndex: 0, height: height, width: width, bottom: 0 },
+        ]}
+      >
         <RadialGradient style={{ ...styles.gradient, zIndex: 0 }} />
       </View>
 
@@ -56,7 +61,7 @@ const TrackerContent = ({
         <Button title="Confirm" onPress={handleConfirm} />
       </View>
 
-      <ScrollView ref={scrollViewRef}>
+      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
         <View
           style={{
             alignItems: "center",

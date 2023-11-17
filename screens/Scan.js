@@ -48,7 +48,7 @@ export default function Scan({ navigation }) {
     console.log(pngURL);
   }, [pngURL]);
 
-  useWebSocket((event) => setServerMessage(event.data));
+  useWebSocket((event) => setServerMessage(event.data), scannerPhase);
 
   return (
     <View style={{ height: height }}>

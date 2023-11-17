@@ -124,11 +124,11 @@ export default function Tracker({ navigation, route }) {
   }, [isToggled]);
   useEffect(() => {
     //if(audioNote != "" && isToggled)
-    if (confirmedText != "" && isToggled && signal) {
-      evaluateNote2(confirmedText);
+    if (audioNote != "" && isToggled && signal) {
+      evaluateNote2(audioNote);
     }
     //[isToggled,audioNote]
-  }, [isToggled, confirmedText, signal]);
+  }, [isToggled, audioNote, signal]);
   useEffect(() => {
     if (!isToggled && allArray) {
       setMainIndex(0);

@@ -50,7 +50,7 @@ export default function Test({ route }) {
             top: "13%",
             fontSize: 35,
             fontWeight: "600",
-            color: "rgba(255,255,255,1)",
+            color: "#1B154C",
             textAlign: "center",
           }}
         >
@@ -70,7 +70,7 @@ export default function Test({ route }) {
             style={{
               fontSize: 35,
               fontWeight: "600",
-              color: "rgba(255,255,255,1)",
+              color: "#1B154C",
               textAlign: "right",
             }}
           >
@@ -85,7 +85,7 @@ export default function Test({ route }) {
             left: width * 0.5,
             fontSize: 35,
             fontWeight: "600",
-            color: "rgba(255,255,255,1)",
+            color: "#1B154C",
             textAlign: "center",
           }}
         >
@@ -105,7 +105,7 @@ export default function Test({ route }) {
             style={{
               fontSize: 35,
               fontWeight: "600",
-              color: "rgba(255,255,255,1)",
+              color: "#1B154C",
               textAlign: "left",
             }}
           >

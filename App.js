@@ -120,43 +120,6 @@ function HomeScreen() {
         }}
       ></Tab.Screen>
       <Tab.Screen
-        name="Tracker"
-        component={Tracker}
-        options={{
-          title: "Tracker",
-          tabBarIcon: ({ focused }) => (
-            <>
-              <MaterialIcons
-                name="multitrack-audio"
-                size={24}
-                color={focused ? "white" : "grey"}
-                style={{ zIndex: 2 }}
-              />
-              <View
-                style={{
-                  position: "absolute",
-                  width: 100,
-                  height: 50,
-                  borderWidth: focused ? 2 : 0,
-                  borderColor: "rgba(91, 85, 147, 1)", // Set the border color
-                  backgroundColor: focused
-                    ? "rgba(91, 85, 147, 1)"
-                    : "rgba(91, 85, 147, 0)",
-                  borderRadius: 20,
-                  left: "-0.5vw",
-                  zIndex: -1,
-                }}
-              />
-            </>
-          ),
-          tabBarActiveTintColor: "#ffffff",
-          tabBarLabelStyle: {
-            fontWeight: "bold", // Set the font weight for tab titles
-            zIndex: 2,
-          },
-        }}
-      ></Tab.Screen>
-      <Tab.Screen
         name="Test"
         component={Test}
         options={{
@@ -241,14 +204,9 @@ export default function App() {
               options={{ title: "SoundSync", headerShown: false }}
             />
             <Stack.Screen
-              name="Library"
-              component={Library}
-              options={{ headerStyle }}
-            />
-            <Stack.Screen
-              name="Profile"
-              component={Profile}
-              options={{ headerStyle }}
+              name="Tracker"
+              component={Tracker}
+              options={{ headerShown: false }}
             />
           </>
         ) : (
