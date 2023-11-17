@@ -66,16 +66,6 @@ const TrackerContent = ({
         </TouchableOpacity>
       </View>
 
-      <View style={{ marginLeft: 400, marginRight: 400, marginTop: 10 }}>
-        <TextInput
-          style={{ backgroundColor: "white" }}
-          placeholder="Type here..."
-          onChangeText={(text) => setInputText(text)}
-          value={inputText}
-        />
-        <Button title="Confirm" onPress={handleConfirm} />
-      </View>
-
       <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
         <View
           style={{

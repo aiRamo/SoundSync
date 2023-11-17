@@ -32,17 +32,21 @@ export default function Tracker({ navigation, route }) {
 
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback((newData) => {
+    setSignal((prevCount) => prevCount + 1);
     setAudioNote(newData.noteString);
   }, []);
 
   // Set up the WebSocket connection
   useAudioWebSocket(getAudioModuleData);
 
+  /*
   useEffect(() => {
     console.log(audioNote);
   }, [audioNote]);
+  */
 
   const evaluateNote2 = (note) => {
+    console.log(note);
     if (mainIndex < allArray.length) {
       console.log(
         "Audio Note: " +
@@ -85,7 +89,6 @@ export default function Tracker({ navigation, route }) {
   };
   const handleConfirm = () => {
     if (isToggled) {
-      setSignal((prevCount) => prevCount + 1);
       setConfirmedText(inputText);
     }
 
@@ -126,7 +129,6 @@ export default function Tracker({ navigation, route }) {
     }
   }, [isToggled]);
   useEffect(() => {
-    //if(audioNote != "" && isToggled)
     if (audioNote != "" && isToggled && signal) {
       evaluateNote2(audioNote);
     }
