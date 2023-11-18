@@ -17,6 +17,11 @@ char str[55];
 std::vector<double> recordingBuffer(CHUNK_SIZE, 0.0);
 int bufferIndex = 0;
 
+struct lws_context *context;
+struct lws_context_creation_info info;
+const char *address = "0.0.0.0";
+int port = 9000;
+
 int noteFreq[46] = 
 {
     0,
@@ -299,7 +304,7 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
             //Setting all magnitudes other than the local maximums to 0
             for(int i = 0; i < CHUNK_SIZE / 2; i++)
             {
-                if (magnitudes[i] < (avg * 40)) 
+                if (magnitudes[i] < (avg * 30)) 
                 {
                     magnitudes[i] = 0;
                 }
@@ -329,15 +334,15 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
                     count++;
                     break;
                 case 1:
-                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.2) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.8)) {
+                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.1) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.9)) {
                         //printf("%d, %d, %f\n", i, localMaximums[0], (float)(i % localMaximums[0]) / i);
                         localMaximums[1] = i;
                         count++;
                     }
                     break;
                 case 2:
-                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.2) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.8) &&
-                        ((float)(i % localMaximums[1]) / localMaximums[1] > 0.2) && ((float)(i % localMaximums[1]) / localMaximums[1] < 0.8)) {
+                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.1) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.9) &&
+                        ((float)(i % localMaximums[1]) / localMaximums[1] > 0.1) && ((float)(i % localMaximums[1]) / localMaximums[1] < 0.9)) {
                         localMaximums[2] = i;
                         break;
                     }
@@ -446,11 +451,6 @@ static int callback_websockets(struct lws *wsi, enum lws_callback_reasons reason
 
 int main()
 {
-    struct lws_context *context;
-    struct lws_context_creation_info info;
-    const char *address = "0.0.0.0";
-    int port = 9000;
-
     memset(&info, 0, sizeof(info));
     info.port = port;
     info.iface = address;
@@ -503,8 +503,7 @@ int main()
 
     std::cout << "Press Enter to exit..." << std::endl;
 
-    int i = 0;
-    while (!wsi_global)
+    while (1)
     {
         lws_service(context, 50); // Handle incoming WebSocket connections
     }
