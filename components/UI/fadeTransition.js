@@ -1,8 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing } from "react-native";
-import RadialGradient from "./RadialGradient";
-
-import styles from "../styleSheetScan";
 
 /* 
   FadeTransition does both the fade in animation and the fade out animation
@@ -71,10 +68,12 @@ const FadeTransition = ({ children, phase, setPhase }) => {
     <Animated.View
       style={{
         opacity: fadeAnim,
+        backgroundColor: "rgba(0,0,0,0)",
         transform: [{ translateY: translateYAnim }],
-        width: 0,
-        height: 0,
+        width: "98vw",
+        height: "100vh",
         zIndex: 6,
+        alignSelf: "center",
       }}
     >
       {children}

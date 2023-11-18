@@ -162,12 +162,10 @@ export default function Tracker({ navigation, route }) {
       count3={count3}
       highlightNotes={highlightNotes}
       scrollViewRef={scrollViewRef}
-      inputText={inputText}
-      setInputText={setInputText}
-      handleConfirm={handleConfirm}
       handlePress2={handlePress2}
       handlePress3={handlePress3}
       isToggled={isToggled}
+      collectionName1={collectionName1}
     />
   );
 }

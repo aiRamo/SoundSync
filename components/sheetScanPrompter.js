@@ -16,7 +16,7 @@ import { checkCurrentUser } from "./firebaseUtils";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
-const ViewWidth = width * 0.26; // 90% of device width
+const ViewWidth = width * 0.28; // Control music sheet sizing here by changing ratio
 const ViewHeight = ViewWidth * A4_RATIO;
 
 const SheetScanPrompt = ({

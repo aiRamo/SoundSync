@@ -40,8 +40,9 @@ const styles = StyleSheet.create({
     flex: 1, // Makes the container take all available height
   },
   responsiveSvg: {
-    width: "100%", // Makes the SVG take all available width of its parent
-    height: "100%", // Makes the SVG take all available height of its parent
+    alignSelf: "center",
+    width: "75%", // Makes the SVG take all available width of its parent
+    height: "75%", // Makes the SVG take all available height of its parent
   },
 });
 

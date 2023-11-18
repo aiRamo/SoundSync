@@ -7,6 +7,8 @@ import Pagination from "./Pagination";
 import NoteHighlighter from "./noteHighligher";
 import SvgWithScript from "./scannerLoader";
 
+import RightArrow from "../../assets/right-arrow.png";
+
 const { width, height } = Dimensions.get("window");
 
 const ScannerModalContent = ({
@@ -56,10 +58,15 @@ const ScannerModalContent = ({
   }, [data]);
 
   return (
-    <View style={{ height: "100vh", alignSelf: "center" }}>
+    <View style={{ height: height, alignSelf: "center", width: width }}>
       {!doneLoading && (
         <>
-          <Text style={[styles.introTitle, { marginTop: "8%" }]}>
+          <Text
+            style={[
+              styles.introTitle,
+              { marginTop: "8%", width: width * 0.7, alignSelf: "center" },
+            ]}
+          >
             {serverMessage}
           </Text>
           <SvgWithScript />
@@ -117,21 +124,22 @@ const ScannerModalContent = ({
               <Text style={styles.redButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Tracker", { subfolderName: collectionName })
-            }
-            style={[
-              styles.showNotesButton,
-              {
-                alignSelf: "center",
-                width: width * 0.07,
-                backgroundColor: "#d4a32b",
-              },
-            ]}
-          >
-            <Text style={styles.openButtonText}>Confirm</Text>
-          </TouchableOpacity>
+          <View style={styles.testButtonContainer}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Tracker", {
+                  subfolderName: collectionName,
+                })
+              }
+              style={{ width: width * 0.08 }}
+            >
+              <Text style={styles.scanButtonText}>Confirm</Text>
+              <Image
+                source={RightArrow}
+                style={[styles.downArrowIcon, { marginBottom: 30 }]}
+              />
+            </TouchableOpacity>
+          </View>
         </>
       )}
     </View>

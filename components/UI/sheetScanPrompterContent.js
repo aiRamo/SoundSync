@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Image, View, TouchableOpacity, Text } from "react-native";
 import Pagination from "./Pagination";
 import styles from "../styleSheetScan";
+import DownArrow from "../../assets/down-arrow.png";
 
 const SheetScanPromptContent = ({
   pickImage,
@@ -57,7 +58,8 @@ const SheetScanPromptContent = ({
             }}
             style={styles.testButtonContainer}
           >
-            <Text style={styles.openButtonText}>Confirm</Text>
+            <Text style={styles.scanButtonText}>Scan</Text>
+            <Image source={DownArrow} style={styles.downArrowIcon} />
           </TouchableOpacity>
         </>
       )}

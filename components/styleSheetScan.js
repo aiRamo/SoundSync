@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
-const ViewWidth = width * 0.26; // 90% of device width
+const ViewWidth = width * 0.28; // 90% of device width
 const ViewHeight = ViewWidth * A4_RATIO;
 
 const styles = StyleSheet.create({
@@ -61,13 +61,13 @@ const styles = StyleSheet.create({
     marginTop: height * 0.02,
   },
   testButtonContainer: {
-    width: width * 0.07,
-    backgroundColor: "#d4a32b",
-    height: height * 0.04,
-    alignSelf: "center",
-    justifyContent: "center",
-    borderRadius: 6,
-    marginTop: height * 0.025,
+    position: "absolute",
+    left: width * 0.7,
+    top: height * 0.4,
+    width: width * 0.065,
+    height: height * 0.24,
+    alignContent: "center",
+    borderRadius: 12,
   },
   imagePreview: {
     resizeMode: "contain",
@@ -137,6 +137,12 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     left: 2,
   },
+  downArrowIcon: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+    alignSelf: "center",
+  },
   imageCounterText: {
     position: "absolute",
     fontSize: 22,
@@ -192,6 +198,17 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginHorizontal: 15,
   },
+  confirmScanButton: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: 30,
+    width: 165,
+    backgroundColor: "white",
+    justifyContent: "center",
+    borderRadius: 6,
+    zIndex: 12,
+  },
   closeButton: {
     height: 30,
     width: 85,
@@ -202,10 +219,16 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
   },
   openButtonText: {
-    color: "white",
-    fontWeight: 600,
-    alignSelf: "center",
     fontSize: 18,
+    fontWeight: "600",
+    color: "white",
+    textAlign: "center",
+  },
+  scanButtonText: {
+    fontSize: 35,
+    fontWeight: "600",
+    color: "#1B154C",
+    textAlign: "center",
   },
   blueButtonText: {
     alignSelf: "center",
@@ -220,7 +243,7 @@ const styles = StyleSheet.create({
     color: "red", // Replace with your color
   },
   namePropmtContent: {
-    backgroundColor: "rgba(0,0,0,1)",
+    backgroundColor: "rgba(0,0,0,0)",
     flex: 1,
     top: 0,
     alignSelf: "center",
