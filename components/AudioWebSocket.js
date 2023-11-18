@@ -13,6 +13,7 @@ const useAudioWebSocket = (getAudioModuleData) => {
 
     ws.onmessage = (e) => {
       const message = e.data;
+      console.log(message);
       const delimiterIndex = message.indexOf(",");
 
       if (delimiterIndex !== -1) {

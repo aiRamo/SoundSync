@@ -82,7 +82,7 @@ const TrackerContent = ({
           </Text>
         </View>
 
-        <View style={{ marginTop: 50 }}>
+        <View style={{ marginTop: 10, marginBottom: 10 }}>
           <TouchableOpacity
             style={[styles2.button, isToggled && styles2.toggledButton]}
             onPress={handlePress2}
@@ -95,12 +95,9 @@ const TrackerContent = ({
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           style={{
-            position: "absolute",
             height: ViewHeight,
             width: ViewWidth,
             alignSelf: "center",
-            bottom: 0,
-            zIndex: 20,
           }}
         >
           <View
