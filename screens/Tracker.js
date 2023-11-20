@@ -46,12 +46,11 @@ export default function Tracker({ navigation, route }) {
   */
 
   const evaluateNote2 = (note) => {
-    console.log(note);
     if (mainIndex < allArray.length) {
       console.log(
-        "Audio Note: " +
+        "Audio: " +
           note +
-          " | Current Note Evaluated: " +
+          " |Curr Note: " +
           // noteArray[currIndexRef] +
           allArray[mainIndex][count3] + // Access the ref
           " | Count: " +

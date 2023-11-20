@@ -122,7 +122,16 @@ export async function retrieve(array) {
         for (const pitch of note.pitch) {
           const step = pitch.step[0];
           const octave = pitch.octave[0];
-          const temp = step + octave;
+          let accidental = "";
+          if (pitch.alter) {
+            const alter = Number(pitch.alter[0]); // assuming alter is a string that can be converted to a number
+            if (alter === -1) {
+              accidental = "b";
+            } else if (alter === 1) {
+              accidental = "#";
+            }
+          }
+          const temp = step + accidental + octave;
           noteArray.push(temp);
         }
       }

@@ -22,104 +22,58 @@ struct lws_context_creation_info info;
 const char *address = "0.0.0.0";
 int port = 9000;
 
-int noteFreq[46] = 
-{
+double noteFreq[37] = {
     0,
-    82,
-    87,
-    92,
-    98,
-    104,
-    110,
-    117,
-    123, 
-    131, 
-    139, 
-    147, 
-    156, 
-    165, 
-    175,
-    185,
-    196,
-    208,
-    220,
-    233,
-    247,
-    262,
-    277,
-    294,
-    311,
-    329,
-    349,
-    370,
-    392,
-    415,
-    440,
-    466,
-    494,
-    523,
-    554,
-    587, 
-    622,
-    659,
-    698,
-    740,
-    784,
-    831,
-    880,
-    932,
-    988,
-    1047
-};
+    // Octave 1
 
-char* noteName[46] = 
-{
+    // Octave 3
+    132, 142, 148, 159, 169, 179, 192, 198, 212, 226, 239, 250,
+    // Octave 4
+    265, 285, 302, 320, 331, 359, 379, 400, 424, 452, 475, 509,
+    // Octave 5
+    537, 570, 604, 640, 678, 719, 761, 807, 855, 906, 960, 1016};
+
+char *noteName[37] = {
     NULL,
-    "E1",
-    "F1",
-    "F1#",
-    "G1",
-    "G1#", 
-    "A1",
-    "A1#", 
-    "B1",
-    "C1",
-    "C1#", 
-    "D1",
-    "D1#",  
-    "E2",
-    "F2",
-    "F2#", 
-    "G2",
-    "G2#", 
-    "A2",
-    "A2#", 
-    "B2",
-    "C2",
-    "C2#", 
-    "D2",
-    "D2#", 
+    // Octave 3
+    "C3",
+    "Db3",
+    "D3",
+    "Eb3",
     "E3",
     "F3",
-    "F3#",
+    "Gb3",
     "G3",
-    "G3#",
+    "Ab3",
     "A3",
-    "A3#", 
+    "Bb3",
     "B3",
-    "C3",
-    "C3#", 
-    "D3",
-    "D3#",
+    // Octave 4
+    "C4",
+    "Db4",
+    "D4",
+    "Eb4",
     "E4",
     "F4",
-    "F4#", 
+    "Gb4",
     "G4",
-    "G4#", 
+    "Ab4",
     "A4",
-    "A4#", 
+    "Bb4",
     "B4",
-    "C4",
+    // Octave 5
+    "C5",
+    "Db5",
+    "D5",
+    "Eb5",
+    "E5",
+    "F5",
+    "Gb5",
+    "G5",
+    "Ab5",
+    "A5",
+    "Bb5",
+    "B5",
 };
 
 std::map<std::pair<double, double>, std::string> freq_to_note = {
@@ -141,12 +95,12 @@ std::map<std::pair<double, double>, std::string> freq_to_note = {
     {{69.30, 73.42}, "C#2/Db2"},
     {{73.42, 77.78}, "D2"},
     {{77.78, 78}, "D#2/Eb2"},
-    {{79, 84}, "E STRING"},
+    {{79, 84}, "E2"},
     {{87.31, 92.50}, "F2"},
     {{92.50, 98.00}, "F#2/Gb2"},
     {{98.00, 103.83}, "G2"},
     {{103.83, 110.00}, "G#2/Ab2"},
-    {{108.00, 112}, "A STRING"},
+    {{108.00, 112}, "A2"},
     {{116.54, 123.47}, "A#2/Bb2"},
     {{123.47, 128.81}, "B2"},
     // Octave 3
@@ -157,17 +111,17 @@ std::map<std::pair<double, double>, std::string> freq_to_note = {
     {{164.81, 174.61}, "E3"},
     {{174.61, 185.00}, "F3"},
     {{185.00, 196.00}, "F#3/Gb3"},
-    {{194.00, 198.65}, "G STRING"},
+    {{194.00, 198.65}, "G3"},
     {{207.65, 220.00}, "G#3/Ab3"},
     {{220.00, 233.08}, "A3"},
     {{233.08, 246.94}, "A#3/Bb3"},
-    {{244.94, 248.63}, "B STRING"},
+    {{246.94, 259.63}, "B3"},
     // Octave 4
     {{259.63, 277.18}, "C4"},
     {{277.18, 293.66}, "C#4/Db4"},
     {{293.66, 311.13}, "D4"},
     {{311.13, 327.63}, "D#4/Eb4"},
-    {{327.63, 331.23}, "E STRING"},
+    {{327.63, 331.23}, "E4"},
     {{347.23, 369.99}, "F4"},
     {{369.99, 390.00}, "F#4/Gb4"},
     {{390.00, 415.30}, "G4"},
@@ -275,7 +229,7 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
 
             // Print the first complex number for debugging
             // std::cout << "First FFT output: (" << out[0][0] << ", " << out[0][1] << "i)" << std::endl;
-            double magnitudes[CHUNK_SIZE/2];
+            double magnitudes[CHUNK_SIZE / 2];
 
             // Find the frequency with the maximum magnitude
             double max_magnitude = 0.0;
@@ -293,82 +247,82 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
                     max_index = i;
                 }
             }
-            //Getting the avg of all magnitudes
+            // Getting the avg of all magnitudes
             double avg;
-            for(int i = 0; i < CHUNK_SIZE / 2; i++)
+            for (int i = 0; i < CHUNK_SIZE / 2; i++)
             {
                 avg += magnitudes[i];
             }
             avg /= CHUNK_SIZE / 2;
 
-            //Setting all magnitudes other than the local maximums to 0
-            for(int i = 0; i < CHUNK_SIZE / 2; i++)
+            // Setting all magnitudes other than the local maximums to 0
+            for (int i = 0; i < CHUNK_SIZE / 2; i++)
             {
-                if (magnitudes[i] < (avg * 30)) 
+                if (magnitudes[i] < (avg * 30))
                 {
                     magnitudes[i] = 0;
                 }
             }
 
-            int localMaximums[3] = {0,0,0};
+            int localMaximums[3] = {0, 0, 0};
 
-            //Putting local maximums in array
+            // Putting local maximums in array
             int count = 0;
-            for(int i = 1; i < 215; i++)
+            for (int i = 1; i < 215; i++)
             {
-                if(magnitudes[i-1] < magnitudes[i] && magnitudes[i] > magnitudes[i+1])
+                if (magnitudes[i - 1] < magnitudes[i] && magnitudes[i] > magnitudes[i + 1])
                 {
-                    //setting index of magnitude to localMaximums
-                    // localMaximums[count] = i;
-                    // count++;
-                    // if(count == 3)
-                    // {
-                    //     break;
-                    // }
-                    //localMaximums[1] = magnitudes[i];
+                    // setting index of magnitude to localMaximums
+                    //  localMaximums[count] = i;
+                    //  count++;
+                    //  if(count == 3)
+                    //  {
+                    //      break;
+                    //  }
+                    // localMaximums[1] = magnitudes[i];
 
-                    //localMaximums[2] = magnitudes[i+1]; 
-            switch (count) {
-                case 0:
-                    localMaximums[0] = i;
-                    count++;
-                    break;
-                case 1:
-                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.1) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.9)) {
-                        //printf("%d, %d, %f\n", i, localMaximums[0], (float)(i % localMaximums[0]) / i);
-                        localMaximums[1] = i;
+                    // localMaximums[2] = magnitudes[i+1];
+                    switch (count)
+                    {
+                    case 0:
+                        localMaximums[0] = i;
                         count++;
-                    }
-                    break;
-                case 2:
-                    if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.1) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.9) &&
-                        ((float)(i % localMaximums[1]) / localMaximums[1] > 0.1) && ((float)(i % localMaximums[1]) / localMaximums[1] < 0.9)) {
-                        localMaximums[2] = i;
+                        break;
+                    case 1:
+                        if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.1) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.9))
+                        {
+                            // printf("%d, %d, %f\n", i, localMaximums[0], (float)(i % localMaximums[0]) / i);
+                            localMaximums[1] = i;
+                            count++;
+                        }
+                        break;
+                    case 2:
+                        if (((float)(i % localMaximums[0]) / localMaximums[0] > 0.1) && ((float)(i % localMaximums[0]) / localMaximums[0] < 0.9) &&
+                            ((float)(i % localMaximums[1]) / localMaximums[1] > 0.1) && ((float)(i % localMaximums[1]) / localMaximums[1] < 0.9))
+                        {
+                            localMaximums[2] = i;
+                            break;
+                        }
                         break;
                     }
-                    break;
-            }
                 }
-
             }
-        
-                
 
             double dominant_frequency[3];
-            for(int i=0;i<3;i++)
+            for (int i = 0; i < 3; i++)
             {
                 dominant_frequency[i] = static_cast<double>(localMaximums[i]) * (SAMPLE_RATE / static_cast<double>(CHUNK_SIZE));
-                //printf("%d: %d\n", i+1,dominant_frequency[i]);
+                // printf("%d: %d\n", i+1,dominant_frequency[i]);
             }
 
             int dif = 1000;
             int detNoteFreq[3];
-            char* detNote[3];
-            for(int j=0;j<3;j++)   
+            char *detNote[3];
+            for (int j = 0; j < 3; j++)
             {
-                for(int i = 0; i < 45; i++)
+                for (int i = 0; i < 45; i++)
                 {
-                    if(abs(dominant_frequency[j] - noteFreq[i]) < dif)
+                    if (abs(dominant_frequency[j] - noteFreq[i]) < dif)
                     {
                         detNoteFreq[j] = noteFreq[i];
                         dif = abs(dominant_frequency[j] - noteFreq[i]);
@@ -376,21 +330,20 @@ static int audioCallback(const void *inputBuffer, void *outputBuffer,
                     }
                 }
             }
-            
 
-            //std::string note = findNote(dominant_frequency);
-            // std::cout << "The frequency " << dominant_frequency << " Hz corresponds to the note " << note << std::endl;
+            // std::string note = findNote(dominant_frequency);
+            //  std::cout << "The frequency " << dominant_frequency << " Hz corresponds to the note " << note << std::endl;
 
             if (wsi_global)
             {
                 int length;
-                if(dominant_frequency[0] < 1100 && dominant_frequency[0] > 65)
+                if (dominant_frequency[0] < 1100 && dominant_frequency[0] > 65)
                 {
-                    if(dominant_frequency[2] != 0)
+                    if (dominant_frequency[2] != 0)
                     {
-                        length = snprintf(str, sizeof(str), "%.0lfHz, %.0lfHz, %.0lfHz, %s, %s, %s\n", dominant_frequency[0], dominant_frequency[1], dominant_frequency[2], detNote[0], detNote[1], detNote[2]); 
-                    } 
-                    else if(dominant_frequency[2] != 0)
+                        length = snprintf(str, sizeof(str), "%.0lfHz, %.0lfHz, %.0lfHz, %s, %s, %s\n", dominant_frequency[0], dominant_frequency[1], dominant_frequency[2], detNote[0], detNote[1], detNote[2]);
+                    }
+                    else if (dominant_frequency[2] != 0)
                     {
                         length = snprintf(str, sizeof(str), "%.0lfHz, %.0lfHz, %s, %s\n", dominant_frequency[0], dominant_frequency[1], detNote[0], detNote[1]);
                     }

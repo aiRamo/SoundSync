@@ -95,9 +95,11 @@ const TrackerContent = ({
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           style={{
+            position: "absolute",
             height: ViewHeight,
             width: ViewWidth,
             alignSelf: "center",
+            bottom: 0,
           }}
         >
           <View

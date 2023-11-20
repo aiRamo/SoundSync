@@ -53,8 +53,12 @@ const calculateNoteCoordinates = async (
 
       if (measure.systemDistance !== null) {
         cumulativeMeasureWidth = 0;
+
+        // If staffDistance is present, add 140, otherwise add 42
+        const additionalOffset = measure.staffDistance !== null ? 140 : 42;
+
         systemYOffset +=
-          parseInt(measure.systemDistance, 10) + 140 + topSysDist;
+          parseInt(measure.systemDistance, 10) + additionalOffset + topSysDist;
       }
 
       measure.notes.forEach((note, noteIndex) => {
