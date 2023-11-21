@@ -32,8 +32,9 @@ export default function Tracker({ navigation, route }) {
 
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback((newData) => {
+    console.log(newData.trimmedValues);
     setSignal((prevCount) => prevCount + 1);
-    setAudioNote(newData.noteString);
+    setAudioNote(newData.trimmedValues[0]);
   }, []);
 
   // Set up the WebSocket connection

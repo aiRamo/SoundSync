@@ -14,11 +14,17 @@ const useAudioWebSocket = (getAudioModuleData) => {
     ws.onmessage = (e) => {
       const message = e.data;
       const delimiterIndex = message.indexOf(",");
+      const values = message.split(",");
+      const filteredValues = values.filter(
+        (value) => value.indexOf("Hz") === -1 && value !== "(null)"
+      );
+      const trimmedValues = filteredValues.map((value) => value.trim());
 
       if (delimiterIndex !== -1) {
         const frequency = message.substring(0, delimiterIndex).trim();
+
         const noteString = message.substring(delimiterIndex + 1).trim();
-        getAudioModuleData({ frequency, noteString }); // The return for the callback in Tracker and Test
+        getAudioModuleData({ frequency, trimmedValues }); // The return for the callback in Tracker and Test
       }
     };
 
