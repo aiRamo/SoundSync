@@ -9,19 +9,20 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
       {Object.keys(notePositions).map((key, index) => {
         const { leftPosition, topPosition } = notePositions[key];
 
-        const isHighlighted = isHighlightAll || index === currIndex; // Check if this is the currently highlighted box
+        const isHighlighted = isHighlightAll || index <= currIndex; // Check if this is the currently highlighted box
         return (
           <React.Fragment key={`note_${index}`}>
             <View
               key={`view_${index}`}
               style={{
                 position: "absolute",
-                width: 8,
-                height: "5.5%",
-                borderColor: isHighlighted ? "red" : "transparent", // Highlighted box has red border, others are transparent
-                borderWidth: 1,
-                top: topPosition,
-                left: leftPosition,
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                backgroundColor: isHighlighted ? "#5b5591" : "transparent", // Highlighted purple circle around current note and previous notes, others are trasparent
+                opacity: 0.5,
+                top: topPosition + 15,
+                left: leftPosition - 3,
                 zIndex: 10,
               }}
             />
