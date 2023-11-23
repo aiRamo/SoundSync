@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView } from "react-native";
 import styles from "../styleSheetScan"; // Replace with the actual path to your styles
 import { downloadAllItemsInCollection } from "../firebaseUtils";
 import Pagination from "./Pagination";
@@ -58,91 +58,93 @@ const ScannerModalContent = ({
   }, [data]);
 
   return (
-    <View style={{ height: height, alignSelf: "center", width: width }}>
-      {!doneLoading && (
-        <>
-          <Text
-            style={[
-              styles.introTitle,
-              { marginTop: "8%", width: width * 0.7, alignSelf: "center" },
-            ]}
-          >
-            {serverMessage}
-          </Text>
-          <SvgWithScript />
-        </>
-      )}
-      {doneLoading && (
-        <>
-          <Text style={styles.modalTitle}>Here is your generated image</Text>
-          <Pagination
-            count={data.imageUrls.length}
-            setImageIndex={setCurrentIndex}
-            showLastSpecial={false}
-          />
-          <View style={styles.modalImageView}>
-            {listFilled && (
-              <>
-                <Image
-                  source={{ uri: data.imageUrls[currentIndex] }}
-                  style={styles.previewImage}
-                />
-                {showNoteLocations && (
-                  <NoteHighlighter
-                    notePositions={data.parsedCoordinateDataList[currentIndex]}
-                    currIndex={-1}
+    <ScrollView style={{flex: 1}}>
+      <View style={{ flex: 1, alignSelf: "center", width: width }}>
+        {!doneLoading && (
+          <>
+            <Text
+              style={[
+                styles.introTitle,
+                { marginTop: "8%", width: width * 0.7, alignSelf: "center" },
+              ]}
+            >
+              {serverMessage}
+            </Text>
+            <SvgWithScript />
+          </>
+        )}
+        {doneLoading && (
+          <>
+            <Text style={styles.modalTitle}>Here is your generated image</Text>
+            <Pagination
+              count={data.imageUrls.length}
+              setImageIndex={setCurrentIndex}
+              showLastSpecial={false}
+            />
+            <View style={styles.modalImageView}>
+              {listFilled && (
+                <>
+                  <Image
+                    source={{ uri: data.imageUrls[currentIndex] }}
+                    style={styles.previewImage}
                   />
-                )}
-              </>
-            )}
-          </View>
+                  {showNoteLocations && (
+                    <NoteHighlighter
+                      notePositions={data.parsedCoordinateDataList[currentIndex]}
+                      currIndex={-1}
+                    />
+                  )}
+                </>
+              )}
+            </View>
 
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignSelf: "center",
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => {
-                setShowNoteLocations((prev) => !prev);
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignSelf: "center",
               }}
-              style={styles.showNotesButton}
             >
-              <Text style={styles.blueButtonText}> Show Note Locations </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                onChangeCollectionName("");
-                setDoneLoading(false);
-                setDoneLoading(false);
-                setScannerPhase(5);
-              }}
-              style={styles.closeButton}
-            >
-              <Text style={styles.redButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.testButtonContainer}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("Tracker", {
-                  subfolderName: collectionName,
-                })
-              }
-              style={{ width: width * 0.08 }}
-            >
-              <Text style={styles.scanButtonText}>Confirm</Text>
-              <Image
-                source={RightArrow}
-                style={[styles.downArrowIcon, { marginBottom: 30 }]}
-              />
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
-    </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowNoteLocations((prev) => !prev);
+                }}
+                style={styles.showNotesButton}
+              >
+                <Text style={styles.blueButtonText}> Show Note Locations </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  onChangeCollectionName("");
+                  setDoneLoading(false);
+                  setDoneLoading(false);
+                  setScannerPhase(5);
+                }}
+                style={styles.closeButton}
+              >
+                <Text style={styles.redButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.testButtonContainer}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Tracker", {
+                    subfolderName: collectionName,
+                  })
+                }
+                style={{ flex: 1, minWidth: width* 0.1 }}
+              >
+                <Text style={styles.scanButtonText}>Confirm</Text>
+                <Image
+                  source={RightArrow}
+                  style={[styles.downArrowIcon, { marginBottom: 30 }]}
+                />
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
