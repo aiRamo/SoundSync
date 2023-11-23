@@ -25,7 +25,7 @@ export default function Tracker({ navigation, route }) {
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState("");
   const [signal, setSignal] = useState("");
-  const { imageUrls, allCoord, allNote, allArray, count2 } = FileList(
+  const { imageUrls, allCoord, allNote, allArray, count2, allPos } = FileList(
     user,
     collectionName1
   );
@@ -59,14 +59,19 @@ export default function Tracker({ navigation, route }) {
       );
 
       if (allArray[mainIndex].length && allCoord) {
+        // console.log("here the coord " + allPos[count3]);
         const nextNoteInData = allArray[mainIndex][count3];
 
         if (note === nextNoteInData) {
           console.log("MATCH FOUND");
           setIsMatch(true);
           // Increment currIndex using the ref
-
-          setCount3((prevCount) => prevCount + 1);
+          if (allPos[count3] == allPos[count3 + 1]) {
+            console.log("Chord found");
+            setCount3((prevCount) => prevCount + 2);
+          } else {
+            setCount3((prevCount) => prevCount + 1);
+          }
         }
       }
       if (count3 == allArray[mainIndex].length - 1) {
