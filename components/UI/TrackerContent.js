@@ -26,6 +26,7 @@ const TrackerContent = ({
   imageUrls,
   allCoord,
   count3,
+  highlightedIndexes,
   highlightNotes,
   scrollViewRef,
   handlePress2,
@@ -130,7 +131,7 @@ const TrackerContent = ({
                   <NoteHighlighter
                     key={`noteHighlighter_${index}`}
                     notePositions={JSON.parse(allCoord[index])}
-                    currIndex={count3}
+                    currIndex={highlightedIndexes}
                   />
                 )}
               </View>

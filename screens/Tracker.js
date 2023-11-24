@@ -25,6 +25,8 @@ export default function Tracker({ navigation, route }) {
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState("");
   const [signal, setSignal] = useState("");
+  const [highlightedIndexes, setHighlightIndexes] = useState([0]);
+
   const { imageUrls, allCoord, allNote, allArray, count2, allPos, myMap } =
     FileList(user, collectionName1);
 
@@ -46,7 +48,7 @@ export default function Tracker({ navigation, route }) {
 
   const evaluateNote2 = (note) => {
     if (mainIndex < allArray.length) {
-      /* console.log(
+      console.log(
         "Audio: " +
           note +
           " |Curr Note: " +
@@ -55,7 +57,6 @@ export default function Tracker({ navigation, route }) {
           " | Count: " +
           count3
       );
-      */
 
       if (allArray[mainIndex].length && allCoord) {
         // console.log("here the coord " + allPos[count3]);
@@ -72,6 +73,10 @@ export default function Tracker({ navigation, route }) {
             for (let i = 0; i < array.length; i++) {
               console.log("CHORD HERE AT INDEX ", array[i]);
             }
+
+            setHighlightIndexes(array);
+          } else {
+            setHighlightIndexes(count3);
           }
 
           setCount3((prevCount) => prevCount + 1);
@@ -170,6 +175,7 @@ export default function Tracker({ navigation, route }) {
       imageUrls={imageUrls}
       allCoord={allCoord}
       count3={count3}
+      highlightedIndexes={highlightedIndexes}
       highlightNotes={highlightNotes}
       scrollViewRef={scrollViewRef}
       handlePress2={handlePress2}

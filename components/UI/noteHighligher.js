@@ -9,7 +9,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
       {Object.keys(notePositions).map((key, index) => {
         const { leftPosition, topPosition } = notePositions[key];
 
-        const isHighlighted = isHighlightAll || index === currIndex; // Check if this is the currently highlighted box
+        const isHighlighted = isHighlightAll || currIndex.includes(index); // Check if this is the currently highlighted box
         return (
           <React.Fragment key={`note_${index}`}>
             <View
