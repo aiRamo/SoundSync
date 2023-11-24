@@ -32,16 +32,10 @@ export default function Tracker({ navigation, route }) {
   const [leftPosition, setleftPosition] = useState(null);
   const [topPositoon, setTopPosition] = useState(null);
 
-  const {
-    imageUrls,
-    allCoord,
-    allNote,
-    allArray,
-    count2,
-    allPos,
-    myMap,
-    myMaps,
-  } = FileList(user, collectionName1);
+  const { imageUrls, allCoord, allNote, allArray } = FileList(
+    user,
+    collectionName1
+  );
 
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback((newData) => {
@@ -180,6 +174,11 @@ export default function Tracker({ navigation, route }) {
       setCount3(0);
       setConfirmedText("");
       setHighlightNotes(null);
+      const { map, leftPositions, topPositions } = mapping(allCoord, 0);
+      setTheMap(map);
+      setleftPosition(leftPositions);
+      setTopPosition(topPositions);
+      setHighlightIndexes([0]);
       console.log("Ending play mode");
     }
   }, [allArray, isToggled]);
