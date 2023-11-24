@@ -25,15 +25,16 @@ export default function Tracker({ navigation, route }) {
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState("");
   const [signal, setSignal] = useState("");
-  const { imageUrls, allCoord, allNote, allArray, count2 } = FileList(
-    user,
-    collectionName1
-  );
+  const [highlightedIndexes, setHighlightIndexes] = useState([0]);
+
+  const { imageUrls, allCoord, allNote, allArray, count2, allPos, myMap } =
+    FileList(user, collectionName1);
 
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback((newData) => {
+    // console.log(newData.trimmedValues);
     setSignal((prevCount) => prevCount + 1);
-    setAudioNote(newData.noteString);
+    setAudioNote(newData.trimmedValues[0]);
   }, []);
 
   // Set up the WebSocket connection
@@ -58,14 +59,29 @@ export default function Tracker({ navigation, route }) {
       );
 
       if (allArray[mainIndex].length && allCoord) {
+        // console.log("here the coord " + allPos[count3]);
         const nextNoteInData = allArray[mainIndex][count3];
 
         if (note === nextNoteInData) {
           console.log("MATCH FOUND");
+          console.log("Map for testing: ", myMap);
           setIsMatch(true);
-          // Increment currIndex using the ref
+
+          if (myMap.get(allPos[count3]).length > 1) {
+            const array = myMap.get(allPos[count3]);
+
+            for (let i = 0; i < array.length; i++) {
+              console.log("CHORD HERE AT INDEX ", array[i]);
+            }
+
+            setHighlightIndexes(array);
+          } else {
+            setHighlightIndexes(count3);
+          }
 
           setCount3((prevCount) => prevCount + 1);
+
+          // Increment currIndex using the ref
         }
       }
       if (count3 == allArray[mainIndex].length - 1) {
@@ -159,6 +175,7 @@ export default function Tracker({ navigation, route }) {
       imageUrls={imageUrls}
       allCoord={allCoord}
       count3={count3}
+      highlightedIndexes={highlightedIndexes}
       highlightNotes={highlightNotes}
       scrollViewRef={scrollViewRef}
       handlePress2={handlePress2}

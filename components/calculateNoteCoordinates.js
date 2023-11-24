@@ -14,6 +14,19 @@ const calculateNoteCoordinates = async (
 ) => {
   const notePositions = {};
 
+  // Check entire JSON object for any 'staffDistance'
+  let hasStaffDistance = false;
+  noteCoordinates.parts.forEach(part => {
+    part.measures.forEach(measure => {
+      if (measure.staffDistance) {
+        hasStaffDistance = true;
+      }
+    });
+  });
+
+  // Set global additionalOffset based on presence of staffDistance
+  const globalAdditionalOffset = hasStaffDistance ? 140 : 42;
+
   // Parse layout margins and dimensions
   const pageLayoutLeftMargin = parseInt(
     noteCoordinates.pageLayout.leftMargin,
@@ -54,11 +67,8 @@ const calculateNoteCoordinates = async (
       if (measure.systemDistance !== null) {
         cumulativeMeasureWidth = 0;
 
-        // If staffDistance is present, add 140, otherwise add 42
-        const additionalOffset = measure.staffDistance !== null ? 140 : 42;
-
         systemYOffset +=
-          parseInt(measure.systemDistance, 10) + additionalOffset + topSysDist;
+          parseInt(measure.systemDistance, 10) + globalAdditionalOffset + topSysDist;
       }
 
       measure.notes.forEach((note, noteIndex) => {

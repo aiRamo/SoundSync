@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { ref, getDownloadURL, listAll } from "firebase/storage";
+import { ref, getDownloadURL, listAll, deleteObject } from "firebase/storage";
 import { STORAGE } from "../firebaseConfig";
 import Card2 from "../components/Card2";
 import { Entypo, AntDesign } from "@expo/vector-icons";
@@ -54,7 +54,47 @@ export default function Library() {
     const listResult = await listAll(folderRef);
 
     const subfolders = listResult.prefixes.map((prefix) => prefix.name);
+
     setSubfolders(subfolders);
+  }
+  async function listSubfolders2(folderPath) {
+    const folderRef = ref(STORAGE, folderPath);
+    const listResult = await listAll(folderRef);
+
+    const subfolders = listResult.prefixes.map((prefix) => prefix.name);
+
+    await Promise.all(
+      subfolders.map(async (subfolder) => {
+        const subfolderPath = `${folderPath}/${subfolder}`;
+        await Delete(subfolderPath);
+      })
+    );
+
+    console.log(subfolders);
+  }
+  async function Delete(folderPath) {
+    try {
+      const folderRef = ref(STORAGE, folderPath);
+      const listResult = await listAll(folderRef);
+
+      const itemsToDelete = listResult.items.map((item) => item.fullPath);
+
+      // Delete each item inside the folder
+      await Promise.all(
+        itemsToDelete.map(async (itemPath) => {
+          await deleteObject(ref(STORAGE, itemPath));
+          console.log(`Deleted: ${itemPath}`);
+        })
+      );
+
+      // Delete the folder itself
+      // Uncomment the line below if you also want to delete the folder itself
+      await deleteObject(folderRef);
+
+      console.log(`All items inside ${folderPath} deleted successfully.`);
+    } catch (error) {
+      console.error("Error deleting items:", error);
+    }
   }
 
   // Function to handle subfolder selection
@@ -62,6 +102,35 @@ export default function Library() {
     // Navigate to the SubfolderScreen with the selected subfolder name
     //navigation.navigate("Test", { subfolderName });
     navigation.navigate("Tracker", { subfolderName });
+  };
+
+  const handleDelete = async (subfolderName) => {
+    const folderPath = `images/${user.uid}/sheetCollections/${subfolderName}`;
+    const folderRef = ref(STORAGE, folderPath);
+
+    try {
+      // List all items (files and subfolders) in the folder
+      const items = await listAll(folderRef);
+
+      // Delete each item in the folder
+      const deletePromises = items.items.map((item) => deleteObject(item));
+
+      // Wait for all deletion promises to resolve
+      await Promise.all(deletePromises);
+
+      listSubfolders2(folderPath);
+
+      setSubfolders((prevSubfolders) =>
+        prevSubfolders.filter((folder) => folder !== subfolderName)
+      );
+
+      // After deleting the contents, delete the folder itself
+      await deleteObject(folderRef);
+
+      console.log("Folder and its contents deleted successfully");
+    } catch (error) {
+      console.error("Error deleting folder and its contents:", error);
+    }
   };
 
   const filteredFolders = subfolders.filter((subFolder) =>
@@ -101,13 +170,14 @@ export default function Library() {
               Folders
             </Text>
             {filteredFolders.map((subfolderName, index) => (
-              <TouchableOpacity
+              <Card2
                 key={index}
-                onPress={() => handleSubfolderSelection(subfolderName)}
-              >
-                <Card2 title={subfolderName} date="" />
-                {/* You can customize the Card component to display subfolders */}
-              </TouchableOpacity>
+                title={subfolderName}
+                handleSubfolderSelection={() =>
+                  handleSubfolderSelection(subfolderName)
+                }
+                handleDelete={() => handleDelete(subfolderName)}
+              />
             ))}
           </ScrollView>
         </View>
