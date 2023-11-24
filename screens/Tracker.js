@@ -6,6 +6,7 @@ import useAudioWebSocket from "../components/AudioWebSocket";
 import FileList from "../components/TrackerHelp";
 import TrackerContent from "../components/UI/TrackerContent";
 import { not } from "mathjs";
+import mapping from "../components/mapping";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
@@ -27,9 +28,20 @@ export default function Tracker({ navigation, route }) {
   const [audioNote, setAudioNote] = useState([]);
   const [signal, setSignal] = useState("");
   const [highlightedIndexes, setHighlightIndexes] = useState([0]);
+  const [theMap, setTheMap] = useState(new Map());
+  const [leftPosition, setleftPosition] = useState(null);
+  const [topPositoon, setTopPosition] = useState(null);
 
-  const { imageUrls, allCoord, allNote, allArray, count2, allPos, myMap } =
-    FileList(user, collectionName1);
+  const {
+    imageUrls,
+    allCoord,
+    allNote,
+    allArray,
+    count2,
+    allPos,
+    myMap,
+    myMaps,
+  } = FileList(user, collectionName1);
 
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback((newData) => {
@@ -66,11 +78,11 @@ export default function Tracker({ navigation, route }) {
 
         if (note[0] === nextNoteInData) {
           console.log("MATCH FOUND");
-          console.log("Map for testing: ", myMap);
+          console.log("Map for testing: ", theMap);
           setIsMatch(true);
 
-          if (myMap.get(allPos[count3]).length > 1) {
-            const array = myMap.get(allPos[count3]);
+          if (theMap.get(leftPosition[count3]).length > 1) {
+            const array = theMap.get(leftPosition[count3]);
             console.log("chord: ", note);
             for (let i = 0; i < array.length; i++) {
               console.log("CHORD HERE AT INDEX ", array[i]);
@@ -79,7 +91,8 @@ export default function Tracker({ navigation, route }) {
 
             setHighlightIndexes(array);
           } else {
-            setHighlightIndexes(count3);
+            const array = [count3];
+            setHighlightIndexes(array);
           }
 
           setCount3((prevCount) => prevCount + 1);
@@ -152,6 +165,15 @@ export default function Tracker({ navigation, route }) {
     }
     //[isToggled,audioNote]
   }, [isToggled, audioNote, signal]);
+  useEffect(() => {
+    if (allCoord) {
+      const { map, leftPositions, topPositions } = mapping(allCoord, mainIndex);
+      setTheMap(map);
+      setleftPosition(leftPositions);
+      setTopPosition(topPositions);
+    }
+  }, [allCoord, mainIndex]);
+
   useEffect(() => {
     if (!isToggled && allArray) {
       setMainIndex(0);
