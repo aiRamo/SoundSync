@@ -25,14 +25,12 @@ export default function Tracker({ navigation, route }) {
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState("");
   const [signal, setSignal] = useState("");
-  const { imageUrls, allCoord, allNote, allArray, count2, allPos } = FileList(
-    user,
-    collectionName1
-  );
+  const { imageUrls, allCoord, allNote, allArray, count2, allPos, myMap } =
+    FileList(user, collectionName1);
 
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback((newData) => {
-    console.log(newData.trimmedValues);
+    // console.log(newData.trimmedValues);
     setSignal((prevCount) => prevCount + 1);
     setAudioNote(newData.trimmedValues[0]);
   }, []);
@@ -48,7 +46,7 @@ export default function Tracker({ navigation, route }) {
 
   const evaluateNote2 = (note) => {
     if (mainIndex < allArray.length) {
-      console.log(
+      /* console.log(
         "Audio: " +
           note +
           " |Curr Note: " +
@@ -57,6 +55,7 @@ export default function Tracker({ navigation, route }) {
           " | Count: " +
           count3
       );
+      */
 
       if (allArray[mainIndex].length && allCoord) {
         // console.log("here the coord " + allPos[count3]);
@@ -64,14 +63,20 @@ export default function Tracker({ navigation, route }) {
 
         if (note === nextNoteInData) {
           console.log("MATCH FOUND");
+          console.log("Map for testing: ", myMap);
           setIsMatch(true);
-          // Increment currIndex using the ref
-          if (allPos[count3] == allPos[count3 + 1]) {
-            console.log("Chord found");
-            setCount3((prevCount) => prevCount + 2);
-          } else {
-            setCount3((prevCount) => prevCount + 1);
+
+          if (myMap.get(allPos[count3]).length > 1) {
+            const array = myMap.get(allPos[count3]);
+
+            for (let i = 0; i < array.length; i++) {
+              console.log("CHORD HERE AT INDEX ", array[i]);
+            }
           }
+
+          setCount3((prevCount) => prevCount + 1);
+
+          // Increment currIndex using the ref
         }
       }
       if (count3 == allArray[mainIndex].length - 1) {
