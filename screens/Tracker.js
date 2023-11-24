@@ -5,6 +5,7 @@ import { AUTH } from "../firebaseConfig";
 import useAudioWebSocket from "../components/AudioWebSocket";
 import FileList from "../components/TrackerHelp";
 import TrackerContent from "../components/UI/TrackerContent";
+import { not } from "mathjs";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
@@ -23,7 +24,7 @@ export default function Tracker({ navigation, route }) {
   const [isToggled, setToggled] = useState(false);
   const [inputText, setInputText] = useState("");
   const [confirmedText, setConfirmedText] = useState("");
-  const [audioNote, setAudioNote] = useState("");
+  const [audioNote, setAudioNote] = useState([]);
   const [signal, setSignal] = useState("");
   const [highlightedIndexes, setHighlightIndexes] = useState([0]);
 
@@ -34,7 +35,8 @@ export default function Tracker({ navigation, route }) {
   const getAudioModuleData = useCallback((newData) => {
     // console.log(newData.trimmedValues);
     setSignal((prevCount) => prevCount + 1);
-    setAudioNote(newData.trimmedValues[0]);
+    // console.log(newData);
+    setAudioNote(newData.trimmedValues);
   }, []);
 
   // Set up the WebSocket connection
@@ -62,16 +64,17 @@ export default function Tracker({ navigation, route }) {
         // console.log("here the coord " + allPos[count3]);
         const nextNoteInData = allArray[mainIndex][count3];
 
-        if (note === nextNoteInData) {
+        if (note[0] === nextNoteInData) {
           console.log("MATCH FOUND");
           console.log("Map for testing: ", myMap);
           setIsMatch(true);
 
           if (myMap.get(allPos[count3]).length > 1) {
             const array = myMap.get(allPos[count3]);
-
+            console.log("chord: ", note);
             for (let i = 0; i < array.length; i++) {
               console.log("CHORD HERE AT INDEX ", array[i]);
+              console.log("The notes", allArray[mainIndex][array[i]]);
             }
 
             setHighlightIndexes(array);
