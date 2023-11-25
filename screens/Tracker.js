@@ -37,6 +37,8 @@ export default function Tracker({ navigation, route }) {
     collectionName1
   );
 
+  let pageCount = 0;
+
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback((newData) => {
     // console.log(newData.trimmedValues);
@@ -56,6 +58,8 @@ export default function Tracker({ navigation, route }) {
 
   const evaluateNote2 = (note) => {
     if (mainIndex < allArray.length) {
+      pageCount = mainIndex;
+
       console.log(
         "Audio: " +
           note +
@@ -94,12 +98,22 @@ export default function Tracker({ navigation, route }) {
           // Increment currIndex using the ref
         }
       }
+
       if (count3 == allArray[mainIndex].length - 1) {
-        console.log("We reached the end");
-        setConfirmedText("");
-        setMainIndex((prevCount) => prevCount + 1);
-        setCount3(0);
-        scroll();
+        console.log("End of page");
+
+        pageCount++;
+        console.log(pageCount);
+        if (pageCount != allArray.length) {
+          console.log("going to next page");
+          setMainIndex((prevCount) => prevCount + 1);
+          setConfirmedText("");
+          setCount3(0);
+          scroll();
+        } else {
+          console.log("Reached the end");
+          handlePress2();
+        }
       }
     } else {
       console.log("Reached the end");
@@ -161,10 +175,12 @@ export default function Tracker({ navigation, route }) {
   }, [isToggled, audioNote, signal]);
   useEffect(() => {
     if (allCoord) {
+      if (mainIndex >= 0) {
+        setTheMap(map);
+        setleftPosition(leftPositions);
+        setTopPosition(topPositions);
+      }
       const { map, leftPositions, topPositions } = mapping(allCoord, mainIndex);
-      setTheMap(map);
-      setleftPosition(leftPositions);
-      setTopPosition(topPositions);
     }
   }, [allCoord, mainIndex]);
 
