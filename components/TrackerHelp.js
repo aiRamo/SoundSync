@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { getDownloadURL, listAll, ref } from "@firebase/storage";
 import { STORAGE } from "../firebaseConfig";
+import { index } from "mathjs";
 
 const FileList = (user, collectionName) => {
   const [imageUrls, setImageUrls] = useState([]);
   const [allCoord, setAllCoord] = useState(null);
   const [allNote, setAllNote] = useState(null);
   const [allArray, setAllArray] = useState(null);
-  const [allPos, setAllPos] = useState(null);
   const [count2, setCount] = useState(0);
 
   useEffect(() => {
@@ -85,15 +85,6 @@ const FileList = (user, collectionName) => {
         setAllCoord(jsonCoordData);
         setAllNote(jsonNoteData);
 
-        const jsonData = JSON.parse(jsonCoordData[0]);
-
-        // Extract left positions
-        const leftPositions = Object.values(jsonData).map(
-          (note) => note.leftPosition
-        );
-
-        setAllPos(leftPositions);
-
         let arrays = [];
         for (let i = 0; i < jsonNoteData.length; i++) {
           const retrievedNoteArray = await retrieve(jsonNoteData[i]);
@@ -113,7 +104,13 @@ const FileList = (user, collectionName) => {
   }, [user, collectionName]);
 
   // Return the variables you want to access in other components
-  return { imageUrls, allCoord, allNote, allArray, count2, allPos };
+  return {
+    imageUrls,
+    allCoord,
+    allNote,
+    allArray,
+    count2,
+  };
 };
 
 // Return the noteArray

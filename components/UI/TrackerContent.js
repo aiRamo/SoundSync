@@ -26,11 +26,14 @@ const TrackerContent = ({
   imageUrls,
   allCoord,
   count3,
+  highlightedIndexes,
   highlightNotes,
   scrollViewRef,
   handlePress2,
   handlePress3,
+  handlePress4,
   isToggled,
+  isToggled2,
   collectionName1,
 }) => {
   const [scannerPhase, setScannerPhase] = React.useState(0);
@@ -82,12 +85,26 @@ const TrackerContent = ({
           </Text>
         </View>
 
-        <View style={{ marginTop: 10, marginBottom: 10 }}>
+        <View
+          style={{
+            marginTop: 10,
+            marginBottom: 10,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignContent: "center",
+          }}
+        >
           <TouchableOpacity
             style={[styles2.button, isToggled && styles2.toggledButton]}
             onPress={handlePress2}
           >
             <Text style={styles2.buttonText}>Play Mode</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles2.button2, isToggled2 && styles2.toggledButton]}
+            onPress={handlePress4}
+          >
+            <Text style={styles2.buttonText}>Play Without Chords</Text>
           </TouchableOpacity>
         </View>
 
@@ -130,7 +147,7 @@ const TrackerContent = ({
                   <NoteHighlighter
                     key={`noteHighlighter_${index}`}
                     notePositions={JSON.parse(allCoord[index])}
-                    currIndex={count3}
+                    currIndex={highlightedIndexes}
                   />
                 )}
               </View>
@@ -147,6 +164,14 @@ const styles2 = StyleSheet.create({
     padding: 10,
     backgroundColor: "orange",
     borderRadius: 5,
+    alignItems: "center",
+    alignSelf: "center",
+  },
+  button2: {
+    padding: 10,
+    backgroundColor: "orange",
+    borderRadius: 5,
+    marginLeft: 10,
     alignItems: "center",
     alignSelf: "center",
   },
