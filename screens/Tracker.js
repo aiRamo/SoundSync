@@ -31,7 +31,7 @@ export default function Tracker({ navigation, route }) {
   const [highlightedIndexes, setHighlightIndexes] = useState([0]);
   const [theMap, setTheMap] = useState(new Map());
   const [leftPosition, setleftPosition] = useState(null);
-  const [topPositoon, setTopPosition] = useState(null);
+  const [topPosition, setTopPosition] = useState(null);
 
   const { imageUrls, allCoord, allNote, allArray } = FileList(
     user,
@@ -60,6 +60,11 @@ export default function Tracker({ navigation, route }) {
   const evaluateNote2 = (note) => {
     if (mainIndex < allArray.length) {
       pageCount = mainIndex;
+      let check = 0;
+      // let top = topPosition.sort();
+
+      //topPosition.sort((a, b) => a - b);
+      //console.log(topPosition);
 
       console.log(
         "Audio: " +
@@ -75,7 +80,12 @@ export default function Tracker({ navigation, route }) {
         // console.log("here the coord " + allPos[count3]);
         const nextNoteInData = allArray[mainIndex][count3];
 
-        if (note[0] === nextNoteInData) {
+        if (note[0][0] == nextNoteInData[0]) {
+          console.log("letters match");
+          check = 1;
+        }
+
+        if (note[0] === nextNoteInData || check == 1) {
           console.log("MATCH FOUND");
           console.log("Map for testing: ", theMap);
           setIsMatch(true);
@@ -95,6 +105,7 @@ export default function Tracker({ navigation, route }) {
           }
 
           setCount3((prevCount) => prevCount + 1);
+          check = 0;
 
           // Increment currIndex using the ref
         }

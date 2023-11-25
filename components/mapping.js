@@ -22,9 +22,13 @@ export default function mapping(allCoord, index) {
         if (map.has(posValue)) {
           const y1 = topPositions[map.get(posValue)];
           const y2 = topPositions[i];
+          //console.log(map.get(posValue));
 
           if (y2 - y1 < 50) {
-            map.get(posValue).push(i);
+            //map.get(posValue).push(i);
+            const indexes = map.get(posValue);
+            indexes.push(i);
+            map.set(posValue, indexes);
           }
 
           // If it is, push the current index to the existing array of indexes
