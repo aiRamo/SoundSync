@@ -30,21 +30,19 @@ const SvgWithScript = () => {
 // You can define your styles here
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    maxHeight: "50%",  // This will make sure the container takes all available space
+    flex: 1,  // This will make sure the container takes all available space
     justifyContent: "center", // Centers children vertically in container
     alignItems: "center", // Centers children horizontally in container
   },
   svgContainer: {
     alignSelf: "center",
-    marginTop: "10%",
+    maxHeight: "50%",
     width: "100%", // Makes sure the container takes all available width
-    flex: 1,
   },
   responsiveSvg: {
     alignSelf: "center",
-    width: "75%", // Makes the SVG take all available width of its parent
-    height: "75%", // Makes the SVG take all available height of its parent
+    width: "100%", // Makes the SVG take all available width of its parent
+    height: "100%", // Makes the SVG take all available height of its parent
   },
 });
 
