@@ -58,7 +58,6 @@ const ScannerModalContent = ({
   }, [data]);
 
   return (
-    <ScrollView style={{flex: 1}}>
       <View style={{ flex: 1, alignSelf: "center", width: width }}>
         {!doneLoading && (
           <>
@@ -74,7 +73,7 @@ const ScannerModalContent = ({
           </>
         )}
         {doneLoading && (
-          <>
+          <ScrollView style={{flex: 1, maxHeight: height * 1.2}}>
             <Text style={styles.modalTitle}>Here is your generated image</Text>
             <Pagination
               count={data.imageUrls.length}
@@ -141,10 +140,9 @@ const ScannerModalContent = ({
                 />
               </TouchableOpacity>
             </View>
-          </>
+          </ScrollView>
         )}
       </View>
-    </ScrollView>
   );
 };
 
