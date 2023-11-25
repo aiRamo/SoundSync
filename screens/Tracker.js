@@ -23,6 +23,7 @@ export default function Tracker({ navigation, route }) {
   const [scroller, setScroller] = useState(0);
   const scrollViewRef = useRef(null);
   const [isToggled, setToggled] = useState(false);
+  const [isToggled2, setToggled2] = useState(false);
   const [inputText, setInputText] = useState("");
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState([]);
@@ -119,9 +120,64 @@ export default function Tracker({ navigation, route }) {
       console.log("Reached the end");
     }
   };
+  const evaluateWithoutChords = (note) => {
+    if (mainIndex < allArray.length) {
+      pageCount = mainIndex;
+
+      console.log(
+        "Audio: " +
+          note +
+          " |Curr Note: " +
+          // noteArray[currIndexRef] +
+          allArray[mainIndex][count3] + // Access the ref
+          " | Count: " +
+          count3
+      );
+
+      if (allArray[mainIndex].length && allCoord) {
+        // console.log("here the coord " + allPos[count3]);
+        const nextNoteInData = allArray[mainIndex][count3];
+
+        if (note[0] === nextNoteInData) {
+          console.log("MATCH FOUND");
+          console.log("Map for testing: ", theMap);
+          setIsMatch(true);
+
+          const array = [count3];
+          setHighlightIndexes(array);
+
+          setCount3((prevCount) => prevCount + 1);
+
+          // Increment currIndex using the ref
+        }
+      }
+
+      if (count3 == allArray[mainIndex].length - 1) {
+        console.log("End of page");
+
+        pageCount++;
+        console.log(pageCount);
+        if (pageCount != allArray.length) {
+          console.log("going to next page");
+          setMainIndex((prevCount) => prevCount + 1);
+          setConfirmedText("");
+          setCount3(0);
+          scroll();
+        } else {
+          console.log("Reached the end");
+          handlePress4();
+        }
+      }
+    } else {
+      console.log("Reached the end");
+    }
+  };
 
   const handlePress2 = () => {
     setToggled(!isToggled);
+  };
+  const handlePress4 = () => {
+    setToggled2(!isToggled2);
   };
   const handlePress3 = () => {
     navigation.navigate("Home", {});
@@ -168,11 +224,22 @@ export default function Tracker({ navigation, route }) {
     }
   }, [isToggled]);
   useEffect(() => {
+    if (isToggled2) {
+      setHighlightNotes("true");
+    }
+  }, [isToggled2]);
+  useEffect(() => {
     if (audioNote != "" && isToggled && signal) {
       evaluateNote2(audioNote);
     }
     //[isToggled,audioNote]
   }, [isToggled, audioNote, signal]);
+  useEffect(() => {
+    if (audioNote != "" && isToggled2 && signal) {
+      evaluateWithoutChords(audioNote);
+    }
+    //[isToggled,audioNote]
+  }, [isToggled2, audioNote, signal]);
   useEffect(() => {
     if (allCoord) {
       if (mainIndex >= 0) {
@@ -198,6 +265,16 @@ export default function Tracker({ navigation, route }) {
       console.log("Ending play mode");
     }
   }, [allArray, isToggled]);
+  useEffect(() => {
+    if (!isToggled2 && allArray) {
+      setMainIndex(0);
+      setCount3(0);
+      setConfirmedText("");
+      setHighlightNotes(null);
+      setHighlightIndexes([0]);
+      console.log("Ending play mode");
+    }
+  }, [allArray, isToggled2]);
 
   const scroll = () => {
     setScroller((prev) => prev + ViewHeight);
@@ -220,7 +297,9 @@ export default function Tracker({ navigation, route }) {
       scrollViewRef={scrollViewRef}
       handlePress2={handlePress2}
       handlePress3={handlePress3}
+      handlePress4={handlePress4}
       isToggled={isToggled}
+      isToggled2={isToggled2}
       collectionName1={collectionName1}
     />
   );
