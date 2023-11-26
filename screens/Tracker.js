@@ -32,6 +32,7 @@ export default function Tracker({ navigation, route }) {
   const [theMap, setTheMap] = useState(new Map());
   const [leftPosition, setleftPosition] = useState(null);
   const [topPosition, setTopPosition] = useState(null);
+  const [change, setChange] = useState([]);
 
   const { imageUrls, allCoord, allNote, allArray } = FileList(
     user,
@@ -61,10 +62,10 @@ export default function Tracker({ navigation, route }) {
     if (mainIndex < allArray.length) {
       pageCount = mainIndex;
       let check = 0;
-      // let top = topPosition.sort();
+      //let top = topPosition.sort();
 
-      //topPosition.sort((a, b) => a - b);
-      //console.log(topPosition);
+      //console.log(top);
+      console.log(change);
 
       console.log(
         "Audio: " +
@@ -286,6 +287,20 @@ export default function Tracker({ navigation, route }) {
       console.log("Ending play mode");
     }
   }, [allArray, isToggled2]);
+  useEffect(() => {
+    if (topPosition) {
+      topPosition.sort((a, b) => a - b);
+      for (let i = 0; i < topPosition.length; i++) {
+        if (i != 0) {
+          if (topPosition[i - 1] != topPosition[i]) {
+            const array = [];
+            array.push(i);
+            setChange((prevArray) => [...prevArray, i]);
+          }
+        }
+      }
+    }
+  }, [topPosition]);
 
   const scroll = () => {
     setScroller((prev) => prev + ViewHeight);
