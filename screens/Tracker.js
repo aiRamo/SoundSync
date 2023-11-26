@@ -63,10 +63,7 @@ export default function Tracker({ navigation, route }) {
     if (mainIndex < allArray.length) {
       pageCount = mainIndex;
       let check = 0;
-      //let top = topPosition.sort();
-
-      //console.log(top);
-      console.log(change);
+      console.log(change[2]);
 
       console.log(
         "Audio: " +
@@ -92,18 +89,21 @@ export default function Tracker({ navigation, route }) {
           console.log("Map for testing: ", theMap);
           setIsMatch(true);
 
-          if (theMap.get(leftPosition[count3]).length > 1) {
+          if (theMap.get(leftPosition[count3]).length >= 1) {
             const array = theMap.get(leftPosition[count3]);
-            console.log("chord: ", note);
-            for (let i = 0; i < array.length; i++) {
-              console.log("CHORD HERE AT INDEX ", array[i]);
-              console.log("The notes", allArray[mainIndex][array[i]]);
-            }
+            if (array[0] == count3) {
+              console.log("Associated array", array);
 
-            setHighlightIndexes(array);
-          } else {
-            const array = [count3];
-            setHighlightIndexes(array);
+              for (let i = 0; i < array.length; i++) {
+                console.log("CHORD HERE AT INDEX ", array[i]);
+                console.log("The notes", allArray[mainIndex][array[i]]);
+              }
+
+              setHighlightIndexes(array);
+            } else {
+              const array = [count3];
+              setHighlightIndexes(array);
+            }
           }
 
           setCount3((prevCount) => prevCount + 1);
@@ -113,7 +113,7 @@ export default function Tracker({ navigation, route }) {
         }
       }
 
-      if (count3 == allArray[mainIndex].length - 1) {
+      if (count3 == change[2]) {
         console.log("End of page");
 
         pageCount++;
