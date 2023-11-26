@@ -35,6 +35,8 @@ const TrackerContent = ({
   isToggled,
   isToggled2,
   collectionName1,
+  tempo,
+  handleTempoChange,
 }) => {
   const [scannerPhase, setScannerPhase] = React.useState(0);
   return (
@@ -106,6 +108,22 @@ const TrackerContent = ({
           >
             <Text style={styles2.buttonText}>Play Without Chords</Text>
           </TouchableOpacity>
+          <TextInput
+            style={{
+              padding: 10,
+              borderRadius: 5,
+              marginLeft: 10,
+              width: 150,
+              backgroundColor: "transparent", // Set background color to transparent
+              borderWidth: 1, // Add border
+              borderColor: "black", // Set border color
+              color: "black", // Set text color
+            }}
+            placeholder="Enter Tempo"
+            value={tempo}
+            onChangeText={(text) => handleTempoChange(text)}
+            keyboardType="numeric"
+          />
         </View>
 
         <ScrollView

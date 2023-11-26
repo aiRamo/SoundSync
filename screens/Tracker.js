@@ -32,6 +32,7 @@ export default function Tracker({ navigation, route }) {
   const [theMap, setTheMap] = useState(new Map());
   const [leftPosition, setleftPosition] = useState(null);
   const [topPosition, setTopPosition] = useState(null);
+  const [tempo, setTempo] = useState("");
 
   const { imageUrls, allCoord, allNote, allArray } = FileList(
     user,
@@ -68,12 +69,12 @@ export default function Tracker({ navigation, route }) {
 
       console.log(
         "Audio: " +
-          note +
-          " |Curr Note: " +
-          // noteArray[currIndexRef] +
-          allArray[mainIndex][count3] + // Access the ref
-          " | Count: " +
-          count3
+        note +
+        " |Curr Note: " +
+        // noteArray[currIndexRef] +
+        allArray[mainIndex][count3] + // Access the ref
+        " | Count: " +
+        count3
       );
 
       if (allArray[mainIndex].length && allCoord) {
@@ -137,12 +138,12 @@ export default function Tracker({ navigation, route }) {
 
       console.log(
         "Audio: " +
-          note +
-          " |Curr Note: " +
-          // noteArray[currIndexRef] +
-          allArray[mainIndex][count3] + // Access the ref
-          " | Count: " +
-          count3
+        note +
+        " |Curr Note: " +
+        // noteArray[currIndexRef] +
+        allArray[mainIndex][count3] + // Access the ref
+        " | Count: " +
+        count3
       );
 
       if (allArray[mainIndex].length && allCoord) {
@@ -199,6 +200,11 @@ export default function Tracker({ navigation, route }) {
     }
 
     // You can perform additional actions or validations here
+  };
+
+  const handleTempoChange = (text) => {
+    setTempo(text);
+    console.log("tempo: ", text);
   };
 
   useEffect(() => {
@@ -298,20 +304,23 @@ export default function Tracker({ navigation, route }) {
     });
   };
 
-  return (
-    <TrackerContent
-      imageUrls={imageUrls}
-      allCoord={allCoord}
-      count3={count3}
-      highlightedIndexes={highlightedIndexes}
-      highlightNotes={highlightNotes}
-      scrollViewRef={scrollViewRef}
-      handlePress2={handlePress2}
-      handlePress3={handlePress3}
-      handlePress4={handlePress4}
-      isToggled={isToggled}
-      isToggled2={isToggled2}
-      collectionName1={collectionName1}
-    />
+
+
+  return (<
+    TrackerContent imageUrls={imageUrls}
+    allCoord={allCoord}
+    count3={count3}
+    highlightedIndexes={highlightedIndexes}
+    highlightNotes={highlightNotes}
+    scrollViewRef={scrollViewRef}
+    handlePress2={handlePress2}
+    handlePress3={handlePress3}
+    handlePress4={handlePress4}
+    isToggled={isToggled}
+    isToggled2={isToggled2}
+    collectionName1={collectionName1}
+    tempo={tempo}
+    handleTempoChange={handleTempoChange}
+  />
   );
 }
