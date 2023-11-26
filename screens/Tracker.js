@@ -32,6 +32,7 @@ export default function Tracker({ navigation, route }) {
   const [theMap, setTheMap] = useState(new Map());
   const [leftPosition, setleftPosition] = useState(null);
   const [topPosition, setTopPosition] = useState(null);
+  const [tempo, setTempo] = useState("");
   const [change, setChange] = useState([]);
 
   const { imageUrls, allCoord, allNote, allArray } = FileList(
@@ -202,6 +203,11 @@ export default function Tracker({ navigation, route }) {
     // You can perform additional actions or validations here
   };
 
+  const handleTempoChange = (text) => {
+    setTempo(text);
+    console.log("tempo: ", text);
+  };
+
   useEffect(() => {
     const unsubscribe = AUTH.onAuthStateChanged((authUser) => {
       if (authUser) {
@@ -327,6 +333,8 @@ export default function Tracker({ navigation, route }) {
       isToggled={isToggled}
       isToggled2={isToggled2}
       collectionName1={collectionName1}
+      tempo={tempo}
+      handleTempoChange={handleTempoChange}
     />
   );
 }
