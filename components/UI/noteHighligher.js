@@ -9,8 +9,8 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
       {Object.keys(notePositions).map((key, index) => {
         const { leftPosition, topPosition } = notePositions[key];
 
-        //const isHighlighted = isHighlightAll || index <= currIndex; // Check if this is the currently highlighted box
-        const isHighlighted = isHighlightAll || currIndex.includes(index); // Check if this is the currently highlighted box
+        const isHighlighted = isHighlightAll || index <= currIndex; // CUmulative for now
+        //const isHighlighted = isHighlightAll || currIndex.includes(index); // Non-cumulative, but chords
         return (
           <React.Fragment key={`note_${index}`}>
             <View
@@ -18,7 +18,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
               style={{
                 position: "absolute",
                 width: 20,
-                height: 20,
+                height: 26,
                 borderRadius: 10,
                 backgroundColor: isHighlighted ? "#5b5591" : "transparent", // Highlighted purple circle around current note and previous notes, others are trasparent
                 opacity: 0.5,
@@ -36,7 +36,7 @@ const NoteHighlighter = ({ notePositions, currIndex }) => {
                 left: leftPosition + 12,
                 fontSize: 12,
                 alignSelf: "center",
-                opacity: isHighlighted ? 1 : 0, // Highlighted box has opacity 1, others are hidden
+                opacity: isHighlighted ? 0 : 0, // Highlighted box has opacity 1, others are hidden
                 zIndex: 10,
               }}
             >

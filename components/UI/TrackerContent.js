@@ -19,26 +19,40 @@ import FadeTransition from "./fadeTransition";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
-const ViewWidth = width * 0.28; // Control music sheet sizing here by changing ratio
-const ViewHeight = ViewWidth * A4_RATIO;
+
+const ViewHeight = height * 0.8; // Control Sizing Here
+
+const ViewWidth = ViewHeight / A4_RATIO;
 
 const TrackerContent = ({
   imageUrls,
   allCoord,
-  count3,
   highlightedIndexes,
-  highlightNotes,
+  mainIndex,
   scrollViewRef,
-  handlePress2,
   handlePress3,
-  handlePress4,
-  isToggled,
-  isToggled2,
   collectionName1,
-  tempo,
-  handleTempoChange,
 }) => {
   const [scannerPhase, setScannerPhase] = React.useState(0);
+  const [loadedImages, setLoadedImages] = React.useState({});
+  const [dataLoaded, setDataLoaded] = React.useState({});
+
+  const handleImageLoaded = (index) => {
+    setLoadedImages((prevLoadedImages) => ({
+      ...prevLoadedImages,
+      [index]: true,
+    }));
+    // Check if data for this index is loaded
+    if (allCoord) {
+      if (allCoord[index]) {
+        setDataLoaded((prevDataLoaded) => ({
+          ...prevDataLoaded,
+          [index]: true,
+        }));
+      }
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: "#483d8b" }}>
       <View
@@ -95,41 +109,13 @@ const TrackerContent = ({
             justifyContent: "center",
             alignContent: "center",
           }}
-        >
-          <TouchableOpacity
-            style={[styles2.button, isToggled && styles2.toggledButton]}
-            onPress={handlePress2}
-          >
-            <Text style={styles2.buttonText}>Play Mode</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles2.button2, isToggled2 && styles2.toggledButton]}
-            onPress={handlePress4}
-          >
-            <Text style={styles2.buttonText}>Play Without Chords</Text>
-          </TouchableOpacity>
-          <TextInput
-            style={{
-              padding: 10,
-              borderRadius: 5,
-              marginLeft: 10,
-              width: 150,
-              backgroundColor: "transparent", // Set background color to transparent
-              borderWidth: 1, // Add border
-              borderColor: "black", // Set border color
-              color: "black", // Set text color
-            }}
-            placeholder="Enter Tempo"
-            value={tempo}
-            onChangeText={(text) => handleTempoChange(text)}
-            keyboardType="numeric"
-          />
-        </View>
+        ></View>
 
         <ScrollView
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
           style={{
+            position: "absolute",
             height: ViewHeight,
             width: ViewWidth,
             alignSelf: "center",
@@ -149,10 +135,9 @@ const TrackerContent = ({
               <View key={index}>
                 <Image
                   source={{ uri: url }}
+                  onLoad={() => handleImageLoaded(index)}
                   onError={(error) => {
                     console.log("Image failed to load:", error);
-                    // You can add an error message to the component state
-                    // to display a message to the user.
                   }}
                   style={{
                     width: ViewWidth,
@@ -160,14 +145,15 @@ const TrackerContent = ({
                     resizeMode: "contain",
                   }}
                 />
-
-                {highlightNotes && allCoord[index] && (
-                  <NoteHighlighter
-                    key={`noteHighlighter_${index}`}
-                    notePositions={JSON.parse(allCoord[index])}
-                    currIndex={highlightedIndexes}
-                  />
-                )}
+                {loadedImages[index] &&
+                  dataLoaded[index] &&
+                  mainIndex == index && (
+                    <NoteHighlighter
+                      key={`noteHighlighter_${index}`}
+                      notePositions={JSON.parse(allCoord[index] || "[]")}
+                      currIndex={highlightedIndexes}
+                    />
+                  )}
               </View>
             ))}
           </View>

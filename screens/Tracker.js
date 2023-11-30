@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import NoteHighlighter from "../components/UI/noteHighligher";
 import { AUTH } from "../firebaseConfig";
 import useAudioWebSocket from "../components/AudioWebSocket";
+import { getDurationForNoteType } from "../components/TrackerHelp";
 import FileList from "../components/TrackerHelp";
 import TrackerContent from "../components/UI/TrackerContent";
-import { not } from "mathjs";
+import { count, not } from "mathjs";
 import mapping from "../components/mapping";
 
 const { width, height } = Dimensions.get("window");
@@ -23,7 +24,7 @@ export default function Tracker({ navigation, route }) {
   const [scroller, setScroller] = useState(0);
   const scrollViewRef = useRef(null);
   const [isToggled, setToggled] = useState(false);
-  const [isToggled2, setToggled2] = useState(false);
+  const [isToggled2, setToggled2] = useState(true);
   const [inputText, setInputText] = useState("");
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState([]);
@@ -47,7 +48,7 @@ export default function Tracker({ navigation, route }) {
     // console.log(newData.trimmedValues);
     setSignal((prevCount) => prevCount + 1);
     // console.log(newData);
-    setAudioNote(newData.trimmedValues);
+    setAudioNote(newData.noteString);
   }, []);
 
   // Set up the WebSocket connection
@@ -123,7 +124,6 @@ export default function Tracker({ navigation, route }) {
           setMainIndex((prevCount) => prevCount + 1);
           setConfirmedText("");
           setCount3(0);
-          scroll();
         } else {
           console.log("Reached the end");
           handlePress2();
@@ -137,21 +137,21 @@ export default function Tracker({ navigation, route }) {
     if (mainIndex < allArray.length) {
       pageCount = mainIndex;
 
-      console.log(
+      /*console.log(
         "Audio: " +
           note +
           " |Curr Note: " +
           // noteArray[currIndexRef] +
-          allArray[mainIndex][count3] + // Access the ref
+          allArray[mainIndex][count3][0][0] + // Access the ref
           " | Count: " +
           count3
-      );
+      );*/
 
       if (allArray[mainIndex].length && allCoord) {
         // console.log("here the coord " + allPos[count3]);
-        const nextNoteInData = allArray[mainIndex][count3];
+        const nextNoteInData = allArray[mainIndex][count3][0][0];
 
-        if (note[0] === nextNoteInData) {
+        if (note[0].includes(nextNoteInData)) {
           console.log("MATCH FOUND");
           console.log("Map for testing: ", theMap);
           setIsMatch(true);
@@ -160,8 +160,6 @@ export default function Tracker({ navigation, route }) {
           setHighlightIndexes(array);
 
           setCount3((prevCount) => prevCount + 1);
-
-          // Increment currIndex using the ref
         }
       }
 
@@ -172,10 +170,10 @@ export default function Tracker({ navigation, route }) {
         console.log(pageCount);
         if (pageCount != allArray.length) {
           console.log("going to next page");
+          setCount3(0);
+          setHighlightIndexes([0]);
           setMainIndex((prevCount) => prevCount + 1);
           setConfirmedText("");
-          setCount3(0);
-          scroll();
         } else {
           console.log("Reached the end");
           handlePress4();
@@ -186,26 +184,8 @@ export default function Tracker({ navigation, route }) {
     }
   };
 
-  const handlePress2 = () => {
-    setToggled(!isToggled);
-  };
-  const handlePress4 = () => {
-    setToggled2(!isToggled2);
-  };
   const handlePress3 = () => {
     navigation.navigate("Home", {});
-  };
-  const handleConfirm = () => {
-    if (isToggled) {
-      setConfirmedText(inputText);
-    }
-
-    // You can perform additional actions or validations here
-  };
-
-  const handleTempoChange = (text) => {
-    setTempo(text);
-    console.log("tempo: ", text);
   };
 
   useEffect(() => {
@@ -230,9 +210,15 @@ export default function Tracker({ navigation, route }) {
       console.log("here collection name " + collectionName1);
     }
   }, [route.params]);
+
+  useEffect(() => {
+    if (count3 == 0 && mainIndex != 0) {
+      scroll();
+    }
+  }, [count3, mainIndex]);
   useEffect(() => {
     if (allArray != null) {
-      console.log("mainIndex:", allArray[mainIndex]);
+      console.log("mainIndex:", allArray);
     }
   }, [mainIndex, allArray]);
 
@@ -269,7 +255,7 @@ export default function Tracker({ navigation, route }) {
     }
   }, [allCoord, mainIndex]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (!isToggled && allArray) {
       setMainIndex(0);
       setCount3(0);
@@ -282,7 +268,7 @@ export default function Tracker({ navigation, route }) {
       setHighlightIndexes([0]);
       console.log("Ending play mode");
     }
-  }, [allArray, isToggled]);
+  }, [allArray, isToggled]);*/
   useEffect(() => {
     if (!isToggled2 && allArray) {
       setMainIndex(0);
@@ -309,13 +295,13 @@ export default function Tracker({ navigation, route }) {
   }, [topPosition]);
 
   const scroll = () => {
-    setScroller((prev) => prev + ViewHeight);
-
-    // Use the callback function to ensure that scrollTo is called with the updated state
-    setScroller((updatedScroller) => {
+    setScroller((prev) => {
+      const newScrollPosition = prev + ViewHeight;
       const scrollView = scrollViewRef.current;
-      scrollView.scrollTo({ y: updatedScroller, animated: true });
-      return updatedScroller;
+      if (scrollView) {
+        scrollView.scrollToEnd({ animated: true });
+      }
+      return newScrollPosition;
     });
   };
 
@@ -323,18 +309,11 @@ export default function Tracker({ navigation, route }) {
     <TrackerContent
       imageUrls={imageUrls}
       allCoord={allCoord}
-      count3={count3}
       highlightedIndexes={highlightedIndexes}
-      highlightNotes={highlightNotes}
+      mainIndex={mainIndex}
       scrollViewRef={scrollViewRef}
-      handlePress2={handlePress2}
       handlePress3={handlePress3}
-      handlePress4={handlePress4}
-      isToggled={isToggled}
-      isToggled2={isToggled2}
       collectionName1={collectionName1}
-      tempo={tempo}
-      handleTempoChange={handleTempoChange}
     />
   );
 }

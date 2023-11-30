@@ -2,8 +2,10 @@ import { StyleSheet, Dimensions } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 const A4_RATIO = 1.4;
-const ViewWidth = width * 0.28; // 90% of device width
-const ViewHeight = ViewWidth * A4_RATIO;
+
+const ViewHeight = height * 0.8; // Control Sizing Here
+
+const ViewWidth = ViewHeight / A4_RATIO;
 
 const styles = StyleSheet.create({
   container: {

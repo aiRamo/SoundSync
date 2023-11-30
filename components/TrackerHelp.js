@@ -138,7 +138,8 @@ export async function retrieve(array) {
               accidental = "#";
             }
           }
-          const temp = step + accidental + octave;
+          const noteType = note.type[0]; // Get the note type
+          const temp = [step + accidental + octave, noteType]; // Create a tuple of note and type
           noteArray.push(temp);
         }
       }
@@ -147,5 +148,24 @@ export async function retrieve(array) {
 
   return noteArray;
 }
+
+export const getDurationForNoteType = (noteType, tempoBpm) => {
+  const beatDurationMs = 60000 / tempoBpm; // Duration of a single beat in ms
+  switch (noteType) {
+    case "whole":
+      return beatDurationMs * 4; // Whole note is four beats
+    case "half":
+      return beatDurationMs * 2; // Half note is two beats
+    case "quarter":
+      return beatDurationMs; // Quarter note is one beat
+    case "eighth":
+      return beatDurationMs / 2; // Eighth note is half a beat
+    case "sixteenth":
+      return beatDurationMs / 4; // Sixteenth note is a quarter beat
+    // Add more cases for different note types if necessary
+    default:
+      return 0; // For rest or unrecognized note type
+  }
+};
 
 export default FileList;

@@ -1,6 +1,3 @@
-// NoteHighlighter takes the parsed and rebuilt JSON object and renders a list of each note's location via a visual highlight on the screen.
-import NoteHighlighter from "./UI/noteHighligher";
-
 // Sends the rebuilt notePositionsJSON to the firebase storage location by the relevant collectionName
 import { sendJSONToSheetCollection } from "./firebaseUtils";
 
@@ -13,11 +10,10 @@ const calculateNoteCoordinates = async (
   ViewHeight
 ) => {
   const notePositions = {};
-
   // Check entire JSON object for any 'staffDistance'
   let hasStaffDistance = false;
-  noteCoordinates.parts.forEach(part => {
-    part.measures.forEach(measure => {
+  noteCoordinates.parts.forEach((part) => {
+    part.measures.forEach((measure) => {
       if (measure.staffDistance) {
         hasStaffDistance = true;
       }
@@ -25,7 +21,11 @@ const calculateNoteCoordinates = async (
   });
 
   // Set global additionalOffset based on presence of staffDistance
-  const globalAdditionalOffset = hasStaffDistance ? 140 : 42;
+  const globalAdditionalOffset = hasStaffDistance
+    ? ViewHeight * 0.17
+    : ViewHeight * 0.053;
+
+  const headerOffset = ViewHeight * 0.05;
 
   // Parse layout margins and dimensions
   const pageLayoutLeftMargin = parseInt(
@@ -57,7 +57,7 @@ const calculateNoteCoordinates = async (
         ? parseInt(measure.leftMargin, 10)
         : measureLeftMargin;
       staffDistance = measure.staffDistance
-        ? parseInt(measure.staffDistance, 10) + 60
+        ? parseInt(measure.staffDistance, 10) + ViewHeight * 0.05
         : staffDistance;
       topSysDist =
         measure.topSystemDistance !== null
@@ -68,7 +68,9 @@ const calculateNoteCoordinates = async (
         cumulativeMeasureWidth = 0;
 
         systemYOffset +=
-          parseInt(measure.systemDistance, 10) + globalAdditionalOffset + topSysDist;
+          parseInt(measure.systemDistance, 10) +
+          globalAdditionalOffset +
+          topSysDist;
       }
 
       measure.notes.forEach((note, noteIndex) => {
@@ -87,8 +89,9 @@ const calculateNoteCoordinates = async (
         let topPosition =
           ((systemYOffset + pageLayoutTopMargin + staffDistance) / pageHeight) *
             ViewHeight -
-          ViewHeight * 0.035;
+          ViewHeight * 0.038;
         topPosition += partAdjustment;
+        topPosition += headerOffset;
 
         notePositions[`note_${boxCounter}`] = { leftPosition, topPosition };
       });

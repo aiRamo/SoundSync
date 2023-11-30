@@ -23,8 +23,8 @@ const useAudioWebSocket = (getAudioModuleData) => {
       if (delimiterIndex !== -1) {
         const frequency = message.substring(0, delimiterIndex).trim();
 
-        const noteString = message.substring(delimiterIndex + 1).trim();
-        getAudioModuleData({ frequency, trimmedValues }); // The return for the callback in Tracker and Test
+        const noteString = trimmedValues;
+        getAudioModuleData({ frequency, noteString }); // The return for the callback in Tracker and Test
       }
     };
 

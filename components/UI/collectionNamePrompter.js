@@ -11,6 +11,7 @@ import styles from "../styleSheetScan";
 const CollectionNamePrompt = ({
   collectionName,
   onChangeCollectionName,
+  onChangeBeatSig,
   setScannerPhase,
   scannerPhase,
 }) => {
