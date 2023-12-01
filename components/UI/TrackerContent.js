@@ -14,6 +14,7 @@ import NoteHighlighter from "./noteHighligher";
 import RadialGradient from "./RadialGradient";
 import { AntDesign } from "@expo/vector-icons";
 import styles from "../styleSheetScan";
+import EndingModal from "./EndingModal";
 
 import FadeTransition from "./fadeTransition";
 
@@ -32,6 +33,8 @@ const TrackerContent = ({
   scrollViewRef,
   handlePress3,
   collectionName1,
+  isListening,
+  reachedEnd,
 }) => {
   const [scannerPhase, setScannerPhase] = React.useState(0);
   const [loadedImages, setLoadedImages] = React.useState({});
@@ -96,9 +99,11 @@ const TrackerContent = ({
             top: 10,
           }}
         >
-          <Text style={[styles.introTitle, { width: 300 }]}>
-            {collectionName1}
-          </Text>
+          {isListening && (
+            <Text style={[styles.introTitle, { width: 300 }]}>
+              Listening Now! Make Some Music.
+            </Text>
+          )}
         </View>
 
         <View
@@ -159,6 +164,7 @@ const TrackerContent = ({
           </View>
         </ScrollView>
       </FadeTransition>
+      {reachedEnd && <EndingModal handlePress3={handlePress3} />}
     </View>
   );
 };

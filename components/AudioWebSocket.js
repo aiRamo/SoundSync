@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import API_URL from "../API_URL.json";
 
-const useAudioWebSocket = (getAudioModuleData) => {
+const useAudioWebSocket = (getAudioModuleData, setIsListening) => {
   const [webSocket, setWebSocket] = useState(null);
 
   useEffect(() => {
@@ -9,6 +9,7 @@ const useAudioWebSocket = (getAudioModuleData) => {
 
     ws.onopen = () => {
       console.log("WebSocket connection established");
+      setIsListening(true);
     };
 
     ws.onmessage = (e) => {

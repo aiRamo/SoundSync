@@ -25,7 +25,8 @@ export default function Tracker({ navigation, route }) {
   const scrollViewRef = useRef(null);
   const [isToggled, setToggled] = useState(false);
   const [isToggled2, setToggled2] = useState(true);
-  const [inputText, setInputText] = useState("");
+  const [isListening, setIsListening] = useState(false);
+  const [reachedEnd, setReachedEnd] = useState(false);
   const [confirmedText, setConfirmedText] = useState("");
   const [audioNote, setAudioNote] = useState([]);
   const [signal, setSignal] = useState("");
@@ -33,7 +34,6 @@ export default function Tracker({ navigation, route }) {
   const [theMap, setTheMap] = useState(new Map());
   const [leftPosition, setleftPosition] = useState(null);
   const [topPosition, setTopPosition] = useState(null);
-  const [tempo, setTempo] = useState("");
   const [change, setChange] = useState([]);
 
   const { imageUrls, allCoord, allNote, allArray } = FileList(
@@ -52,7 +52,7 @@ export default function Tracker({ navigation, route }) {
   }, []);
 
   // Set up the WebSocket connection
-  useAudioWebSocket(getAudioModuleData);
+  useAudioWebSocket(getAudioModuleData, setIsListening);
 
   /*
   useEffect(() => {
@@ -176,7 +176,11 @@ export default function Tracker({ navigation, route }) {
           setConfirmedText("");
         } else {
           console.log("Reached the end");
-          handlePress4();
+          setCount3((prevCount) => prevCount + 1);
+          const array = [count3];
+          setHighlightIndexes(array);
+
+          setReachedEnd(true);
         }
       }
     } else {
@@ -239,11 +243,14 @@ export default function Tracker({ navigation, route }) {
     //[isToggled,audioNote]
   }, [isToggled, audioNote, signal]);
   useEffect(() => {
-    if (audioNote != "" && isToggled2 && signal) {
-      evaluateWithoutChords(audioNote);
+    if (allArray) {
+      if (audioNote != "" && isToggled2 && signal && !reachedEnd) {
+        evaluateWithoutChords(audioNote);
+      }
     }
+
     //[isToggled,audioNote]
-  }, [isToggled2, audioNote, signal]);
+  }, [isToggled2, audioNote, signal, allArray, reachedEnd]);
   useEffect(() => {
     if (allCoord) {
       if (mainIndex >= 0) {
@@ -314,6 +321,8 @@ export default function Tracker({ navigation, route }) {
       scrollViewRef={scrollViewRef}
       handlePress3={handlePress3}
       collectionName1={collectionName1}
+      isListening={isListening}
+      reachedEnd={reachedEnd}
     />
   );
 }

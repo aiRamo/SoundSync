@@ -30,7 +30,7 @@ const SvgWithScript = () => {
 // You can define your styles here
 const styles = StyleSheet.create({
   container: {
-    flex: 1,  // This will make sure the container takes all available space
+    flex: 1, // This will make sure the container takes all available space
     justifyContent: "center", // Centers children vertically in container
     alignItems: "center", // Centers children horizontally in container
   },
