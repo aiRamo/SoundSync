@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Adrian/Desktop",
-      "program": "c:/Users/Adrian/Desktop/build/Debug/outDebug",
+      "cwd": "o:/SoundSync/SoundSync/PiWebSocket",
+      "program": "o:/SoundSync/SoundSync/PiWebSocket/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

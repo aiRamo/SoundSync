@@ -25,7 +25,7 @@ const calculateNoteCoordinates = async (
     ? ViewHeight * 0.17
     : ViewHeight * 0.053;
 
-  const headerOffset = ViewHeight * 0.05;
+  const headerOffset = ViewHeight * 0.055;
 
   // Parse layout margins and dimensions
   const pageLayoutLeftMargin = parseInt(

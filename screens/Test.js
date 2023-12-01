@@ -12,6 +12,8 @@ export default function Test({ route }) {
     noteString: "",
   });
 
+  const [isListening, setIsListening] = useState(false);
+
   // Custom callback similar to useEffect that is only triggered when the websocket sends data.
   const getAudioModuleData = useCallback(
     (newData) => {
@@ -27,8 +29,7 @@ export default function Test({ route }) {
     },
     [] // No dependencies needed, just need pass this into useAudioWebSocket
   );
-
-  useAudioWebSocket(getAudioModuleData); // Main method to toggle the Audio module's websocket. Pass the custom callback to set data in a live stream.
+  useAudioWebSocket(getAudioModuleData, setIsListening); // Main method to toggle the Audio module's websocket. Pass the custom callback to set data in a live stream.
 
   return (
     <View style={{ flex: 1, zIndex: 0, width: width, color: "#483d8b" }}>
