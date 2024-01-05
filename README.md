@@ -16,12 +16,10 @@
     <img src="assets/SoundSync.png" alt="Logo" width="400" height="400">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">SoundSync</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    A real-time, audio-responsive digital sheet music platform for seamless musician synchronization.
     <br />
     <br />
     <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
