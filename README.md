@@ -59,7 +59,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]]
 
 SoundSync is a web application with the main goal of eliminating the need to manually turn a sheet
 music page when playing an instrument. 
@@ -129,6 +129,9 @@ _Below is an example of how you can instruct your audience on installing and set
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
 * Sheet Music Digital Recreation and Note Recognition
+
+
+![Recognition Screen Shot][recognition-screenshot]
   
 * Real-time Audio Note Tracking
 
@@ -168,6 +171,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: assets/SS_Screenshot.png
+[recognition-screenshot]: assets/Recognition_Screenshot.png
 [React_Native]: https://img.shields.io/badge/React%20Native%20-badge?style=for-the-badge&logo=React&color=%23050e30
 [React_Native-url]: https://reactnative.dev/
 [Expo]: https://img.shields.io/badge/Expo-badge?style=for-the-badge&logo=Expo&color=black
