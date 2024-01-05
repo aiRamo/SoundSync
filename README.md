@@ -22,7 +22,7 @@
     A real-time, audio-responsive digital sheet music platform for seamless musician synchronization.
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://youtu.be/EhhmW8895KI">View Demo</a>
     ·
     <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
     ·
