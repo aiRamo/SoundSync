@@ -12,7 +12,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/aiRamo/SoundSync">
     <img src="assets/SoundSync.png" alt="Logo" width="400" height="400">
   </a>
 
