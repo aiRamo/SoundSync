@@ -113,19 +113,35 @@ Please ensure you have all of these downloaded before proceeding:
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone https://github.com/aiRamo/SoundSync
    ```
-3. Install NPM packages
+2. Clone the API repo in a seperate location
+   ```sh
+   git clone https://github.com/aiRamo/audiveris-api
+   ```   
+3. Install NPM packages for BOTH projects
    ```sh
    npm install
    ```
-4. Enter your API in `config.js`
+4. Create your API file `API_URL.js` and place it in the root directory of the SoundSync project
    ```js
-   const API_KEY = 'ENTER YOUR API';
+   {
+    "API_URL_WS": "ws://<Your IPV4 address here>:4000",
+    "API_URL_WS_AUDIO": "ws://<Your IPV4 address here>:9000",
+    "API_URL_UPLOAD": "http://<Your IPV4 address here>:3000/upload"
+   }  
    ```
+5. Run the Soundsync project and the API project locally
+   ```sh
+   expo start --web
+   ```
+
+   ```sh
+   node index.js
+   ```
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
