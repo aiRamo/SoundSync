@@ -85,12 +85,12 @@ Use the `BLANK_README.md` to get started.
 This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
 
 * [![React_Native][React_Native]][React_Native-url]
+*  [![Expo][Expo]][Expo-url]
 * [![Firebase][Firebase]][Firebase-url]
 * [![Node][Node.js]][Node.js-url]
 * [![Lilypond][Lilypond]][Lilypond-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
+* [![Audiveris][Audiveris]][Audiveris-url]
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -233,15 +233,14 @@ Use this space to list resources you find helpful and would like to give credit 
 [product-screenshot]: images/screenshot.png
 [React_Native]: https://img.shields.io/badge/React%20Native%20-badge?style=for-the-badge&logo=React&color=%23050e30
 [React_Native-url]: https://reactnative.dev/
+[Expo]: https://img.shields.io/badge/Expo-badge?style=for-the-badge&logo=Expo&color=black
+[Expo-url]: https://expo.dev/
 [Firebase]: https://img.shields.io/badge/Firebase-badge?style=for-the-badge&logo=firebase&color=grey
 [Firebase-url]: https://firebase.google.com/
 [Node.js]: https://img.shields.io/badge/node.js-badge?style=for-the-badge&logo=Node.JS&color=black
 [Node.js-url]: https://nodejs.org/en/about
-[Lilypond]: https://img.shields.io/badge/Lilypond%20-badge?style=for-the-badge&logo=Lilypond&color=green
+[Lilypond]: https://img.shields.io/badge/Lilypond%20-badge?style=for-the-badge&logo=Lilypond&color=%23075e12
 [Lilypond-url]: https://lilypond.org/
-[Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
-[Laravel-url]: https://laravel.com
-[Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
-[Bootstrap-url]: https://getbootstrap.com
-[JQuery.com]: https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white
-[JQuery-url]: https://jquery.com 
+[Audiveris]: https://img.shields.io/badge/Audiveris-badge?style=for-the-badge&logo=Audiveris&color=orange
+[Audiveris-url]: https://github.com/audiveris
+
