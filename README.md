@@ -93,6 +93,9 @@ SoundSync is capable of:
 ### Prerequisites
 
 Please ensure you have all of these downloaded before proceeding:
+
+SOFTWARE: 
+
 * npm
   ```sh
   npm install npm@latest -g
@@ -108,6 +111,10 @@ Please ensure you have all of these downloaded before proceeding:
  
 * Audiveris API
   - [Clone This Repository](https://github.com/aiRamo/audiveris-api)
+
+ HARDWARE:
+
+ * An audio recording device
 
 ### Installation
 
