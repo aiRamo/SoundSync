@@ -231,7 +231,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
 [product-screenshot]: images/screenshot.png
-[React_Native]: https://img.shields.io/badge/React%20Native%20-badge?style=for-the-badge&logo=React&color=%2309143C
+[React_Native]: https://img.shields.io/badge/React%20Native%20-badge?style=for-the-badge&logo=React&color=%23050e30
 [React_Native-url]: https://reactnative.dev/
 [Firebase]: https://img.shields.io/badge/Firebase-badge?style=for-the-badge&logo=firebase&color=grey
 [Firebase-url]: https://firebase.google.com/
