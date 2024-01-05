@@ -24,9 +24,9 @@
     <br />
     <a href="https://youtu.be/EhhmW8895KI">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/aiRamo/SoundSync/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/aiRamo/SoundSync/issues">Request Feature</a>
   </p>
 </div>
 
