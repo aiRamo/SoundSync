@@ -86,7 +86,7 @@ This section should list any major frameworks/libraries used to bootstrap your p
 
 * [![React][React.js]][React-url]
 * [![Firebase][Firebase]][Firebase-url]
-* [![Angular][Angular.io]][Angular-url]
+* [![Node][Node.js]][Node.js-url]
 * [![Svelte][Svelte.dev]][Svelte-url]
 * [![Laravel][Laravel.com]][Laravel-url]
 * [![Bootstrap][Bootstrap.com]][Bootstrap-url]
@@ -235,8 +235,8 @@ Use this space to list resources you find helpful and would like to give credit 
 [React-url]: https://reactjs.org/
 [Firebase]: https://img.shields.io/badge/Firebase-badge?style=for-the-badge&logo=firebase&color=grey
 [Firebase-url]: https://firebase.google.com/
-[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
-[Angular-url]: https://angular.io/
+[Node.js]: https://img.shields.io/badge/node.js-badge?style=for-the-badge&logo=Node.JS&color=black
+[Node.js-url]: https://nodejs.org/en/about
 [Svelte.dev]: https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00
 [Svelte-url]: https://svelte.dev/
 [Laravel.com]: https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white
