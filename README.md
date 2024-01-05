@@ -94,27 +94,27 @@ SoundSync is capable of:
 
 Please ensure you have all of these downloaded before proceeding:
 
-SOFTWARE: 
+* Software: 
 
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+  * npm
+    ```sh
+    npm install npm@latest -g
+    ```
+  
+  * expo
+    ```sh
+    npm install -g expo-cli
+    ```
 
-* expo
-  ```sh
-  npm install -g expo-cli
-  ```
+  * Node.js
+    - [Download Here](https://nodejs.org/en/download)
+   
+  * Audiveris API
+    - [Clone This Repository](https://github.com/aiRamo/audiveris-api)
 
-* Node.js
-  - [Download Here](https://nodejs.org/en/download)
- 
-* Audiveris API
-  - [Clone This Repository](https://github.com/aiRamo/audiveris-api)
+ * Hardware:
 
- HARDWARE:
-
- * An audio recording device
+   * An audio recording device
 
 ### Installation
 
