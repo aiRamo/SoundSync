@@ -134,6 +134,9 @@ Use this space to show useful examples of how a project can be used. Additional 
 ![Recognition Screen Shot][recognition-screenshot]
   
 * Real-time Audio Note Tracking
+  
+
+![Tracker Screen Shot][tracker-screenshot]
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
